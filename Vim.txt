@@ -1,0 +1,220 @@
+* Comments:
+
+      Current line: gcc
+
+      Selected area: gc
+
+
+
+
+* Enter to the insert mode:
+
+      Before current character: i
+      After current character : a
+      At the end of the line  : A
+
+
+
+
+* Enter to the normal mode: Esc
+
+
+
+
+* Center the page to the viewport: zz
+
+
+
+
+* Undo: u
+* Redo: Ctrl + r
+
+
+
+
+* Move line by line vertically:
+
+      Up  : k
+      Down: j
+
+      * To move 10 lines up  : 10k
+      * To move 10 lines down: 10j
+
+
+
+
+* Move half page:
+
+      Up  : Ctrl + u
+      Down: Ctrl + d
+
+
+
+
+* Move to the start of the file: gg
+* Move to the end of the file  : G
+
+
+
+
+* Move character by character horizontally:
+
+      left : h
+      right: l
+
+      * To move 10 characters left : 10h
+      * To move 10 characters right: 10l
+
+
+
+
+* Move word by word horizontally:
+
+      To left : b
+      To right: w
+
+
+
+
+* Move along a line:
+
+      End of the line                           : $
+      First non-whitespace character of the line: _ (underscore)
+      Very start of the line                    : 0
+
+
+      To a specific character left : F<character>
+      To a specific character right: f<character>
+
+          To continue the same operation again:
+
+              forward : ; (semicolon)
+              backward: , (comma)
+
+
+
+
+* Visual mode:
+
+      Select line by line:
+
+          press V and go up and down using k and j keys.
+
+
+      Select an area:
+
+          press v and move using j k h l keys
+
+
+      Select from current character to specified character in current line:
+
+          To left : vF<character>
+          To right: vf<character>
+
+              To repeat the same operation again:
+
+                  forward : ; (semicolon)
+                  backward: , (comma)
+
+
+      Select everything in between:
+
+            '': vi'
+            "": vi"
+            (): vi(
+            {}: vi{
+            <>: vi<
+
+
+
+
+* Copy:
+
+      Current line : yy
+
+      Selected area: y
+
+      Current word: yiw
+
+
+* Paste: p
+
+      Paste is performed after the current character.
+
+
+
+
+* Delete:
+
+      Replace current character:
+
+          press: r
+          then press the new character
+
+
+      Delete current character: x
+
+
+      Delete current word:
+
+          Stay in normal mode:
+
+                  diw - Delete the word
+                  daw - Delete the word with the space
+
+          Enter to the insert mode: ciw (change in word)
+
+
+      Delete current line:
+
+          Stay in normal mode : dd
+          Enter to insert mode: cc
+
+          * When you delete something, it is copied to the clipboard
+            automatically.
+
+
+      Delete a selected area:
+
+          Stay in normal mode : d
+          Enter to insert mode: c
+
+
+* Searching:
+
+      * Searching is not case sensitive.
+
+
+      Press: /
+      Then type the search query
+
+
+      * If you want to search current word:
+
+            press: *
+
+
+      * To jump to each search result:
+
+            Up  : N
+            Down: n
+
+
+
+
+* Navigating between tabs:
+
+      Forward:
+
+            gt  : Next tab
+            2gt : go to tab number 2
+
+      Previous tab : gT
+
+
+
+
+* Case conversions:
+
+      To uppercase : Select the word, then press U (uppercase)
+      To lowercase : Select the word, then press u (lowercase)

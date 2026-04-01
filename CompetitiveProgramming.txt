@@ -1,0 +1,309 @@
+---------- C++ -----------------------------------------------------------------
+
+---------- (Hello World) ----------
+
+    #include <iostream>
+
+    using namespace std;
+
+    int main()
+    {
+      cout << "hello world " << endl;
+    }
+
+
+
+
+---------- (Variables) ----------
+
+* use snake_case for variable names.
+
+
+* Define multiple variables in same type:
+
+      <type> <variable1>, <variable2>, <variable3>, ...
+
+      Ex: int a, b, c;
+
+
+* Define constants:
+
+      constexpr double PI = 3.14159;
+
+
+* Use "const" when the value may not be known at compile time but should not change:
+
+      const int x = get_value();
+
+
+
+
+---------- (Integers) ----------
+
+* There are multiple integer types. But use:
+
+      * int  ( < 10^9 )
+      * long ( < 10^19 )
+
+
+* For unsigned integers:
+
+      * unsigned int  ( < 10^10 )
+      * unsigned long ( < 10^20 )
+
+
+
+
+---------- (Floating points) ----------
+
+* There are multiple floating point types. But use: double
+
+
+
+
+---------- (Booleans) ----------
+
+* Type : bool
+
+* Values : true / false
+
+
+
+
+---------- (Characters) ----------
+
+* Type : char
+
+* User : ''
+
+
+
+
+---------- (Strings) ----------
+
+* Type: string
+
+* Use : ""
+
+* Mutable
+
+* Supports indexing.
+
+
+
+
+---------- (Conditional blocks) ----------
+
+* if-else if - else:
+
+      if (condition1) {
+            //
+      } else if (condition2) {
+            //
+      } else if (condition3) {
+            //
+      } else {
+            //
+      }
+
+      * "else if"s and else are optional.
+
+
+* Ternary operator:
+
+      value = condition ? value_if_condition_true : value_if_condition_false;
+
+
+
+
+---------- (Loops) ----------
+
+* for loop:
+
+      Ex:
+
+          for (int i = 0; i < 10; i++)
+          {
+            // body
+          }
+
+
+* while loop:
+
+      Ex:
+
+          while (<condition>)
+          {
+            // body
+          }
+
+
+* To range over collections:
+
+      for (char c : name) {
+        cout << c << " ";
+      }
+
+
+* Can use "break" and "continue" in all loops.
+
+
+
+
+---------- (Arrays) ----------
+
+* Has a fixed size.
+
+
+* The size of the array must be a compile time constant.
+
+
+* To import : #include <array>
+
+
+* Without values:
+
+      1D : array<int, 5> numbers;
+
+      2D : array<array<int, 3>, 2> numbers; // 2 rows, 3 columns
+
+
+* With values:
+
+      1D : array<int, 5> numbers = {1, 2, 3, 4, 5};
+
+      2D : array<array<int, 3>, 2> numbers = {{{1, 2, 3}, {4, 5, 6}}}; // Need 3 {}
+
+
+* Access values : arr[index]
+
+
+* Update values:
+
+      arr[index] = newValue;
+
+
+* Get the length of an array : arr.size()
+
+
+
+
+---------- (Vectors) ----------
+
+* Allocates memory in the heap.
+
+
+* Creation:
+
+      vector<type> <name>(<initial_capacity>);
+
+
+* Important methods:
+
+      * Get the length : vec.size()
+
+      * Get the capacity : vec.capacity()
+
+      * Remove all elements : vec.clear()
+
+      * Append an element : vec.push_back(<element>)
+
+      * Remove an element at the end : vec.pop_back()
+
+      * Remove the element at index i : vec.erase(vec.begin() + i)
+
+      * To remove a range of values : vec.erase(vec.begin() + 1, vec.end());
+
+
+
+
+---------- (Pairs) ----------
+
+* jkj
+
+
+
+
+---------- (Tuples) ----------
+---------- (Sets) ----------
+---------- (Maps) ----------
+---------- (Structs) ----------
+
+
+
+
+---------- (Print outputs) ----------
+
+* We use "cout" to print outputs:
+
+      cout << "Hello World" << '\n';
+
+
+* Print a double value with a given number of digits:
+
+      cout << fixed << setprecision(12) << double_value
+
+      * fixed:
+
+            If specified, there are 12 digits after the "."
+
+            If not specified, total number of digits are 12.
+
+
+
+
+---------- (Type Casting) ----------
+
+* (type)value
+
+      or,
+
+* static_cast<type>(value);
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Two pointers method -------------------------------------------------
+
+Q: Find two numbers in the array whose sum equals the target.
+
+      array = [1, 2, 3, 4, 6]
+      target = 6
+
+
+* Solution:
+
+      int main()
+      {
+            ios::sync_with_stdio(false);
+            cin.tie(nullptr);
+
+            array<int, 5> arr = {1, 2, 3, 4, 6};
+            int target = 6;
+
+            int l = 0, r = arr.size() - 1, sum = 0;
+            while (l < r)
+            {
+                  cout << l << " " << r << '\n';
+
+                  sum = arr[l] + arr[r];
+
+                  if (sum == target)
+                  {
+                        cout << arr[l] << " " << arr[r];
+                        break;
+                  }
+                  else if (sum < target)
+                        l++;
+                  else
+                  {
+                        r--;
+                  }
+            }
+
+            return 0;
+      }
+
+--------------------------------------------------------------------------------

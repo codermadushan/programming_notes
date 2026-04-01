@@ -1,0 +1,5213 @@
+---------- rustup --------------------------------------------------------------
+
+* "rustup" is a utility tool that runs from your terminal that helps with
+  various rust related functionalities.
+
+
+* To update Rust:
+
+      rustup update
+
+
+* To open documentation:
+
+      rustup doc
+
+
+* Inspect rust toolchain:
+
+      rustup show
+
+
+* To uninstall Rust:
+
+      rustup self uninstall
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- rustc ---------------------------------------------------------------
+
+* The rust compiler.
+
+
+* Compile a rust file (.rs):
+
+      rustc <file_name>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- cargo ---------------------------------------------------------------
+
+* "cargo" is a command line tool that helps to manage rust projects.
+
+
+* Create a new project:
+
+      cargo new <project-name>
+
+
+* Compile a rust project:
+
+      cargo build:
+
+            * Debug mode
+            * Fast but Unoptimized
+            * Contains debug related informations
+            * For testing
+
+            * Executable is stored at:
+
+                  ./target/debug/<project-name>
+
+
+      cargo build --release:
+
+            * Release mode
+            * Slow but Optimized
+            * To create the final executable
+
+            * Executable is stored at:
+
+                  ./target/release/<project-name>
+
+
+* Compile + Run a rust project:
+
+      cargo run
+
+
+* Clean the current rust project (delete ./target):
+
+      cargo clean
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Build the final binary ----------------------------------------------
+
+* Put these settings in Cargo.toml file:
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+debug = 0
+strip = "symbols"
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Core ----------------------------------------------------------------
+
+* If Rust cannot know the size of a value at compile time, that value must be
+  accessed through a pointer.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Variables -----------------------------------------------------------
+
+* We use "let" keyword to define variables.
+
+
+* In Rust, all variables are immutable by default. We can use "mut" keyword to
+  make them mutable.
+
+      let count = 50;     // immutable
+      let mut count = 50; // mutable
+
+
+* Define a variable with an initial value:
+
+      let count = 50; // No need to specify the data type of the variable.
+
+
+* Define a variable without an initial value:
+
+      let count: i32; // Required to specify the data type of the variable.
+
+      * In this case the variable must be initialized before using it.
+
+
+* If you want to remove the warning for a variable called "unused variable",
+  then prefix the variable name with underscore.
+
+      let count = 50;  // unused variable warning
+      let _count = 50;  // no unused variable warning
+
+
+
+
+---------- (Variable shadowing) ----------
+
+* Variable shadowing means redeclaring a variable in same scope. The original
+  variable is replaced by the new one.
+
+      let count = "3.4";
+      let count = 3.4;
+
+
+
+
+---------- (Constants) ----------
+
+* A permanently immutable value.
+
+
+* Usually we define constants in file level.
+
+
+* We use "const" keyword to define constants and the data type and the value is
+  required at the time of declaration.
+
+      const TAX_RATE: f64 = 7.25;
+
+
+
+
+---------- (Type aliases) ----------
+
+* A type alias is an alternate name that we can assign to an existing type.
+
+
+* We use "type" keyword to define type aliases.
+
+      type Meters = i32;
+
+
+
+
+---------- (Compiler directives) ----------
+
+* A compiler directive is an annotation that tells the compiler how to parse the
+  source code.
+
+
+* We use following syntax to define compiler directives:
+
+      #[<directive>]
+
+
+* To apply a compiler directive to a single line, we define the compiler
+  directive above that line.
+
+
+* To apply a compiler directive to a function, we define the compiler
+  directive above that function.
+
+
+* To apply a compiler directive to a whole file, we define the compiler
+  directive at the very top of the file.
+
+
+Ex: Use a complier directive to remove "unused variables" warning:
+
+      fn main() {
+            #[allow(unused_variables)]
+            let count = 50;
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Data Types ----------------------------------------------------------
+
+* Every Rust value has a data type.
+
+
+* Rust is a "Statically Typed Language", which means the compiler must know the
+  types of all variables at compile time.
+
+
+* The compiler can infer the types of variables based on their initial
+  assignments.
+
+
+
+
+---------- (Scalar Types) ----------
+
+* A scalar type is a type that holds a single value.
+
+
+* Rust has 4 scalar types:
+
+      1. Integers
+      2. Floating-point numbers
+      3. Booleans
+      4. Characters
+
+
+
+
+---------- (Integers) ----------
+
+* There are 2 types of integers:
+
+      1. Signed integers:
+
+            * Default type for integers
+
+            * Support positive and negative numbers
+
+            * Start with "i":
+
+                  i8, i16, i32, i64, i128
+
+
+      2. Unsigned integers:
+
+            * Support only positive numbers
+
+            * Start with "u":
+
+                  u8, u16, u32, u64, u128
+
+
+* The number after the "i" or "u" refers to the amount of bits the integer needs
+  in your computer's memory.
+
+
+* We can use "_" to make integers more readable:
+
+      let count = 2168871; -----> let count = 2_168_871;
+
+
+* isize:
+
+      * Equals to i32 in 32bit computers
+
+      * Equals to i64 in 64bit computers
+
+
+* usize:
+
+      * Equals to u32 in 32bit computers
+
+      * Equals to u64 in 64bit computers
+
+
+
+
+---------- (Floating-point numbers) ----------
+
+* All floating-point data types:
+
+      f32, f64
+
+
+* Default type is: f64
+
+
+* String interpolation with given number of digits:
+
+      let pi = 3.14159;
+      println!("{pi:.4}")
+
+
+
+
+---------- (Booleans) ----------
+
+* Data type: bool
+
+
+* Size of a boolean variable is: 1 byte (8 bit)
+
+
+* Only 2 values are allowed:
+
+      1. true
+      2. false
+
+
+
+
+---------- (Characters) ----------
+
+* Data type: char
+
+
+* The size of a character variable is: 4 bytes (32 bit)
+
+
+* We use '' (single quotes) to represent characters.
+
+
+Ex:
+      let character = 'A';
+
+
+
+
+---------- (Type Casting) ----------
+
+* We use "as" keyword for type casting.
+
+
+Ex:
+      let count = 50;
+      let count_i8 = count as i8;
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Operators -----------------------------------------------------------
+
+---------- (Math Operations) ----------
+
+* Addition      : +
+
+* Subtraction   : -
+
+* Multiplication: *
+
+* Division      : /
+
+      int / int = int
+
+* Modulo        : %
+
+
+* For addition, subtraction, multiplication and division both values should
+  be in same data type.
+
+
+
+
+---------- (Augmented Assignment Operators) ----------
+
+* a = a + 1 -----> a += 1
+
+* a = a - 1 -----> a -= 1
+
+* a = a * 1 -----> a *= 1
+
+* a = a / 1 -----> a /= 1
+
+
+
+
+---------- (Logical Operators) ----------
+
+* NOT      : !
+
+* AND      : &&
+
+* OR       : ||
+
+* Eqality  : ==
+
+* Ineqality: !=
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Array ---------------------------------------------------------------
+
+* An array is a fixed-size collection of homogenous data (data of the same type)
+
+
+* Create an array:
+
+      * With values:
+
+            let numbers = [1, 2, 3, 4, 5]; // No need to specify data type
+
+
+      * Without values:
+
+            let numbers: [i32; 5]; // Need to specify data type
+
+
+* Access values of an array:
+
+      numbers[<index>]
+
+
+* To assign a new array to an array variable or to update existing value at
+  specific index, we have to define the array as mutable using "mut" keyword.
+
+
+      let mut numbers = [1, 2, 3];
+
+      numbers[2] = 10;
+
+      numbers = [4, 5, 6]; // Length must be same
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Traits --------------------------------------------------------------
+
+* A trait is a contract that requires a type supports one or more methods.
+
+
+* Traits establish consistency between types. Methods that represent the same
+  behavior have the same name.
+
+
+* When a type opts in to honoring a trait's requirements, we say the type
+  implements the trait.
+
+
+* Types can vary in their implementation but still implement the same trait.
+
+
+* A type can choose to opting in to implementing a trait.
+
+
+* A type can implement multiple traits. There are hundreds of traits available
+  in Rust.
+
+
+* A trait is called an interface or protocol in other programming languages.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Display trait -------------------------------------------------------
+
+* The Display trait requires that a type can be represented as a user-friendly
+  readable string.
+
+
+* The Display trait mandates a "format" method that returns the string.
+
+
+* When we use the "{}" interpolation syntax, Rust relies on the format method.
+
+
+* Integers, Floats, booleans all implement the Display trait by default.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Debug trait ---------------------------------------------------------
+
+* It should format the output in a programmer-facing, debugging context.
+
+
+* Syntax:
+
+      println!("{<variable>:?}") : Regular debug print
+
+      println!("{<variable>:#?}") : Uses # for a further formatted print
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Tuple ---------------------------------------------------------------
+
+* Using a tuple we can store values in dirrent types in a single variable.
+
+
+* To access values, we use . and the index of each value.
+
+      let employee: (&str, i32, &str) = ("John", 32, "Marketing");
+
+
+      let name = employee.0;
+      let age = employee.1;
+      let department = employee.2;
+
+
+* Or we can extract values in a tuple into seperate variables as follows:
+
+      let employee: (&str, i32, &str) = ("John", 32, "Marketing");
+
+      let (name, age, department) = employee;
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Ranges --------------------------------------------------------------
+
+* A range is a sequence/interval of consecutive values.
+
+
+Ex:
+
+      Values from 1 to 10:
+
+            let numbers = 1..11;
+
+            or
+
+            let numbers = 1..=10;
+
+
+* Iterate over a range:
+
+      let numbers = 1..=10;
+
+      for number in numbers {
+            println!("{number}");
+      }
+
+
+* For custom data types with ranges:
+
+      let numbers: std::ops::Range<i8> = 1..10;
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Functions -----------------------------------------------------------
+
+* Syntax:
+
+      fn <function_name>(<arg1>: <type_of_arg1>) -> <return_type> {
+            // body
+      }
+
+
+* No need to specify the return type if no value is returned.
+
+
+* If no value is returned, the default return value is an empty tuple which is
+  called the unit value.
+
+
+* In a function, the value at last line is returned automatically if we don't
+  use "return" keyword and the ";" at the end of the line. This is called
+  implicit return values.
+
+      fn square(number: i32) -> i32 {
+            number * number
+      }
+
+
+* We can use blocks to isolate some piece of code. To get a calculated value
+  from that block we have to use implicit return values.
+
+      fn main() {
+            let multiplier = 3;
+
+            let calculation = {
+                  let value = 4 + 5;
+                  value * multiplier
+            };
+
+            println!("{calculation}")
+      }
+
+
+* The default return value of a block is also the unit.
+
+
+
+
+---------- (Passing function parameters) ----------
+
+* Case 1 - Immutable parameters:
+
+      * If the parameter type implements Copy trait:
+
+            Ex:
+
+                  fn test(number: i32) {
+                        println!("{}", number);
+                  }
+
+                  fn main() {
+                        let number1 = 10; // An immutable variable
+                        let mut number2 = 20; // A mutable variable
+
+                        test(number1); // A new copy will be created
+                        test(number2); // A new copy will be created
+
+                        println!("{}", number1); // Valid
+                        println!("{}", number2); // Valid
+                  }
+
+            * We can pass an immutable variable to an immutable parameter.
+            * We can pass a mutable variable to an immutable parameter.
+            * In both cases a new copy will be created.
+
+
+      * If the parameter type doesn't implement Copy trait (move):
+
+            Ex:
+                  fn test(name: String) {
+                        println!("{}", name);
+                  }
+
+                  fn main() {
+                        let name1 = String::from("John"); // An immutable variable
+                        let mut name2 = String::from("Anna"); // A mutable variable
+
+                        test(name1); // Ownership is moved
+                        test(name2); // Ownership is moved
+
+                        // println!("{}", name1); // Invalid: borrow of moved value
+                        // println!("{}", name2); // Invalid: borrow of moved value
+                  }
+
+            * We can pass an immutable variable to an immutable parameter.
+            * We can pass a mutable variable to an immutable parameter.
+            * In both cases ownerships are transferred.
+
+
+
+
+* Case 2 - Mutable parameters:
+
+      * If the parameter type implements Copy trait:
+
+            Ex:
+                  fn test(mut x: i32) {
+                        println!("{}", x);
+                  }
+
+                  fn main() {
+                        let number1 = 10;
+                        let mut number2 = 20;
+
+                        test(number1); // A new copy will be created
+                        test(number2); // A new copy will be created
+
+                        println!("{}", number1); // Valid
+                        println!("{}", number2); // Valid
+                  }
+
+            * We can pass an immutable variable to a mutable parameter.
+            * We can pass a mutable variable to a mutable parameter.
+            * In both cases new copies will be created.
+
+
+      * If the parameter type doesn't implement Copy trait:
+
+            Ex:
+
+                  fn test(mut name: String) {
+                        println!("{}", name);
+                  }
+
+                  fn main() {
+                        let name1 = String::from("John");
+                        let mut name2 = String::from("Anna");
+
+                        test(name1); // Ownership is transferred
+                        test(name2); // Ownership is transferred
+
+                        // println!("{}", name1); // Invalid: borrow of moved value
+                        // println!("{}", name2); // Invalid: borrow of moved value
+                  }
+
+            * We can pass an immutable variable to a mutable parameter.
+            * We can pass a mutable variable to a mutable parameter.
+            * In both cases ownerships are transferred.
+
+
+
+
+* Case 3 - Immutable references:
+
+      * If the parameter type implements Copy trait:
+
+            Ex:
+
+                  fn test(number: &i32) {
+                        println!("{}", number);
+                  }
+
+                  fn main() {
+                        let number1 = 10;
+                        let mut number2 = 20;
+
+                        test(&number1); // Pass as an immutable reference
+                        test(&number2); // Pass as an immutable reference
+
+                        println!("{}", number1); // Valid
+                        println!("{}", number2); // Valid
+                  }
+
+
+            * We can pass an immutable variable as an immutable reference argument.
+            * We can pass a mutable variable as an immutable reference argument.
+            * No new copies.
+
+
+      * If the parameter type doesn't implement Copy trait:
+
+            (Same as a Copy trait implemented parameter)
+
+            Ex:
+
+                  fn test(name: &String) {
+                        println!("{}", name);
+                  }
+
+                  fn main() {
+                        let name1 = String::from("John");
+                        let mut name2 = String::from("Anna");
+
+                        test(&name1); // Pass as an immutable reference
+                        test(&name2); // Pass as an immutable reference
+
+                        println!("{}", name1); // Valid
+                        println!("{}", name2); // Valid
+                  }
+
+            * We can pass an immutable variable as an immutable reference argument.
+            * We can pass a mutable variable as an immutable reference argument.
+            * No ownership transfers.
+
+
+
+
+* Case 4 - Mutable references:
+
+      * If the parameter type implements Copy trait:
+
+            Ex:
+
+                  fn test(number: &mut i32) {
+                        println!("{}", number);
+                  }
+
+                  fn main() {
+                        let number1 = 10;
+                        let mut number2 = 20;
+
+                        // Pass as a mutable references
+                        test(&mut number1); // Invalid: cannot mutate immutable variable
+                        test(&mut number2); // Valid
+
+                        println!("{}", number1); // Valid
+                        println!("{}", number2); // Valid
+                  }
+
+            * We cannot pass an immutable variable as a mutable reference argument.
+            * We can pass a mutable variable as a mutable reference argument.
+            * No new copies.
+
+
+      * If the parameter type doesn't implement Copy trait:
+
+            Ex:
+
+                  fn test(name: &mut String) {
+                        println!("{}", name);
+                  }
+
+                  fn main() {
+                        let name1 = String::from("John");
+                        let mut name2 = String::from("Anna");
+
+                        test(&mut name1); // Invalid: cannot borrow name1 as mutable
+                        test(&mut name2); // Valid
+
+                        println!("{}", name1); // Valid
+                        println!("{}", name2); // Valid
+                  }
+
+            * We cannot pass an immutable variable as a mutable reference argument.
+            * We can pass a mutable variable as a mutable reference argument.
+            * No ownership transfers.
+
+
+
+
+---------- (Short note) ----------
+
+* Value parameters:
+
+      1. If immutable: Both immutable and mutable variables are allowed.
+      2. If mutable  : Both immutable and mutable variables are allowed.
+      3. If Copy     : A new Copy is created.
+      4. If not Copy : Ownership is transferred.
+
+
+* Reference parameters:
+
+      1. If immutable: Both immutable and mutable references are allowed.
+      2. If mutable: Only mutable references are allowed.
+      3. No new copies.
+      4. No ownership transfers.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- If Statement --------------------------------------------------------
+
+* In Rust we don't use () for "if" statement.
+
+      if <condition> {
+            // body
+      }
+
+
+* if - else:
+
+      if <condition> {
+            // body if the condition is true
+      } else {
+            // body if the condition is false
+      }
+
+
+* if - else if - else:
+
+      if <condition1> {
+            // body if the condition1 is true
+      } else if <condition2>{
+            // body if the condition2 is true
+      } else {
+            // body if non of the above is true
+      }
+
+
+* Assigning result of if statement to a variable:
+
+      let result = if <condition> { <value_if_true> } else { <value_if_false> };
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Match Statement -----------------------------------------------------
+
+* Like switch statement in other languages.
+
+
+* But always we must provide all the posibilities to the match statement.
+
+
+Ex:
+
+      match evaluation {
+            true => {
+                  println!("true")
+            }
+
+            false => {
+                  println!("false")
+            }
+      }
+
+
+* We can return values from each match arm:
+
+      let value = match evaluation {
+            true => 10,
+            false => 20,
+      };
+
+
+* We can use _ as the default arm:
+
+      match season {
+            "summer" => println!("School's out"),
+
+            "winter" => println!("Brr, so cold!"),
+
+            _ => println!("Lots of rain!"),
+      }
+
+
+* Match with multiple values:
+
+      match number {
+            2 | 4 | 6 | 8 => println!("even"),
+
+            1 | 3 | 5 | 7 => println!("odd"),
+
+            _ => println!("unknown"),
+      }
+
+
+* Match with conditions:
+
+      match number {
+            value if value % 2 == 0 => println!("{value} is even"),
+
+            _ => println!("odd"),
+      }
+
+
+* Sometimes we covers all posibilities in match statement. But Rust cannot
+  understant it. In these scenarios, we can use "unreachable!()" macro with
+  default arm.
+
+      match number {
+            value if value % 2 == 0 => println!("even"),
+
+            value if value % 2 != 0 => println!("odd"),
+
+            _ => unreachable!(),
+      }
+
+      * "value" means the current value of the number.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Loops ---------------------------------------------------------------
+
+* By default a loop is executed forever. To stop the execution and move to the
+  next line, we use "break" keyword.
+
+      loop {
+            println!("{count} seconds to blast...");
+
+            count -= 1;
+
+            if count == 0 {
+                  break;
+            }
+      }
+
+
+* We can use "continue" keyword to jump to next iteration.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- While Loop ----------------------------------------------------------
+
+* Syntax:
+
+      while <condition> {
+            // body
+      }
+
+      A while loop runs until the condition becomes false.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Recursion -----------------------------------------------------------
+
+* Recursion is when a function calls itself.
+
+Ex:
+
+      fn countdown(start: i32) {
+            if start == 0 {
+                  println!("Blast!");
+                  return;
+            }
+            println!("{start} seconds to blast...");
+
+            countdown(start - 1);
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Ownership -----------------------------------------------------------
+
+* Ownership is a set of rules that the compiler checks for to ensure the program
+  will be free of memory errors.
+
+
+* The owner is who/what is responsible for cleaning up a piece of data when it
+  is no longer in use.
+
+
+* Every value in a Rust program has one owner.
+
+
+* The owner can change over the course of the program, but there is only one
+  owner for a value at a time.
+
+
+* The owner is usually a name:
+
+      * A variable can be an owner.
+      * A parameter can be an owner.
+
+
+* Ownership also extends to composite types that own their elements.
+
+      * A tuple and array own their values.
+
+
+* The purpose of ownership is to assign responsibility for deallocating memory.
+  (Primarily Heap memory)
+
+
+* Ownership is a compiler feature for reducing duplicate heap data and cleaning
+  up heap data that is no longer needed.
+
+
+* Rules of ownership:
+
+      * Each value has one owner.
+
+      * When the owner goes out of scope or is overwritten, the previous value
+        is dropped.
+
+      * Ownership can be moved or borrowed.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Stack vs Heap -------------------------------------------------------
+
+* The Stack and Heap are two different regions of the computer's memory.
+
+
+* The Stack and Heap read and write data in different ways that offer advantages
+  and disadvangates.
+
+
+
+
+---------- (Stack) ----------
+
+* A stack stores values in the sequential order it receives them.
+
+
+* A stack is LIFO (Last In First Out)
+
+
+* All stack data has a fixed, consistent size that is known at compile time.
+
+
+* Data types like Integers, Floats, Booleans, Characters and Arrays have a fixed
+  size. Rust stores them on the stack at runtime.
+
+
+* The pieces of data on the stack will not grow or shrink in size as the program
+  runs.
+
+
+
+
+---------- (Heap) ----------
+
+* The Heap is a large area of storage space.
+
+
+* The Heap is for data whose size is not known at compile time
+  (user inputs, a file's content, etc)
+
+
+* When the Rust program needs dynamic space, it requests it from the Heap. A
+  program called the memory allocator finds an empty spot that is large enough
+  to store the data.
+
+
+* The memory allocator returns a reference, which is an address.
+
+
+* The reference points to the memory address of the data.
+
+
+* We can store a reference in a variable in a Rust program. References have a
+  fixed size, so Rust stores them on the Stack.
+
+
+* Allocating on the Heap is slower than pushing to the Stack. The memory
+  allocator has to spend time searching for an open spot large enough to fit the
+  data.
+
+
+* Accessing data is faster on the Stack than the Heap as well. With the Heap,
+  the program has to follow the pointer to find the memory address.
+
+
+* The Stack stores the data in sequence, so there is less "jumping around" from
+  point to point.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Scope and Ownership -------------------------------------------------
+
+* When we assign a value to a variable, that variable becomes the owner of that
+  value.
+
+
+* In Rust, when a variable goes out of scope:
+
+      1. The variable's value is dropped.
+
+      2. If the type implements Drop, its drop() method is called.
+
+      3. After that, the memory is reclaimed:
+
+            * Stack memory -> Popped automatically
+
+            * Heap memory -> Explicitly freed via allocator
+
+
+* Drop is for resource cleanup, not specifically for heap memory.
+
+
+Ex:
+
+      fn main() {
+            let count = 11;
+
+            {
+                  let isTrue = false;
+
+                  // isTrue variable exists here
+            }
+            // isTrue variable goes out of scope here
+
+            // count variable exists here
+      }
+      // count variable goes out of scope here
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Copy Trait ----------------------------------------------------------
+
+* Copy is a marker trait (it has no methods).
+
+
+* Not safe for heap-owning types.
+
+
+* Never try to make heap-owning types Copy. Always use Clone for duplication or
+  references for borrowing.
+
+
+* If a type implements the Copy trait, it cannot implement Drop trait.
+
+
+* If a type implements Copy:
+
+      * Assignments make a copy.
+
+      * Passing to functions makes a copy.
+
+      * The original value remains usable.
+
+
+* Reassignment:
+
+      * let var2 = var1;
+
+      * Reassignment is move by default.
+
+      * Reassignment is copy only if the type implements Copy.
+
+      * COPY:
+
+            fn main() {
+                  let time = 2026;
+                  let year = time;
+
+                  println!("{time}"); // valid
+                  println!("{year}"); // valid
+            }
+
+            * Creates a new copy of the value. So both variables have their own
+            independent values.
+
+
+      * MOVE:
+
+            fn main() {
+                  let time = String::from("2026");
+                  let year = time;
+
+                  println!("{time}"); // invalid (borrow of moved value)
+                  println!("{year}"); // valid
+            }
+
+            * Ownership is transferred.
+
+
+* Copy vs Clone:
+
+      Copy:
+            * Cheap
+            * Implicit
+            * Stack-only bitwise duplication
+
+
+      Clone:
+
+            * Possibly expensive
+            * Explicit
+            * Works for both Stack and Heap
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- String Type ---------------------------------------------------------
+
+* Rust has 2 core string types:
+
+      1. &str
+
+            * let name: &str = "John";
+
+            * Do not allocate memory in either stack or heap. Instead it is
+              directly embedded to the binary executable (static memory).
+
+            * Values are immutable. Cannot change its contents.
+
+            * The value must be known at compile time.
+
+            * "name" is not the owner of string data. It just a reference.
+
+            * The text data of &str type lives wherever the owner put it
+              (static or heap).
+
+                  let name = "John"; // Static
+
+                  let data: &str = &name[0..2]; // Heap
+
+
+      2. String
+
+            * Allocate memory in the heap.
+
+            * Can be mutable:
+
+                  let mut name = String::from("John");
+                  name.push_str(" Wick");
+
+
+            * let name: String = String::new() // Returns an empty string
+
+                  * Use if you want to start with an empty string and build it
+                    dynamically.
+
+                  * Common in loops or when reading inputs.
+
+
+            * let name: String = String::from(<string_literal>)
+
+                  * Creates a String from an existing string slice (&str).
+
+
+            * Not required to know the value of the string at compile time.
+
+
+            * <String>.push(<char>):
+
+                  * Used to append a character to an existing mutable String.
+
+
+            * <String>.push_str(<str>):
+
+                  * Used to append a string slice (&str) to an existing mutable
+                    String.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Copy and Ownership --------------------------------------------------
+
+* If a type of a variable implements the Copy trait, when we assign it to a new
+  variable a new copy will be created.
+
+
+* After that both variables hold seperate copies and their ownerships.
+
+
+Ex:
+
+      fn main() {
+            let x = 10;
+            let y = x; // A new copy will be created
+
+            println!("{}", y); // Valid
+            println!("{}", x); // Valid
+      }
+
+
+
+
+* We can Copy a value of an immutable variable to a mutable variable:
+
+      fn main() {
+            let x = 10;
+            let mut y = x; // A new copy will be created
+
+            println!("{}", y); // Valid
+            println!("{}", x); // Valid
+      }
+
+
+
+
+* We can Copy a value of a mutable variable to an immutable variable:
+
+      fn main() {
+            let mut x = 10;
+            let y = x; // A new copy will be created
+
+            println!("{}", y); // Valid
+            println!("{}", x); // Valid
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Moves and Ownership -------------------------------------------------
+
+* Move is the transfer of ownership from one owner to another.
+
+      fn main() {
+            let person = String::from("John");
+            let genius = person; // Transfer the ownership from person to genius
+
+            // println!("{person}"); // Wrong
+
+            println!("{genius}"); // Correct
+      }
+
+
+
+
+* We can move the value of an immutable variable to a mutable variable:
+
+      fn main() {
+            let x = String::from("X");
+            let mut y: String;
+
+            y = x;
+
+            y.push_str("_to_Y"); // X_to_Y
+
+            println!("{}", y);
+      }
+
+      * After that previous variable is not accessible.
+
+
+
+
+* We can also move the value of a mutable variable to an immutable variable:
+
+      fn main() {
+            let mut x = String::from("X");
+            let y: String;
+
+            y = x;
+
+            println!("{}", y);
+      }
+
+      * After that previous variable is not accessible.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Drop trait ----------------------------------------------------------
+
+* Drop is a special trait that defines what happens when a value is destroyed.
+
+
+* It contains a method called "drop" (Drop::drop)
+
+
+* If a type implements Drop, it cannot implement Copy.
+
+
+* Every safe Rust heap-owning type implements Drop:
+
+      * Heap memory is not automatically freed.
+      * Without Drop, Rust would leak memory.
+      * Rust guarantees no memory leaks in safe code.
+
+
+* When the Drop::drop is called:
+
+      * Variable goes out of scope
+      * std::mem::drop(<value>) is called
+
+
+* drop(<variable>) (std::mem::drop):
+
+      * If Copy is implemented, it does nothing.
+
+      * If Copy is not implemented:
+
+            * Takes the ownership of the value
+            * Immediately ends its lifetime
+            * Calls Drop::drop internally if the type implements Drop
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- (Re-assign a value to a variable) -----------------------------------
+
+* If the variable type implements the Copy trait:
+
+      let mut x = 5;
+      x = 10;
+
+      * Overwrite memory location of x with 10
+
+
+
+
+* If the variable type implements Drop:
+
+      let mut name = String::from("John");
+      name = String::from("Mike");
+
+      * Step 1: drop(old_name);
+      * Step 2: Store new name in same memory location.
+
+
+
+
+* If the variable type implements neither Copy nor Drop:
+
+      struct Person {
+            name: String,
+      }
+
+      fn main() {
+            let mut p = Person {
+                  name: String::from("John"),
+            };
+
+            p = Person {
+                  name: String::from("Mike"),
+            };
+      }
+
+      * So even though Person doesn't implement Drop, its fields are still
+        dropped automatically.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- The clone Method ----------------------------------------------------
+
+* <variable>.clone()
+
+
+* Used only with types that are not implement Copy.
+
+
+* For stack-owning types:
+
+      * Bitwise copy.
+      * Equivalent to assignment for Copy types.
+
+
+* For heap-owning types:
+
+      * New memory is allocated on the heap.
+      * The contents are copied to the new memory.
+      * Original value remains valid.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- References and Borrowing --------------------------------------------
+
+* Reference:
+
+      * Use &
+
+      * The memory address of the original value.
+
+      * Mostly used with heap allocated data because stack data is generally
+        cheap to make a copy.
+
+
+      Ex:
+            fn main() {
+                  let stack_value = 1;
+                  let stack_reference = &stack_value;
+
+                  let heap_value = String::from("John");
+                  let heap_reference = &heap_value;
+            }
+
+
+      * All &T types implement Copy:
+
+            * Copying a reference just copies the pointer value.
+            * The underlying data is not copied.
+
+
+      * All &mut T types does not implement Copy (move).
+
+
+* Dereference:
+
+      * Use *
+
+      * Access the data at the memory address that the reference points to.
+
+      Ex:
+            fn main() {
+                  let value = 1;
+
+                  let reference = &value;
+
+                  let dereferenced_value = *reference;
+            }
+
+
+* Borrowing:
+
+      * Using something without taking ownership of it.
+
+      * We use references for borrowing.
+
+
+* We can create an immutable reference using an immutable variable or a mutable
+  variable:
+
+      let x = 10; // Immutable variable
+      let immutable_ref = &x;
+
+      let mut x = 10; // Mutable variable
+      let immutable_ref = &x;
+
+
+* We can create a mutable reference only using a mutable variable:
+
+      let mut x = 10; // Mutable variable
+      let mutable_ref = &mut x;
+
+
+* &T and &mut T are implement Copy trait.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Auto Dereferencing --------------------------------------------------
+
+* Auto Dereferencing is a compile-time mechanism where Rust automatically
+  applies Dereference (*) and borrow (& / &mut) operations while performing
+  trait-based operation resolution, in order to find a valid implementation
+  without changing ownership or allocating memory.
+
+
+Ex 1 (Apply * automatically):
+
+      fn main() {
+            let name = String::from("John");
+
+            let name_ref = &name;
+
+            println!("{}", name_ref) // internally *name_ref
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Ownership and Function Parameters -----------------------------------
+
+* If the type implements the Copy:
+
+      fn print_value(value: i32) {
+            println!("Value is: {value}")
+      }
+
+      fn main() {
+            let apples = 10;
+
+            print_value(apples);
+
+            println!("{apples} is still valid")
+      }
+
+
+* If the type does not implement Copy:
+
+      fn print_value(value: String) {
+            println!("Value is: {value}")
+      }
+
+      fn main() {
+            let value = String::from("John");
+
+            print_value(value);
+
+            // println!("{value} is still valid") // borrow of moved value
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Mutable Parameters --------------------------------------------------
+
+fn add_fries(mut meal: String) {
+      meal.push_str(" and Fries");
+
+      println!("{meal}");
+}
+
+fn main() {
+      let burger = String::from("Burger");
+
+      add_fries(burger); // same as: let meal = burger;
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Ownership and Return Values -----------------------------------------
+
+Ex 1:
+
+      fn bake_cake() -> String {
+            let cake = String::from("Chocolate Mousse");
+
+            return cake;
+      }
+
+      fn main() {
+            let cake = bake_cake();
+
+            println!("I now have a {cake} cake");
+      }
+
+
+* In this case, the ownership of cake variable inside the bake_cake function is
+  moved to cake variable in main function.
+
+
+
+
+Ex 2:
+
+      fn add_flour(mut meal: String) -> String {
+            meal.push_str("Add flour");
+            return meal;
+      }
+
+      fn add_sugar(mut meal: String) -> String {
+            meal.push_str("Add sugar");
+            return meal;
+      }
+
+      fn main() {
+            let mut current_meal = String::new();
+
+            current_meal = add_flour(current_meal);
+            current_meal = add_sugar(current_meal);
+
+            println!("{current_meal}")
+      }
+
+
+* In this case we have to re-assign current_meal variable to get back the
+  ownership of the modified value.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Immutable references ------------------------------------------------
+
+* Syntax: &<type>
+
+
+Ex:
+      fn print_name(name: &String) {
+            println!("{name}");
+      }
+
+      fn main() {
+            let name1 = String::from("John");
+            let mut name2 = String::from("Anna");
+
+            print_name(&name1);
+            print_name(&name2);
+      }
+
+
+* We can create an immutable reference from immutable or mutable data.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Mutable references --------------------------------------------------
+
+* Syntax: &mut <type>
+
+
+* We can create a mutable reference only from mutable data.
+
+      Ex:
+
+            fn update_name(name: &mut String) {
+                  name.push_str(" Dolton");
+            }
+
+            fn main() {
+                  let mut name1 = String::from("John");
+                  let name2 = String::from("Anna");
+
+                  update_name(&mut name1); // Correct
+                  // update_name(&mut name2); // Wrong
+
+                  println!("{name1}")
+            }
+
+* Once a mutable reference to a value exists, the owner itself cannot read or
+  modify that value until the mutable reference is no longer used, because
+  mutable access must be exclusive.
+
+      Ex:
+
+            fn main() {
+                  let mut x = 10;
+                  let r = &mut x;
+
+                  x = 20; // Wrong
+
+                  println!("{r}");
+            }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Borrowing Rules -----------------------------------------------------
+
+* At any given time, Rust allows either:
+
+      1. Multiple immutable references.
+
+            or
+
+      2. Exactly one mutable reference.
+
+
+* Mixing mutable and immutable references are not allowed.
+
+
+* But following code is allowed. Why?:
+
+      fn main() {
+            let mut x = 10;
+
+            let r1 = &mut x;
+            let r2 = &mut x;
+      }
+
+      * Borrows last until their last use, not until end of scope.
+        (Non-Lexical Lifetimes --> NLL)
+
+      * A reference's lifetime is determined by where it is used, not where it
+        is declared.
+
+      * r1 is never used. Its borrow ends Immediately. So r2 is the only active
+        mutable reference.
+
+      * That is why following code is not allowed:
+
+            fn main() {
+                  let mut x = 10;
+
+                  let r1 = &mut x;
+                  let r2 = &mut x; // Wrong
+
+                  println!("{}", r1);
+            }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Dangling References -------------------------------------------------
+
+* A dangling reference is a pointer to a memory address that has been
+  deallocated.
+
+
+* Rust does not allowed dangling pointers.
+
+
+Ex:
+
+      fn create_city() -> &String {
+            let city = String::from("New York");
+
+            return &city;
+      }
+
+
+      * In this function "city" is the owner of the string value. It is
+        responsible for deallocating memory at the end of the scope.
+
+      * Even we return a reference to the value, it is removed from the memory
+        at the end of the scope (Dangling Pointer).
+
+      * Therefore this is not allowed in Rust.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Ownership with Arrays and Tuples ------------------------------------
+
+* Ownership is not strictly limited to a name like a variable or parameter.
+
+
+* Ownership is answering the question, who is responsible for cleaning up this
+  data.
+
+
+* With Copy implemented types:
+
+      fn main() {
+            let registrations = [true, false, true];
+
+            let first = registrations[0]; // Allowed
+      }
+
+      * Booleans implement the Copy trait. When we extract the first
+        element a new copy will be created.
+
+      * Therefore "registrations" stays same as the owner of all array values.
+
+
+* With types that are not implement Copy:
+
+      fn main() {
+            let languages = [String::from("Rust"), String::from("Python")];
+
+            let first = languages[0]; // Wrong
+      }
+
+      * String does not implement Copy trait. Therefore ownership of the first
+        array value should be moved from "languages" to "first".
+
+      * This is a wired situation. Rust does not allow this.
+
+      * We can solve this creating a reference:
+
+            let first = &languages[0];
+
+
+
+
+---------- (Short Note) ----------
+
+* Read:
+
+      <array_name>[<index>];
+
+
+* Modify:
+
+      <array_name>[<index>] = <new_value>;
+
+
+* Assign to a variable:
+
+      * If value is Copy:
+
+            let value = <array_name>[<index>]; // A new copy is created
+
+
+      * If value is Move:
+
+            let immutable_ref = &<array_name>[<index>];
+
+            or,
+
+            let mutable_ref = &mut <array_name>[<index>];
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Deref Coercion ------------------------------------------------------
+
+* Deref Coercion is a compile-time, implicit conversion of references that Rust
+  performs using the Deref (and DerefMut) traits.
+
+
+* It allows a reference to one type to be used as a reference to another type
+  without explicitly dereferencing.
+
+
+* Rust can convert:
+
+      &U     ---> &T
+      &mut U ---> &mut T
+
+
+      When:
+
+            U:Deref<Target=T>
+            U:DerefMut<Target=T>
+
+
+Ex:
+      fn print_name(name: &str) {
+            println!("{}", name)
+      }
+
+      fn main() {
+            let name = String::from("John");
+
+            print_name(&name);
+      }
+
+
+      * "String" implements Deref<Target=str>.
+
+      * Rust inserts s.deref() automatically.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Slices --------------------------------------------------------------
+
+* A slice is a Dynamically Sized Type (DST) by design:
+
+      * There is no data related to the size of a slice in type definition.
+      * A Slice is always a reference that points to already existing data.
+
+
+
+
+---------- (Slice vs &str) ----------
+
+* &str values are always immutable.
+
+
+* let hero = "John Zeena";
+
+      * The type of "hero" variable is "&str". Therefore it never owns the
+        string data. It is always a borrowed reference (Slice).
+
+
+      Ex:
+
+            fn main() {
+                  let hero = "John Zeena";
+
+                  let first_name = &hero[0..=3];
+            }
+
+            * The type of "first_name" is "&str".
+
+            * Can be panicked at runtime if index goes out of bounds.
+
+
+
+
+* Why following example is not a dangling pointer?:
+
+      fn main() {
+            let first_name = {
+                  let hero = "John Cena";
+
+                  &hero[0..=3]
+            };
+
+            println!("{first_name}");
+      }
+
+      * "hero" is not the owner of the string data.
+
+      * Stored in static memory (inside the binary).
+
+      * Lives for the entire program.
+
+      * "first_name" (&hero[0..=3]) creates another &str.
+
+      * It slices static memory.
+
+      * "hero" goes out of scope.
+
+      * But the data it points to does not.
+
+      * Because static memory never gets dropped.
+
+
+
+
+---------- (String Slices) ----------
+
+* Create an immutable String slice:
+
+      let name = String::from("John Cena");
+      let immutable_slice = &name[0..=3]; // Type: &str
+
+
+
+
+* Create a mutable String slice:
+
+      let mut name = String::from("John Cena");
+      let mutable_slice = &mut name[0..=3]; // Type: &mut str
+
+
+
+
+* Deref coercion with String slices:
+
+      * To a &str parameter we can pass:
+
+            1. &String
+            2. &str
+            3. String literals ("hello")
+
+
+      Ex:
+
+            fn do_hero_stuff(hero_name: &str) {
+                  println!("{hero_name} saves the day");
+            }
+
+            fn main() {
+                  let hero1 = "John Cena";
+                  let hero2 = String::from("Undertaker");
+
+                  do_hero_stuff(hero1);
+                  do_hero_stuff(&hero2);
+                  do_hero_stuff("Remy Studio");
+
+                  println!("{hero1}");
+                  println!("{hero2}");
+            }
+
+
+
+
+---------- (Array Slices) ----------
+
+* Create an immutable slice:
+
+      let numbers = [2, 4, 6, 8, 10, 12];
+      let slice = &numbers[1..=4];
+
+
+
+
+* Create a mutable slice:
+
+      let numbers = [2, 4, 6, 8, 10, 12];
+      let slice = &mut numbers[1..=4];
+
+
+
+
+* Deref Coercion with Array Slices:
+
+      * A reference to an array can be passed where a slice is expected, as long
+        as the element type matches.
+
+
+      Ex:
+            fn print_length(reference: &[i32]) {
+                  println!("{}", reference.len());
+            }
+
+            fn main() {
+                  let numbers = [1, 2, 3, 4, 5];
+
+                  let regular_reference = &numbers;
+
+                  let slice_of_three = &numbers[0..3];
+
+                  print_length(regular_reference);
+                  print_length(slice_of_three);
+            }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Structs -------------------------------------------------------------
+
+* A struct is a container for related pieces of data.
+
+
+* Rust has 3 kinds of structs:
+
+      1. Named fields structs.
+      2. Tuple-like structs.
+      3. Unit-like structs.
+
+
+* Structs are Move by default.
+
+
+* Most of the time we use Named fields structs.
+
+
+
+
+---------- (Create a struct) ----------
+
+struct Coffee {
+      price: f64,
+      name: String,
+      is_hot: bool,
+}
+
+
+
+
+---------- (Create an instance of a struct) ----------
+
+struct Coffee {
+      price: f64,
+      name: String,
+      is_hot: bool,
+}
+
+fn main() {
+      let mocha = Coffee {
+            name: String::from("Mocha"),
+            price: 4.99,
+            is_hot: true,
+      };
+}
+
+
+* You must provide values for all the fields.
+
+
+
+
+---------- (Access struct fields) ----------
+
+struct Coffee {
+      price: f64,
+      name: String,
+      is_hot: bool,
+}
+
+fn main() {
+      let mocha = Coffee {
+            name: String::from("Mocha"),
+            price: 4.99,
+            is_hot: true,
+      };
+
+      println!("{}", mocha.name);
+      println!("{}", mocha.price);
+      println!("{}", mocha.is_hot);
+}
+
+
+
+
+---------- (Ownership with Structs) ----------
+
+* A struct is the owner of its fields.
+
+
+* A field owns its value.
+
+
+* If a field contains a value type which does not implement Copy trait:
+
+      struct Coffee {
+            price: f64,
+            name: String,
+            is_hot: bool,
+      }
+
+      fn main() {
+            let mocha = Coffee {
+                  name: String::from("Mocha"),
+                  price: 4.99,
+                  is_hot: true,
+            };
+
+            let favorite_coffee = mocha.name; // Ownership is moved
+
+            println!("{}", favorite_coffee); // Correct
+
+            println!("{}", mocha.name); // Wrong (borrow of moved value)
+      }
+
+
+* If a field contains a value type which implements Copy trait:
+
+      struct Coffee {
+            price: f64,
+            name: String,
+            is_hot: bool,
+      }
+
+      fn main() {
+            let mocha = Coffee {
+                  name: String::from("Mocha"),
+                  price: 4.99,
+                  is_hot: true,
+            };
+
+            let favorite_coffee_price = mocha.price; // A new copy is created
+
+            println!("{}", favorite_coffee_price); // Correct
+
+            println!("{}", mocha.price); // Correct
+      }
+
+
+
+
+---------- (Overwrite Struct Fields) ----------
+
+* To overwrite fields in a struct we have to define the struct with "mut"
+  keyword.
+
+
+* When we define a struct with "mut" keyword, all fields of that struct are
+  mutable.
+
+
+* When we overwrite a field of a struct with a new value, old value is
+  de-allocated automatically.
+
+
+Ex:
+
+      struct Coffee {
+            price: f64,
+            name: String,
+            is_hot: bool,
+      }
+
+      fn main() {
+            let mut beverage = Coffee {
+                  name: String::from("Mocha"),
+                  price: 4.99,
+                  is_hot: true,
+            };
+
+            beverage.name = String::from("Caramel Macchiato");
+            beverage.price = 6.99;
+            beverage.is_hot = false;
+
+            println!("{}", beverage.name);
+            println!("{}", beverage.price);
+            println!("{}", beverage.is_hot);
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Create Structs in a Function ----------------------------------------
+
+Ex:
+
+      struct Coffee {
+            name: String,
+            price: f64,
+            is_hot: bool,
+      }
+
+      fn make_coffee(name: String, price: f64, is_hot: bool) -> Coffee {
+            let coffee = Coffee {
+                  name: name,
+                  price: price,
+                  is_hot: is_hot,
+            };
+
+            // println!("{}", name); // Wrong (borrow of moved value)
+
+            return coffee;
+      }
+
+      fn main() {
+            let name = String::from("Latte");
+            let coffee = make_coffee(name, 5.99, true);
+
+            // println!("{}", name); // Wrong (borrow of moved value)
+
+            println!("{}", coffee.name);
+            println!("{}", coffee.price);
+            println!("{}", coffee.is_hot);
+      }
+
+
+* In this example when we pass the "name" variable inside the main function to
+  the make_coffee function, the ownership is moved from "name" variable in main
+  function to the "name" parameter in make_coffee function.
+
+
+* Then when we assign the "name" parameter to the "name" field of the Coffee
+  struct, the ownership of the value is moved again to the struct field.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Struct Field Initialization Shorthand Syntax ------------------------
+
+struct Coffee {
+      name: String,
+      price: f64,
+      is_hot: bool,
+}
+
+fn main() {
+      let name = String::from("Latte");
+      let price = 5.99;
+      let is_hot = true;
+
+      let coffee = Coffee {
+            name,
+            price,
+            is_hot,
+      };
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Struct Update Syntax ------------------------------------------------
+
+* Create a new struct with all or some fields of existing same type struct.
+
+
+* It is simillar to re-assigning field values of old struct to the new struct.
+
+
+* If a field type of the old struct implements Copy trait, A new copy will be
+  created for the new struct. Otherwise the ownership will be moved from old
+  struct field to new struct field.
+
+      Ex:
+
+            struct Coffee {
+                  name: String,
+                  price: f64,
+                  is_hot: bool,
+            }
+
+            fn main() {
+                  let mocha = Coffee {
+                        name: String::from("Mocha"),
+                        price: 4.99,
+                        is_hot: true,
+                  };
+
+                  let latte = Coffee { ..mocha };
+
+                  println!("{}", mocha.name); // Wrong (borrow of moved value)
+                  println!("{}", mocha.price); // Correct
+                  println!("{}", mocha.is_hot); // Correct
+
+                  println!("{}", latte.name); // Correct
+                  println!("{}", latte.price); // Correct
+                  println!("{}", latte.is_hot); // Correct
+            }
+
+
+* Rust fills fields in order:
+
+      * Explicit fields first, then ..<base_struct> for the rest.
+
+      Ex:
+
+            struct Coffee {
+                  name: String,
+                  price: f64,
+                  is_hot: bool,
+            }
+
+            fn main() {
+                  let mocha = Coffee {
+                        name: String::from("Mocha"),
+                        price: 4.99,
+                        is_hot: true,
+                  };
+
+                  let latte = Coffee {
+                        name: String::from("Latte"), // This one is used
+                        ..mocha
+                  };
+
+                  println!("{}", latte.name); // Latte
+                  println!("{}", latte.price); // 4.99
+                  println!("{}", latte.is_hot); // true
+            }
+
+
+* We can use clone() to copy types which does not implement Copy trait:
+
+      Ex:
+
+            struct Coffee {
+                  name: String,
+                  price: f64,
+                  is_hot: bool,
+            }
+
+            fn main() {
+                  let mocha = Coffee {
+                        name: String::from("Mocha"),
+                        price: 4.99,
+                        is_hot: true,
+                  };
+
+                  let latte = Coffee {
+                        name: mocha.name.clone(),
+                        ..mocha
+                  };
+            }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Passing structs into a function -------------------------------------
+
+---------- (As a immutable parameter) ----------
+
+* Ownership is moved to function's parameter.
+
+
+Ex:
+
+      struct Coffee {
+            price: f64,
+            name: String,
+            is_hot: bool,
+      }
+
+      fn drink_coffee(cofee: Coffee) {
+            println!("Drinking my delicious {}", cofee.name);
+      }
+
+      fn main() {
+            let mocha = Coffee {
+                  price: 4.99,
+                  name: String::from("Mocha"),
+                  is_hot: true,
+            };
+
+            drink_coffee(mocha);
+
+            println!("{}", mocha.name); // borrow of moved value
+      }
+
+
+
+
+---------- (As a mutable parameter) ----------
+
+* Ownership is moved to function's parameter.
+
+
+Ex:
+
+      struct Coffee {
+            price: f64,
+            name: String,
+            is_hot: bool,
+      }
+
+      fn drink_coffee(mut coffee: Coffee) {
+            coffee.name = String::from("Latte");
+
+            println!("Drinking my delicious {}", coffee.name);
+      }
+
+      fn main() {
+            let mocha = Coffee {
+                  price: 4.99,
+                  name: String::from("Mocha"),
+                  is_hot: true,
+            };
+
+            drink_coffee(mocha);
+      }
+
+
+
+
+---------- (As an immutable reference) ----------
+
+Ex:
+
+      struct Coffee {
+            price: f64,
+            name: String,
+            is_hot: bool,
+      }
+
+      fn drink_coffee(coffee: &Coffee) {
+            println!("Drinking my delicious {}", coffee.name);
+      }
+
+      fn main() {
+            let mocha = Coffee {
+                  name: String::from("Mocha"),
+                  price: 4.99,
+                  is_hot: true,
+            };
+
+            drink_coffee(&mocha);
+      }
+
+
+
+
+---------- (As a mutable reference) ----------
+
+
+
+
+      struct Coffee {
+            price: f64,
+            name: String,
+            is_hot: bool,
+      }
+
+      fn drink_coffee(coffee: &mut Coffee) {
+            coffee.name = String::from("Latte");
+
+            println!("Drinking my delicious {}", coffee.name);
+      }
+
+      fn main() {
+            let mut mocha = Coffee {
+                  name: String::from("Mocha"),
+                  price: 4.99,
+                  is_hot: true,
+            };
+
+            drink_coffee(&mut mocha);
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Deriving Debug Trait for Structs ------------------------------------
+
+* In Rust structs do not implement Display or Debug trait by default.
+
+* Therefore to print a struct we have to derive the debug trait.
+
+* Syntax:
+
+      #[derive(Debug)]
+      struct <StructName> {
+            ...
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Defining Struct Methods ---------------------------------------------
+
+* We define all the methods of a struct in the impl block:
+
+      impl <StructName> {
+            ...
+      }
+
+
+* Multiple impl blocks are allowed for the same struct type. We can use that
+  feature to organize our code.
+
+      As an example, We can use one impl block for methods and another impl
+      block for associated functions.
+
+
+* Self (S in uppercase) is an alias to the Struct name inside impl blocks.
+
+      impl <StructName> {
+            fn <method_name>(self: Self) {
+                  ...
+            }
+      }
+
+
+
+
+---------- (Access the struct instance inside methods) ----------
+
+* As an immutable value parameter:
+
+      impl <StructName> {
+            // As an immutable value parameter
+            fn <method_name>(self) {
+                  ...
+            }
+
+            // or,
+
+            fn <method_name>(self: Self) {
+                  ...
+            }
+
+            * Ownership is transferred.
+
+
+
+
+            // As a mutable value parameter
+            fn <method_name>(mut self) {
+                  ...
+            }
+
+            // or,
+
+            fn <method_name>(mut self: Self) {
+                  ...
+            }
+
+            * Ownership is transferred.
+
+
+
+
+            // As an immutable reference parameter
+            fn <method_name>(&self) {
+                  ...
+            }
+
+            // or,
+
+            fn <method_name>(self: &Self) {
+                  ...
+            }
+
+            * Ownership is not transferred.
+
+
+
+
+            // As a mutable reference parameter
+            fn <method_name>(&mut self) {
+                  ...
+            }
+
+            // or,
+
+            fn <method_name>(self: &mut Self) {
+                  ...
+            }
+
+            * Ownership is not transferred.
+      }
+
+
+
+
+---------- (Methods With Multiple Parameters) ----------
+
+* Always "self" must be the first parameter.
+
+
+Ex:
+
+      #[derive(Debug)]
+      struct TaylorSwiftSong {
+            title: String,
+            release_year: u32,
+            duration_secs: u32,
+      }
+
+      impl TaylorSwiftSong {
+            fn is_longer_than(&self, other: &Self) -> bool {
+                  self.duration_secs > other.duration_secs
+            }
+      }
+
+      fn main() {
+            let song1 = TaylorSwiftSong {
+                  title: String::from("Blank Space"),
+                  release_year: 2024,
+                  duration_secs: 96,
+            };
+
+            let song2 = TaylorSwiftSong {
+                  title: String::from("All Too Well"),
+                  release_year: 2022,
+                  duration_secs: 112,
+            };
+
+            let is_longer_than = song2.is_longer_than(&song1);
+            println!("{}", is_longer_than);
+      }
+
+
+
+
+---------- (Calling Methods From Other Methods) ----------
+
+* Use "self".
+
+
+Ex:
+
+      #[derive(Debug)]
+      struct TaylorSwiftSong {
+            title: String,
+            release_year: u32,
+            duration_secs: u32,
+      }
+
+      impl TaylorSwiftSong {
+            fn display_song_info(&self) {
+                  println!("Title              : {}", self.title);
+                  println!("Years Since Release: {}", self.years_since_release());
+                  println!("Duration           : {} seconds", self.duration_secs);
+            }
+
+            fn years_since_release(&self) -> u32 {
+                  2025 - self.release_year
+            }
+      }
+
+      fn main() {
+            let song = TaylorSwiftSong {
+                  title: String::from("Blank Space"),
+                  release_year: 2014,
+                  duration_secs: 231,
+            };
+
+            song.display_song_info();
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Associated Functions ------------------------------------------------
+
+* Associated functions are functions that are attached to a type.
+
+
+They are not methods.
+
+
+* We often use associated functions for constructors:
+
+      A constructor is a function that returns a new instance of a type.
+
+
+* If we do not define "self" inside a function in impl block, it becomes an
+  associated function.
+
+
+Ex:
+
+      #[derive(Debug)]
+      struct TaylorSwiftSong {
+            title: String,
+            release_year: u32,
+            duration_secs: u32,
+      }
+
+      impl TaylorSwiftSong {
+            fn new(title: String, release_year: u32, duration_secs: u32) -> Self {
+                  Self {
+                        title,
+                        release_year,
+                        duration_secs,
+                  }
+            }
+      }
+
+      fn main() {
+            let song = TaylorSwiftSong::new(String::from("Blank Space"), 2014, 231);
+
+            println!("{:#?}", song);
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Builder Pattern -----------------------------------------------------
+
+Ex:
+
+      #[derive(Debug)]
+      struct Computer {
+            cpu: String,
+            memory: u32,
+            hard_drive_capacity: u32,
+      }
+
+      impl Computer {
+            fn new(cpu: String, memory: u32, hard_drive_capacity: u32) -> Self {
+                  Self {
+                        cpu,
+                        memory,
+                        hard_drive_capacity,
+                  }
+            }
+      }
+
+      impl Computer {
+            fn upgrade_cpu(&mut self, new_cpu: String) -> &mut Self {
+                  self.cpu = new_cpu;
+                  self
+            }
+
+            fn upgrade_memory(&mut self, new_memory: u32) -> &mut Self {
+                  self.memory = new_memory;
+                  self
+            }
+
+            fn upgrade_capacity(&mut self, new_capacity: u32) -> &mut Self {
+                  self.hard_drive_capacity = new_capacity;
+                  self
+            }
+      }
+
+      fn main() {
+            let mut computer = Computer::new(String::from("M3"), 16, 128);
+
+            computer
+                  .upgrade_cpu(String::from("M4"))
+                  .upgrade_memory(32)
+                  .upgrade_capacity(512);
+
+            println!("{:#?}", computer);
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Tuple-Like Structs -------------------------------------------------------
+
+* No attribute names.
+
+* Cannot define methods or associated function.
+
+* Syntax:
+
+      struct <Name>(<type1>, <type2>, ...);
+
+
+Ex:
+
+      #[derive(Debug)]
+      // hours, minutes
+      struct ShortDuration(u32, u32);
+
+      fn main() {
+            let work_shift = ShortDuration(8, 0);
+
+            println!("Hours  : {}", work_shift.0);
+            println!("Minutes: {}", work_shift.1);
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Unit-Like Structs -------------------------------------------------------
+
+* Structs that do not hold any value.
+
+* But we can still define methods and associated functions for them.
+
+* Rarely used. But useful for some design patterns.
+
+* Syntax:
+
+      struct <Name>;
+
+
+Ex:
+
+      struct Empty;
+
+      fn main() {
+            let empty = Empty;
+
+            ...
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Enums ---------------------------------------------------------------
+
+* An enum is a type that represents a set of possible values. Each possible
+  value is called a varient.
+
+
+* All enum varients are move by default.
+
+
+* Enums don't implement Display or Debug trait by default. We have to derive
+  the debug trait manually to print enums.
+
+      #[derive(Debug)]
+      enum <Name> {
+            ...
+      }
+
+
+* Create an enum:
+
+      enum <Name> {
+            <varient1>,
+            <varient2>,
+            ...
+      }
+
+      Ex:
+            enum CardSuit {
+                  Hearts,
+                  Diamonds,
+                  Spades,
+                  Clubs,
+            }
+
+
+* Access each varient:
+
+      <EnumName>::<varient>
+
+      Ex: let first_card = CardSuit::Spades;
+
+
+
+
+---------- (Enums with associated values) ----------
+
+* We can define associated values for each enum varient.
+
+
+* Each varient can contains different types of values. No need to be same.
+
+
+* There are 2 types of associated value varients:
+
+      1. Tuple varients
+      1. Struct varients
+
+
+Ex - Tuple varient:
+
+      #[derive(Debug)]
+      enum PaymentMethod {
+            CreditCard(String),
+            DebitCard(String),
+            PayPal(String, String),
+      }
+
+      fn main() {
+            let method1 = PaymentMethod::CreditCard(String::from("5391-5720-2312-3932"));
+
+            let method2 = PaymentMethod::PayPal(
+                  String::from("5391-5720-2312-3932"),
+                  String::from("codermadushan@gmail.com"),
+            );
+
+            println!("{:#?}", method1);
+            println!("{:#?}", method2);
+      }
+
+      * Cannot access associated values directly using dot (.)
+
+
+
+
+Ex - Struct varient:
+
+      #[derive(Debug)]
+      enum PaymentMethod {
+            CreditCard(String),
+            DebitCard(String),
+            PayPal { username: String, password: String },
+      }
+
+      fn main() {
+            let paypal = PaymentMethod::PayPal {
+                  username: String::from("codermadushan@gmail.com"),
+                  password: String::from("password123"),
+            };
+
+            println!("{:#?}", paypal);
+      }
+
+      * Cannot access associated values directly using dot (.)
+
+
+
+
+* When to use them?:
+
+      * No associated values            : Normal Varient
+
+      * One associated value            : Tuple Varient
+
+      * More than one associated values : Struct Varient
+
+
+
+
+---------- (Enums With Match) ----------
+
+Ex:
+
+      enum PaymentStatus {
+            Pending,
+            Failed(String, u32), // message, status_code
+            Completed { transaction_id: String, amount: u32 },
+      }
+
+      fn main() {
+            let status = PaymentStatus::Pending;
+
+            match status {
+                  PaymentStatus::Pending => {
+                        println!("Pending");
+                  }
+
+                  PaymentStatus::Failed(message, status_code) => {
+                        println!("Error Message: {}", message);
+                        println!("Status Code  : {}", status_code);
+                  }
+
+                  PaymentStatus::Completed {
+                        transaction_id,
+                        amount,
+                  } => {
+                        println!("TransactionID: {}", transaction_id);
+                        println!("Amount       : {}", amount);
+                  }
+            }
+      }
+
+
+* You can use any name for tuple varient value positions. If you don't need to
+  access values, then discard them using _ (underscore).
+
+
+* Match with exact associated values:
+
+      Ex:
+
+            enum Milk {
+                  LowFat(i32),
+                  Whole,
+            }
+
+            impl Milk {
+                  fn drink(&self) {
+                        match self {
+                              Milk::LowFat(2) => {
+                                    //
+                              }
+
+                              Milk::LowFat(percentage) => {
+                                    //
+                              }
+
+                              Milk::Whole => {
+                                    //
+                              }
+                        }
+                  }
+            }
+
+      * To match with exact values with tuple variants and struct variants,
+        use exact values instead of parameter names.
+
+
+
+
+---------- (Defining Methods On Enums) ----------
+
+* use impl blocks to define methods for enums like structs.
+
+
+* self -----> Current enum varient
+* Self -----> Type of the enum (Name of the enum)
+
+
+* The type and mutability rules for self is applied for tuple and struct variant
+  fields.
+
+
+* Ex:
+
+      enum PaymentStatus {
+            Pending,
+            Failed(String, u32), // message, status_code
+            Completed { transaction_id: String, amount: u32 },
+      }
+
+      impl PaymentStatus {
+            fn show_info(&self) {
+                  match self {
+                        PaymentStatus::Pending => {
+                        println!("Pending");
+                        }
+
+                        PaymentStatus::Failed(message, status_code) => {
+                        println!("Error Message: {}", message);
+                        println!("Status Code  : {}", status_code);
+                        }
+
+                        PaymentStatus::Completed {
+                        transaction_id,
+                        amount,
+                        } => {
+                        println!("TransactionID: {}", transaction_id);
+                        println!("Amount       : {}", amount);
+                        }
+                  }
+            }
+      }
+
+      fn main() {
+            let status = PaymentStatus::Failed(String::from("Sample message"), 404);
+
+            status.show_info();
+      }
+
+
+
+
+---------- (If Let Construct) ----------
+
+* The "if let" construct combines an if statement with a variable declaration.
+
+
+* We use this to match with only one variant of an enum.
+
+
+* Syntax:
+
+      if let <hardcoded_enum_variant> = <dynamic_enum_variant> {
+            // if hardcoded_enum_variant == dynamic_enum_variant
+      } else {
+            // otherwise
+      }
+
+      * else is optional
+
+
+* Ex:
+
+      enum Milk {
+            LowFat(i32),
+            Whole,
+      }
+
+      fn main() {
+            let my_beverage = Milk::LowFat(3);
+
+
+            // Normal match
+            if let Milk::LowFat(percentage) = my_beverage {
+                  println!("Your beverage is {}% of milk", percentage);
+            }
+
+
+            // Exact match
+            if let Milk::LowFat(3) = my_beverage {
+                  println!("Your beverage is 3% of milk");
+            }
+      }
+
+
+
+
+---------- (Let Else Contruct) ----------
+
+* Syntax:
+
+      let <hardcoded_enum_variant> = <dynamic_enum_variant> else {
+            // if <hardcoded_enum_variant> != <dynamic_enum_variant>
+
+            // Cannot access associated values here
+
+            return;
+      }
+
+      // Access the associated values of the variant here
+
+
+Ex:
+
+      enum Milk {
+            LowFat(i32),
+            Whole,
+      }
+
+      fn main() {
+            let my_beverage = Milk::LowFat(3);
+
+            let Milk::LowFat(percent) = my_beverage else {
+                  println!("You do not have the lowfat milk");
+                  return;
+            };
+
+            println!("{}% milk is available here", percent);
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Generics ------------------------------------------------------------
+
+---------- (Generics With Functions) ----------
+
+fn make_tuple<T, U>(first: T, second: U) -> (T, U) {
+      (first, second)
+}
+
+fn main() {
+      // Specifing types implicitly
+      make_tuple(10, "hai");
+
+      // Specifing types explicitly
+      make_tuple::<i32, &str>(10, "hai");
+}
+
+
+
+
+---------- (Generics With Structs) ----------
+
+struct TreasureChest<T> {
+      captain: String,
+      treasure: T,
+}
+
+impl TreasureChest<String> {
+      /*
+            Methods in this block are available only for the structs which contains
+            String treasure field values.
+      */
+}
+
+impl<T> TreasureChest<T> {
+      // Methods in this block are available for any struct
+
+      /*
+            Why both impl<T> and StructName<T>?
+
+                  To avoid ambiguity with a concrete type named T in the program
+      */
+}
+
+fn main() {
+      // Specifing types implicitly
+      TreasureChest {
+            captain: String::from("Bloodsail"),
+            treasure: "Silver",
+      };
+
+      // Specifing types explicitly
+      TreasureChest::<&str> {
+            captain: String::from("Firebeard"),
+            treasure: "Gold",
+      };
+}
+
+
+
+
+---------- (Generics With Enums) ----------
+
+enum Cheesesteak<T> {
+    Plain,
+    Topping(T),
+}
+
+fn main() {
+    // Specifing types implicitly
+    let mushroom = Cheesesteak::Topping("Mushroom");
+
+
+    // Specifing types explicitly
+    let mushroom = Cheesesteak::Topping::<&str>("Mushroom");
+
+
+    // We must annotate types manually for variants which do not contains T
+    // That type is helpful when we re-assign a variant which contains T
+    let mut plain: Cheesesteak<String> = Cheesesteak::Plain;
+    plain = Cheesesteak::Topping(String::from("Mushroom"));
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- The Option Enum -----------------------------------------------------
+
+* The option enum models a scenario where a type could be a valid value or
+  nothing at all.
+
+
+* When the Option enum variants are Copy or Move?:
+
+      If the Generic type is Copy, variant is Copy.
+      If the Generic type is Move, variant is Move.
+
+
+* There are 2 option variants:
+
+      Option::None
+
+            Represents an absent value
+
+
+      Option::Some(T)
+
+            Represents a present value
+
+
+Ex:
+
+      fn main() {
+            // Specifying the type implicitly
+            let a = Option::Some(5);
+
+            // Specifying the type explicitly
+            let b: Option<i32> = Option::Some(5);
+
+            // or,
+
+            let c = Option::<i32>::Some(5);
+
+            // None
+            let d: Option<i32> = Option::None; // Must provide T
+      }
+
+
+* We can use the get() method of arrays to access a value at a given index
+  safely. It returns an Option enum:
+
+      fn main() {
+            let musical_instruments = [
+                  String::from("Guitar"),
+                  String::from("Drums"),
+                  String::from("Bass"),
+            ];
+
+            let bass = musical_instruments.get(2);
+            println!("{:?}", bass); // Some("bass")
+
+            let invalid_instrument = musical_instruments.get(10);
+            println!("{:?}", invalid_instrument); // None
+      }
+
+
+* The unwrap method attempts to extract the associated data out of the Some
+  variant. If you call unwrap on Option::None, you get a runtime panic.
+
+      fn main() {
+            let musical_instruments = [
+                  String::from("Guitar"),
+                  String::from("Drums"),
+                  String::from("Bass"),
+            ];
+
+            let bass = musical_instruments.get(2);
+            let valid_instrument = bass.unwrap();
+            println!("{:?}", valid_instrument); // Some("bass")
+
+            let invalid_instrument = musical_instruments.get(10);
+            println!("{:?}", invalid_instrument); // None
+            invalid_instrument.unwrap();
+      }
+
+      * Instead of unwrap, we can use expect method. The only difference is we
+        can provide a custom panic message if the result is Option::None.
+
+
+* unwrap, expect methods are not recommended to use in production because of our
+  code can be panicked at rumtime. The recommended way is using match.
+
+      fn main() {
+            let musical_instruments = [
+                  String::from("Guitar"),
+                  String::from("Drums"),
+                  String::from("Bass"),
+            ];
+
+            let bass = musical_instruments.get(2);
+
+            match bass {
+                  Some(instrument) => {
+                        //
+                  }
+
+                  None => {
+                        //
+                  }
+            }
+      }
+
+
+* We can use unwrap_or method to define a fallback value instead of panicking:
+
+      fn main() {
+            let present_value = Some(10);
+            let missing_value: Option<i32> = None;
+
+            println!("{}", missing_value.unwrap_or(0)); // 0
+      }
+
+
+* Returning an option enum from a function:
+
+      fn is_item_in_stock(item_is_in_system: bool, item_is_in_stock: bool) -> Option<bool> {
+            if item_is_in_system && item_is_in_stock {
+                  Option::Some(true)
+            } else if item_is_in_system {
+                  Option::Some(false)
+            } else {
+                  Option::None
+            }
+      }
+
+      fn main() {
+            let availability = is_item_in_stock(true, true);
+
+            match availability {
+                  Some(true) => {
+                        println!("Item is available")
+                  }
+
+                  _ => {
+                        println!("Item is not available")
+                  }
+            }
+      }
+
+
+* As a shortcut we can use the variants of Option enum without specifying the
+  enum name:
+
+      Some(<value>)
+      None
+
+
+* But to specify the type, we have to use Option name:
+
+      Option<type>
+
+
+* Building Option enum from scratch:
+
+      #[derive(Debug, Clone, Copy)]
+      enum MyOption<T> {
+            Some(T),
+            None,
+      }
+
+      impl<T> MyOption<T> {
+            fn unwrap(self) -> T {
+                  match self {
+                        MyOption::Some(value) => value,
+
+                        MyOption::None => panic!("Uh oh"),
+                  }
+            }
+
+            fn unwrap_or(self, fallback: T) -> T {
+                  match self {
+                        MyOption::Some(value) => value,
+
+                        MyOption::None => fallback,
+                  }
+            }
+      }
+
+
+* copied() method in Option enum:
+
+      It turns an Option<&T> into an Option<T> when T implements Copy.
+
+
+      Ex 1:
+
+            fn main() {
+                  let names = [10, 20, 30, 40, 50];
+
+                  let name = names.get(0).copied(); // A new copy will be created
+            }
+
+
+      Ex 2:
+
+            fn main() {
+                  let names = ["A", "B", "C", "D"];
+
+                  let name = names.get(0).copied(); // A new copy is not created, just copy the reference
+            }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Result Enum ---------------------------------------------------------
+
+* The Result enum models an evaluation that can produce either a success or an
+  error.
+
+      pub enum Result<T, E> {
+            Ok(T),
+            Err(E),
+      }
+
+
+
+
+* When the Result enum variants are Copy or Move?:
+
+      If one of Ok or Err value type is Move, variant is Move.
+      If both Ok and Err value types are Copy, variant is Copy.
+
+
+
+
+* We can directly use Ok(T) and Err(E):
+
+      fn main() {
+            let ok: Result<i32, &str> = Ok(0);
+            let err: Result<i32, &str> = Err("Something went wrong");
+      }
+
+
+
+
+* A practical usage:
+
+      fn main() {
+            let text = "50";
+
+            let number = text.parse::<i32>();
+
+            println!("{:?}", number);
+      }
+
+
+
+
+* Returning a Result enum from a function:
+
+      fn divide(numerator: f64, denominator: f64) -> Result<f64, String> {
+            if denominator == 0.0 {
+                  Err("Cannot divide by zero".to_string())
+            } else {
+                  Ok(numerator / denominator)
+            }
+      }
+
+      fn main() {
+            let result = divide(10.0, 0.0);
+
+            match result {
+                  Ok(value) => println!("{}", value),
+
+                  Err(err) => println!("{}", err),
+            }
+      }
+
+
+
+
+* Methods of Result enum:
+
+      * unwrap():
+
+            If the result is Ok(value), returns the value.
+            If the result is Err(value), panicks at runtime.
+
+
+      * expect():
+
+            If the result is Ok(value), returns the value.
+            If the result is Err(value), panicks at runtime with custom error message.
+
+
+      * unwrap_or(<fallback_value>):
+
+            If the result is Ok(value), returns the value.
+            If the result is Err(value), returns the fallback_value.
+
+
+      * is_ok():
+
+            Returns true if the result is Ok(value), else returns false.
+
+
+      * is_err():
+
+            Returns true if the result is Err(value), else returns false.
+
+
+
+
+* Partially moved enum values:
+
+      fn operation(great_success: bool) -> Result<String, String> {
+            if great_success {
+                  Ok("Success".to_string())
+            } else {
+                  Err("Error".to_string())
+            }
+      }
+
+      fn main() {
+            let result = operation(true);
+
+            let content = match result {
+                  Ok(message) => message,
+
+                  Err(error) => error,
+            };
+
+            println!("{:?}", result); // borrow of partially moved value
+      }
+
+      * In this case values of both Ok and Err variants are Move (String).
+
+      * When we assign the values of Ok and Err variants to content variable, we
+        cannot access result variable anymore.
+
+      * Because values of result are partially moved.
+
+      * When the values move partially?:
+
+            If atleast one of Ok or Err value is a move type.
+
+            If both contain Copy type values, then new copies will be created
+            and no ownership transfers.
+
+
+
+
+* <Result>.ok() & <Result>.err():
+
+      * To convert the Result enum to a Option enum.
+
+            * Result<ValueType, ErrorType>.ok() -> Option<ValueType>
+
+            * Result<ValueType, ErrorType>.err() -> Option<ErrorType>
+
+
+
+
+* copied() method with Result enum:
+
+      It turns Result<&T, E> to Result<T, E> if T implements Copy.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- While Let Construct -------------------------------------------------
+
+fn main() {
+    let mut sauces = vec!["Mayonaise", "Ketchup", "Ranch"];
+
+    while let Some(value) = sauces.pop() {
+        println!("The next sauce is {}", value);
+    }
+}
+
+* sauces.pop() returns Option<&str>.
+
+* Some(value) matches --> loop runs.
+
+* When pop() returns None, the loop exits.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Vectors -------------------------------------------------------------
+
+* A vector is a resizable, heap-allocated collection that can store multiple
+  values of the same type.
+
+
+* Vectors are always Move by default.
+
+
+* Always allocate memory in the heap.
+
+
+* Create a vector:
+
+      1. An empty vector:
+
+            let pizza_diameters: Vec<i32> = Vec::new(); or,
+
+            let pizza_diameters = Vec::<i32>::new();
+
+
+      2. With initial values:
+
+            let pizza_diameters = vec![1, 2, 3];
+
+
+
+
+* Adding and removing elements:
+
+      * To add or remove elements, the vector must be mutable.
+
+            let mut vector = vec![...];
+
+
+      * Adding elements:
+
+            To the end of the vector : <vector>.push(<value>)
+
+            To a given index         : <vector>.insert(<index>, <value>)
+
+
+      * Removing elements:
+
+            From the end of the vector : <vector>.pop() // Returns an Option enum
+
+            At given index             : <vector>.remove(<index>, <value>)
+
+
+
+
+* Reading and Writing vector elements:
+
+      fn main() {
+            let mut numbers = vec![2, 4];
+            let mut names = vec![String::from("John"), String::from("Anna")];
+
+            // Read values
+            println!("{}", numbers[0]);
+            println!("{}", names[0]);
+
+            // Write values
+            numbers[0] = 100;
+            names[0] = String::from("Clerk");
+
+            println!("{:?}", numbers);
+            println!("{:?}", names);
+
+            // Assign to a variable
+
+            // If values are Copy
+            let number1 = numbers[0]; // A new copy is created
+            let number2 = &numbers[0]; // Borrowing
+
+            // If values are Move
+            let name = &names[0]; // Borrowing
+      }
+
+
+      * We can use get methods to safely access the data at given index of a
+        vector. They return Option enums:
+
+            As an immutable reference : <vector>.get(<index>);
+            As a mutable referencei   : <vector>.get_mut(<index>);
+
+
+
+
+* Ownership with vectors:
+
+      fn main() {
+            let mut numbers = vec![2, 4, 6, 8];
+
+            let number_ref = &numbers[1];
+
+            numbers.push(10);
+
+            println!("{}", number_ref);
+      }
+
+      * We cannot compile this code.
+
+      * "number_ref" is an immutable reference.
+
+      * "push" method required a mutable reference internally to modify the vector.
+
+      * Both immutable and mutable references cannot be exist at a time.
+
+
+
+
+* Vector capacity behind the scenes:
+
+      * Vector's capacity is how many elements it can hold without reallocating
+        memory.
+
+
+      fn main() {
+            let mut numbers: Vec<i32> = Vec::with_capacity(4);
+            println!(
+                  "Length: {} | Capacity: {}", // Length: 0 | Capacity: 4
+                  numbers.len(),
+                  numbers.capacity()
+            );
+
+            numbers.push(1);
+            numbers.push(2);
+            numbers.push(3);
+            numbers.push(4);
+            println!(
+                  "Length: {} | Capacity: {}", // Length: 4 | Capacity: 4
+                  numbers.len(),
+                  numbers.capacity()
+            );
+
+            numbers.push(5);
+            println!(
+                  "Length: {} | Capacity: {}", // Length: 5 | Capacity: 8
+                  numbers.len(),
+                  numbers.capacity()
+            );
+      }
+
+
+      * Rust forbids having mutable and immutable references at the same time
+        because mutation (like Vec reallocation when capacity is exceeded) could
+        move or change the data and make existing references unsafe.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Packages ------------------------------------------------------------
+
+---------- (CLI Tools) ----------
+
+* Install                : cargo install <crate>
+* Uninstall              : cargo uninstall <crate>
+* See installed packages : cargo install --list
+
+
+
+
+* Create a new package with a binary crate:
+
+      cargo new <package-name>
+
+
+* Install an external crate : cargo add <crate>
+
+
+* Remove an external crate  : cargo remove <crate>
+
+
+* Update all dependencies: cargo update
+
+
+* Verify installed external crates: cargo fetch --locked
+
+
+* Check the code compatibility with dependencies : cargo check --locked
+
+
+* A package is a folder with a Cargo.toml file. The Cargo.toml file holds
+  metadata about the package.
+
+
+* A package must contain one or more crates.
+
+
+
+
+---------- (Crates) ----------
+
+* A crate is a collection of Rust code that produces an executable or a library.
+
+
+* A crate is the smallest amount of code that the Rust compiler considers at a
+  time.
+
+
+* There are 2 types of crates:
+
+      1. Binary crate:
+
+            * A crate that compiles to an executable.
+            * Has a main function.
+
+
+      2. library crate:
+
+            * A crate that exports functionality for other Rust programs to
+              share and use.
+
+            * Does not have a main function.
+
+
+      * The "name" field of Cargo.toml file sets the name of the package.
+
+      * If src/main.rs file exists, Rust infers that we have a binary crate.
+
+      * If src/lib.rs file exists, Rust infers that we have a library crate.
+
+
+
+
+---------- (Modules) ----------
+
+* A module is an organizational container that encapsulates related code.
+
+      mod <module_name> {
+            // define all module related code here
+      }
+
+
+* All items inside a module are private by default. They can be accessed only
+  within the module. To make them public, we have to use "pub" keyword.
+
+      * When we define an enum as public, It's variants become public automatically.
+
+      * Even we define a struct as public It's fields remain private, We have to
+        make them public explicitly using "pub" keyword.
+
+
+Ex:
+
+      mod inventory {
+            const FLOOR_SPACE: i32 = 10000;
+            pub const MANAGER: &str = "John Cena";
+
+            #[derive(Debug)]
+            enum ProductCategory {
+                  Ladder,
+                  Hammer,
+            }
+
+            struct Item {
+                  name: String,
+                  category: ProductCategory,
+                  quantity: u32,
+            }
+
+            fn talt_to_manager() {
+                  println!("Hey, {}, how's your coffee?", MANAGER);
+            }
+      }
+
+      fn main() {
+            println!("The manager of our inventory is {}", inventory::MANAGER);
+      }
+
+
+* Module as files:
+
+      step 1: Create a file with module name (Ex: <module_name>.rs)
+
+      step 2: Define all items related to that module in that file.
+
+      step 3: Then specify the module as follows where you want to use it:
+
+            mode <module_name>; // In this case the module file should be inside same directory
+
+
+
+
+* Module as folders:
+
+      step 1: Create a folder with module name.
+
+      step 2: Inside the folder, create a file called "mod.rs".
+
+      step 3: Define all items related to that module in that file.
+
+      step 4: Then specify the module as follows where you want to use it:
+
+            mode <module_name>; // In this case the module folder should be inside same directory
+
+
+
+
+* Sub Modules:
+
+      * There are 3 way to create a sub module:
+
+            1. Inside the same <parent_module>.rs or <parent_module>/mod.rs file:
+
+                  pub mod <sub_module> {
+                        // items
+                  }
+
+                  * If you don't want to use the sub module outside of the
+                    parent module, remove pub keyword.
+
+
+
+
+            2. As a file sub module:
+
+                  Step 1:
+
+                        Create the <sub_module>.rs file in the same directory
+                        which <parent_module>.rs or <parent_module>/mod.rs file
+                        exists.
+
+
+                  Step 2:
+
+                        Then define all items related to that sub module in that
+                        new file.
+
+
+                  Step 3:
+
+                        Now specify the sub module in parent module as follows:
+
+                              pub mod <sub_module>;
+
+                              * If you don't want to use the sub module outside
+                                of the parent module, remove pub keyword.
+
+
+
+
+            3. As a folder sub module:
+
+                  Step 1:
+
+                        Create the <sub_module>/mod.rs file in the same directory
+                        which <parent_module>.rs or <parent_module>/mod.rs file
+                        exists.
+
+
+                  Step 2:
+
+                        Then define all items related to that sub module in that
+                        new file.
+
+
+                  Step 3:
+
+                        Now specify the sub module in parent module as follows:
+
+                              pub mod <sub_module>;
+
+                              * If you don't want to use the sub module outside
+                                of the parent module, remove pub keyword.
+
+
+
+
+      * Access sub modules:
+
+            <parent_module>::<sub_module>::<sub_module_item>
+
+
+
+
+* Specify the path of an item in a module:
+
+      Absolute path:
+
+            crate::<...>::<..>::<..> // crate means from the crate root (main.rs)
+
+
+      Relative path:
+
+            <..>::<..>::<..>
+
+
+
+
+* The "use" keyword:
+
+      * The "use" keyword brings a name into the current scope. It creates a
+        "shortcut" to a name in a nested module.
+
+
+      * After specifying the module using mod keyword, we can use use keyword to
+        get the items to current scope to use them directly without specifying long
+        relative paths.
+
+            Ex:
+
+                  mod inventory;
+
+                  use inventory::MANAGER; // for single item
+                  use inventory::{MANAGER, ...}; // for multiple items
+
+
+      * If there is a name conflicts (two modules has items with same name), it
+        is recommended to use relative paths.
+
+
+
+
+* "self" with modules:
+
+      * To import both a sub module and its items.
+
+
+      * Can combine these 2 lines:
+
+            use <parent_module>::<sub_module>;
+            use <parent_module>::<sub_module>::<sub_module_item>;
+
+
+      * As follows:
+
+            use <parent_module>::<sub_module>::{self, <sub_module_item>};
+
+
+
+
+* "super" with modules:
+
+      * We can use "super" keyword to access parent module items in sub modules.
+
+      * we can think like "super" means one level up.
+
+            * For 1 level up: super::<parent_module_item>
+
+            * For 2 level up: super::super::<parent_module_item>
+
+
+
+
+* We can use "as" keyword to provide aliases:
+
+      use inventory::MANAGER as INVENTORY_MANAGER;
+
+
+
+
+* We can export sub module items from parent module using "pub use":
+
+      pub mod products;
+
+      pub use products::{<items>};
+
+
+      * Now we can access the specified items of products module directly using
+        the parent module.
+
+
+
+
+* External crates:
+
+      * A dependency is an external library crate that we pull into our project.
+
+
+      * Our code depends on it to run.
+
+
+      * Add an external crate to the current project:
+
+            1. cargo add <crate-name> or,
+
+            2. Add <crate-name> = "<version>" to Cargo.toml file.
+
+
+      * After that you can think "mod <crate-name>;" is already added to any file.
+
+
+      * You just need to use "use" keyword to use that crate:
+
+            use <crate-name>::<items>;
+
+
+
+
+* The standard library:
+
+      * A collection of modules built into Rust.
+
+
+      * We can use modules in standard library as follows:
+
+            use std::<...>;
+
+            Ex: use std::prelude::rust_2024; // Automatically available preludes
+
+
+
+
+* The glob operator:
+
+      * To import all public items in a module.
+
+            use std::collections::*;
+
+
+      * Not recommended to use.
+
+
+
+
+* Create a library crate:
+
+      Step 1: Create a file called lib.rs in src folder.
+
+
+      Step 2: Then define all your items in that file.
+
+
+      Step 3: To access that items:
+
+            use <package_name_in_cargo.toml_file>::<...>
+
+
+      * It works as another crate.
+
+
+
+
+* Multiple binary crates:
+
+      * Every .rs file in src/bin folder is a seperate binary crate.
+
+
+      * In each .rs file we can define seperate main() functions.
+
+
+      * In each .rs file we can use items defined in lib.rs file.
+
+
+      * If you have multiple binary crates, "cargo run" command does not work.
+
+
+      * We have to specify which binary crate should run:
+
+            To run main.rs binary crate:
+
+                  cargo run --bin <package-name>
+
+
+            To run a binary crate in src/bin folder:
+
+                  cargo run --bin <crate_file_name>
+
+
+
+
+* Documentation comments:
+
+      * We define documentation comments immediately above the item.
+
+            /// comment
+            struct <StructName> {
+                  ...
+            }
+
+
+      * To generate a documentation for our package:
+
+            cargo doc --no-deps --open
+
+                  --no-deps : Do not add external crates for the documentation.
+
+                  --open    : Open the documentation immediately after generation.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Strings -------------------------------------------------------------
+
+* Main string types:
+
+      1. &str:
+
+            * String literals are embedded directly into the compiled binary.
+
+            * At runtime, they live in read-only static memory.
+
+            * That's why we access them using &.
+
+            * They exist for the entire duration of the program.
+
+            * They are immutable.
+
+            * &str variables do not own their data. They are just references.
+
+
+      2. String:
+
+            * Stored on the heap.
+
+            * String variables own their data.
+
+            * They are mutable.
+
+
+
+
+* We cannot access characters of a &str or String value using indexes. Because
+  in Rust length represents the number of bytes, not the number of characters.
+
+
+
+
+* We can slice them:
+
+      &str:
+
+            fn main() {
+                  let pirate = "Bloodhook";
+
+                  let immutable_slice = &pirate[0..4];
+            }
+
+            * Cannot borrow as a mutable slice because &str is immutable.
+
+
+      String:
+
+            fn main() {
+                  let mut pirate = String::from("Bloodhook");
+
+                  let immutable_slice = &pirate[0..4];
+                  let mutable_slice = &mut pirate[0..4];
+            }
+
+
+
+
+* Convert a String value to a &str value:
+
+      fn main() {
+            let pirate = String::from("Bloodhook");
+
+            let str = &pirate as &str;
+      }
+
+
+
+
+* Convert a &str value to a String value:
+
+      fn main() {
+            let pirate = "Bloodhook";
+
+            let string_value = pirate.to_string();
+      }
+
+
+
+
+* Concatenation:
+
+      * We cannot concatenate &str values, because they are immutable.
+
+
+      * Append a &str value to a String:
+
+            <String_value>.push_str(<&str_value>);
+
+
+      * Append a char value to a String:
+
+            <String_value>.push(<char_value>);
+
+
+      * Append a String to a String value:
+
+            let first_name = String::from("Anna");
+            let last_name = String::from("Fernando");
+
+            let full_name = first_name + &last_name;
+
+                  * In this case internally add method is called:
+
+                        let full_name = first_name.add(&last_name as &str);
+
+
+                  * The ownership of first_name is transfered to "mut self" of
+                    add method.
+
+
+                  * Because of that, we cannot use first_name after this operation.
+
+
+
+
+* Returns an interpollated String:
+
+      format!("{}, {}, ...", <arg1>, <arg2>, ...);
+
+
+
+
+* Common &str methods:
+
+      * Remove white spaces:
+
+            trim_start() : From start
+
+            trim_end()   : From end
+
+            trim()       : From both start and end
+
+
+
+
+      * Case conversion:
+
+            To uppercase : to_uppercase()
+
+            To lowercase : to_lowercase()
+
+
+
+
+      * Replace all occuranced with a given &str:
+
+            replace(<old_value>, <new_value>);
+
+
+
+
+      * Split a given &str:
+
+            fn main() {
+                  let music_genres = "Rock, Metal, Country, Rap";
+
+                  let genres: Vec<&str> = music_genres.split(", ").collect();
+            }
+
+
+
+
+* Collecting user inputs:
+
+      Ex:
+
+            use std::io;
+
+            fn main() {
+                  println!("What is your name? :");
+                  let mut name = String::new();
+                  let result = io::stdin().read_line(&mut name);
+
+                  match result {
+                        Ok(_) => println!("Hello, {}", name.trim()),
+
+                        Err(message) => println!("There was an error: {}", message),
+                  }
+            }
+
+
+      * read_line() method reads a new line at the end when we press the enter
+        key. Therefore use trim() to remove white spaces.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- HashMaps ------------------------------------------------------------
+
+* A hash map is a collection type that consists of key-value pairs.
+
+
+
+
+* Each key must be unique. But 2 keys can hold a same value.
+
+
+
+
+* Exists in the standard library:
+
+      use std::collections::HashMap;
+
+
+
+
+* Creation:
+
+      * An empty HashMap:
+
+            let empty_hashmap: HashMap<key_type, value_type> = HashMap::new();
+
+
+      * A HashMap with some initial key-value pairs:
+
+            let empty_hashmap: HashMap<key_type, value_type> = HashMap::from(
+                  (key1, value1),
+                  (key2, value2),
+                  ...
+            );
+
+
+
+
+* If you try to insert a new key-value pair with an existing key, the old value
+  is replaced with the new value.
+
+      use std::collections::HashMap;
+
+      fn main() {
+            let mut menu: HashMap<String, f64> = HashMap::new();
+
+            menu.insert(String::from("Steak"), 29.99);
+            menu.insert(String::from("Tuna"), 29.99);
+            menu.insert(String::from("Tuna"), 39.99);
+
+            println!("{:?}", menu); // {"Tuna": 39.99, "Steak": 29.99}
+      }
+
+
+
+
+* Methods:
+
+      * insert:
+
+            To insert a new key-value pair.
+
+
+      * remove:
+
+            To remove a key-value pair using the key. Returns an Option type.
+
+
+      * len:
+
+            Number of key-value pairs.
+
+
+      * entry:
+
+            <hashmap>.entry(<key>).or_insert(<vlaue>);
+
+            * If the key exists, do nothing.
+
+            * If the key doesn't exist, insert the key-value pair to the hashmap.
+
+
+
+
+* Access a value by key:
+
+      * <hashmap>[<key>]; // Not safe
+
+      * <hashmap>.get(<key>): Returns an Option type with an immutable reference.
+
+      * <hashmap>.get_mut(<key>): Returns an Option type with a mutable reference.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- HashSets ------------------------------------------------------------
+
+* A HashSet is a collection type that stores unique values.
+
+
+
+
+* Exists in the standard library:
+
+      use std::collections::HashSet;
+
+
+
+
+* Creation:
+
+      * An empty HashSet:
+
+            HashSet::new();
+
+
+      * With initial values:
+
+            HashSet::from([value1, value2, ...]);
+
+
+
+
+* Methods:
+
+      * insert:
+
+            To insert a value. If value already exists, do nothing.
+
+
+      * remove:
+
+            To remove an existing value.
+
+                  If value is removed, returns true.
+
+                  If value doesn't exist, returns false.
+
+
+      * get:
+
+            Returns an Option type. If the value exists, returns an immutable
+            reference to the existing value. Else returns None.
+
+
+      * union:
+
+            Returns all the values in both sets without duplicates.
+
+
+      * difference:
+
+            Returns all the values which exist in current set, but not in other set.
+
+
+      * symmetric_difference:
+
+            Returns all the values which do not exist in both sets.
+
+
+      * intersection:
+
+            Returns all the common values in both sets.
+
+
+      * is_disjoint:
+
+            Returns true if both sets doesn't have atleast one common value.
+
+
+      * is_subset:
+
+            Returns true if all the values in current set exist in another set.
+
+
+      * is_superset:
+
+            Returns true if all the values of other set exist in current set.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Error Handling ------------------------------------------------------
+
+* There are 2 types of errors:
+
+      1. Recoverable errors:
+
+            Errors that we can define code to handle.
+
+
+      2. Unrecoverable errors:
+
+            Errors that cause the program to be unable to proceed.
+
+
+
+
+* We use panic! macro in unrecoverable situations:
+
+      panic!(<message>);
+
+
+      * Stops only the current thread. If current the main thread is panicked,
+        full program is terminated.
+
+
+
+
+* Terminate a program:
+
+      * Stops the full program immediately.
+
+
+      use std::process::exit;
+
+      exit(0): Terminate the program successfully
+
+      exit(1): Terminate the program because something went wrong.
+
+
+
+
+* eprintln! macro:
+
+      * We use eprintln macro for printing errors.
+
+
+      Ex:
+
+            fn main() {
+                  println!("Some status update");
+                  eprintln!("Some error message");
+            }
+
+
+                  * If we run "cargo run" both results are printed in the console.
+
+
+                  * If we run "cargo run > example.txt":
+
+                        println! message is redirected to the example.txt file.
+
+                        eprintln! message is still printed in the console.
+
+
+
+
+* Opening a File:
+
+      use std::{fs::File, process::exit};
+
+      fn main() {
+            let file = match File::open("example.txt") {
+                  Ok(file) => file,
+
+                  Err(error) => {
+                        eprintln!(
+                        "Something went wrong reading the file. The error was {}",
+                        error
+                        );
+                        exit(1);
+                  }
+            };
+
+            println!("{:#?}", file);
+      }
+
+
+
+
+* The try operator (?) with Result enum:
+
+      Ex:
+
+            fn read_file() -> Result<String, io::Error> {
+                  let file = File::open("example.txt")?;
+
+                  ...
+            }
+
+
+            * If the result of File::open is Result::Err(), return Result::Err()
+              from the function.
+
+
+            * If the result of File::open is Result::Ok(), assign the associated
+              value of Result::Ok() to the file variable.
+
+
+
+
+* The try operator (?) with Option enum:
+
+      Ex:
+
+            fn get_value_at(index: i32) -> Option<&i32> {
+                  let numbers = [2, 4, 6, 8];
+                  let number = numbers.get(1)?;
+
+                  return Some(number);
+            }
+
+
+            * If the result of numbers.get() is Option::None, return Option::None
+              from the function.
+
+
+            * If the result of numbers.get() is Option::Some(), assign the associated
+              value of Option::Some() to the number variable.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Define type aliases -------------------------------------------------
+
+* We can use "type" keyword:
+
+      type Integer = i32;
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Traits --------------------------------------------------------------
+
+* A trait is a "distinguishing quality or characteristic".
+
+
+* Consider a trait like a flight. Flight describes the quality of being able to
+  fly.
+
+
+* A trait is a contract that describes functionality that a type should have.
+
+
+* We use the word implement to describe when a type honors a trait's requirements.
+
+
+* A trait definition declares the method(s) that a type implementing that trait
+  must have.
+
+      * Method name
+      * Parameters with types
+      * Return value type
+
+      * The Display and Debug traits require a type to define methods for
+        presenting itself as a string.
+
+      * The Clone trait requires a type to define a clone method for creating a
+        duplicate of itself.
+
+
+* Once we have defined a trait, we can implement it on structs and enums. The
+  type promises to honor the trait's contract.
+
+
+* Multiple types can implement the same trait.
+
+
+* A type can implement multiple traits.
+
+
+
+
+---------- (Defining A Trait) ----------
+
+Ex:
+
+      trait Accommodation {
+            fn get_description(&self) -> String;
+
+            fn book(&mut self, name: &str, nights: u32);
+      }
+
+
+
+
+---------- (Implementing A Trait For A Struct) ----------
+
+Ex:
+
+      #[derive(Debug)]
+      struct Hotel {
+            name: String,
+            reservations: HashMap<String, u32>,
+      }
+
+      impl Hotel {
+            fn new(name: &str) -> Self {
+                  Self {
+                        name: name.to_string(),
+                        reservations: HashMap::new(),
+                  }
+            }
+      }
+
+      impl Accommodation for Hotel {
+            fn get_description(&self) -> String {
+                  format!("{} is the pinnacle of luxury", self.name)
+            }
+
+            fn book(&mut self, name: &str, nights: u32) {
+                  self.reservations.insert(name.to_string(), nights);
+            }
+      }
+
+
+      * A trait's visibility automatically applies to all its items. You
+            can't set visibility like pub on individual trait methods.
+
+
+      * You can call a trait method on a type only if the trait is visible
+            and in scope (use <trait>), because the method belongs to the
+            trait, not the type.
+
+
+
+
+* Default implementations:
+
+      * Instead of defining only the method signature inside the trait, we can
+        define the method body also. It is called a default implementation.
+
+      * In this case you are not required to provide an implementation for that
+        method in the impl block.
+
+            * If you provide an implementation in impl block, that implementation
+              will be considered.
+
+            * Otherwise, the default implementation will be considered.
+
+
+
+
+---------- (Traits For Function Parameter Constraints) ----------
+
+* impl in a function parameter is a shorthand for saying "This function accepts
+  any type that implements given trait".
+
+
+
+
+Ex:
+
+      fn print_value(x: impl <Trait>) {
+            ...
+      }
+
+
+      * x as an immutable value parameter      ->  x: impl <Trait>
+
+      * x as a mutable value parameter         ->  mut x: impl <Trait>
+
+      * x as an immutable reference parameter  ->  x: &impl <Trait>
+
+      * x as a mutable reference parameter     ->  x: &mut impl <Trait>
+
+
+
+
+* Equivalent generic version:
+
+      fn print_value<T: <Trait>>(x: T) {
+            ...
+      }
+
+
+
+
+* Consider the following scenarios:
+
+      fn print_value(x: impl Trait, y: impl Trait) {
+            ...
+      }
+
+
+      * Suppose there are 2 objects that implement Trait trait called "a" and
+        "b".
+
+      * print_value(a, b) -----> Allowed
+
+
+
+
+      fn print_value<T: Trait>(x: T, y: T) {
+            ...
+      }
+
+
+      * Suppose there are 2 objects that implement Trait trait called "a" and
+        "b".
+
+      * print_value(a, b) -----> Not allowed
+
+      * In this case both arguments must be in same type, either "a" or "b".
+
+      * Or we can modify it as follows:
+
+            fn print_value<T: Trait, U: Trait>(x: T, y: U) {
+                  ...
+            }
+
+
+
+
+---------- (Multiple Trait Bounds) ----------
+
+fn print_value<T: Trait1 + Trait2>(x: T) {
+      ...
+}
+
+or,
+
+fn print_value(x: impl Trait1 + Trait2) {
+      ...
+}
+
+
+* In these cases x must satisfy both Trait1 and Trait2.
+
+
+
+
+---------- (where Clauses) ----------
+
+* We can organize this one:
+
+      fn print_value<T: Trait1 + Trait2, U: Trait1>(x: T, y: U) {
+            ...
+      }
+
+
+* As this one:
+
+      fn print_value<T, U>(x: T, y: U)
+      where
+            T: Trait1 + Trait2,
+            U: Trait1,
+      {
+            ...
+      }
+
+
+
+
+---------- (Traits As Function Return Values) ----------
+
+fn test_function() -> impl Trait1 + Trait2 + ... {
+      ...
+}
+
+
+* We can return any object of a type that implements all of specified traits.
+
+* But we cannot return 2 different types of objects conditionally even both
+  types implement all given traits.
+
+
+
+
+---------- (Trait Bounds To Conditionally Implement Methods) ----------
+
+#[derive(Debug)]
+struct Hotel<T> {
+      ...
+}
+
+impl<T: Trait> Hotel<T> {
+      ...
+}
+
+
+* In this case, the methods which are defined inside the above impl block is
+  available only for the types which implement "Trait" trait.
+
+
+
+
+---------- (Trait Objects) ----------
+
+* A trait object is an instance of a type that implements a particular trait
+  whose methods will be accessed at runtime using a feature called dynamic
+  dispatch.
+
+
+* Allowed only for references because of dynamic nature.
+
+
+Ex:
+
+      * For immutable references:
+
+            let values: Vec<&dyn Trait> = vec![&value1, &value2, ...];
+
+
+      * For mutable references:
+
+            let values: Vec<&mut dyn Trait> = vec![&mut value1, &mut value2, ...];
+
+
+      * In this case values vector can contains any references of objects which
+        implement "Trait" trait.
+
+--------------------------------------------------------------------------------

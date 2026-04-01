@@ -1,0 +1,11 @@
+5 AM -----> 7 AM    : English
+
+8 AM -----> 12 Noon : Go
+
+1 PM -----> 3 PM    : Go
+
+3 PM -----> 6 PM    : Flutter
+
+7 PM -----> 9 PM    : (SQL) / (Design Patterns)
+
+9 PM -----> 11 PM   : Rust

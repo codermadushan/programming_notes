@@ -1,0 +1,2955 @@
+---------- Authorization (authz.ts) --------------------------------------------
+
+export const USER_ROLES = ["admin", "user"] as const;
+
+type AuthzRole = (typeof USER_ROLES)[number];
+
+type AuthzAction = "create" | "read" | "update" | "delete";
+
+type AuthzResource = "post";
+
+type AuthzPermission = `${AuthzAction}:${AuthzResource}`;
+
+const PERMISSIONS: Record<AuthzRole, AuthzPermission[]> = {
+  admin: [
+    // post
+    "create:post",
+    "read:post",
+    "update:post",
+    "delete:post",
+  ],
+
+  user: [
+    // post
+    "read:post",
+  ],
+};
+
+type CheckPermissionProps = {
+  role: AuthzRole;
+  action: AuthzAction;
+  resource: AuthzResource;
+};
+
+export function checkPermission({
+  role,
+  action,
+  resource,
+}: CheckPermissionProps): boolean {
+  const permissions = PERMISSIONS[role];
+
+  return permissions.includes(`${action}:${resource}`);
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Change scrollbar style ----------------------------------------------
+
+* Copy paste them directly to the:
+
+    @layer base {}
+
+::-webkit-scrollbar {
+  @apply w-3;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-muted-foreground/50 border-2 border-transparent bg-clip-content;
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Shadcn components ---------------------------------------------------
+
+* Don't remove "use client" from default components.
+
+
+
+
+Accordion
+Alert
+Alert Dialog
+Aspect Ratio
+Avatar
+Badge
+Breadcrumb
+Button
+Calendar
+Card
+Carousel
+Chart
+Checkbox
+Collapsible
+Combobox
+Command
+Context Menu
+Data Table
+Date Picker
+Dialog
+Drawer
+Dropdown Menu
+React Hook Form
+Hover Card
+Input
+Input OTP
+Label
+Menubar
+Navigation Menu
+Pagination
+Popover
+Progress
+Radio Group
+Resizable
+Scroll-area
+Select
+Separator
+Sheet
+Sidebar
+Skeleton
+Slider
+Sonner
+Switch
+Table
+Tabs
+Textarea
+Toast
+Toggle
+Toggle Group
+Tooltip
+
+
+
+
+---------- (Alert) ----------
+
+* By default a server component.
+
+* All components:
+
+    * Alert
+    * AlertTitle
+    * AlertDescription
+
+
+* Alert:
+    Parent component.
+
+
+* AlertTitle:
+    To define the title of the alert.
+
+
+* AlertDescription:
+    To define the description of the description.
+
+
+<Alert variant="default | destructive">
+  <Terminal />
+  <AlertTitle>Heads up!</AlertTitle>
+  <AlertDescription>
+    You can add components and dependencies to your app using the cli.
+  </AlertDescription>
+</Alert>
+
+
+
+
+---------- (Alert Dialog) ----------
+
+* By default a client component.
+
+* Responsive by default. No need to worry.
+
+* All components:
+
+    * AlertDialog
+    * AlertDialogPortal
+    * AlertDialogOverlay
+    * AlertDialogTrigger
+    * AlertDialogContent
+    * AlertDialogHeader
+    * AlertDialogFooter
+    * AlertDialogTitle
+    * AlertDialogDescription
+    * AlertDialogAction
+    * AlertDialogCancel
+
+
+* AlertDialog:
+    Parent component.
+
+
+* AlertDialogPortal:
+    Low level component. No need to use.
+
+
+* AlertDialogOverlay:
+    Low level component. Use by default to apply dim background when the dialog
+    is shown. No need to use directly.
+
+
+* AlertDialogTrigger:
+    To wrap the component which opens the dialog.
+
+
+* AlertDialogContent:
+    To define the content of the dialog.
+
+
+* AlertDialogHeader:
+  To define the header of the dialog.
+
+
+* AlertDialogFooter:
+    To define the footer of the dialog.
+
+
+* AlertDialogTitle:
+    Title of the dialog.
+
+* AlertDialogDescription:
+    Description of the dialog.
+
+
+* AlertDialogAction:
+    To remove the dialog with some action.
+
+
+* AlertDialogCancel:
+    To remove the dialog without any action.
+
+
+Ex:
+
+export default function ConfirmDeleteDialog() {
+  const [open, isOpen] = useState(false);
+
+  function handleIsOpen(value: boolean) {
+    isOpen(value);
+  }
+
+  function handleOperation() {
+    console.log("do it");
+
+    isOpen(false);
+  }
+
+  return (
+    <AlertDialog open={open}>
+      <AlertDialogTrigger>
+        <Trash2 onClick={() => handleIsOpen(true)} />
+      </AlertDialogTrigger>
+
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete your
+            account and remove your data from our servers.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={() => handleIsOpen(false)}>
+            Cancel
+          </AlertDialogCancel>
+
+          <AlertDialogAction onClick={handleOperation}>
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+
+
+
+---------- (Aspect Ratio) ----------
+
+* No need to use. Can use tailwind with,
+
+    *aspect-<width>/<height>
+
+
+
+
+---------- (Avatar) ----------
+
+* It is a client component. Relies on browser-specific features.
+
+* We can use Avatar component to show avatar images like profile pictures.
+  It is a very simple component.
+
+* All components:
+
+    * Avatar
+    * AvatarImage
+    * AvatarFallback
+
+
+    <Avatar>
+      <AvatarImage src="/profile.jpg" />
+      <AvatarFallback>CN</AvatarFallback>
+    </Avatar>
+
+
+
+
+---------- (Badge) ----------
+
+* By default a client component.
+
+* All components:
+
+    * Badge
+
+<Badge variant="secondary" className="text-emerald-500 bg-emerald-500/15">
+  <BadgeCheckIcon />
+  Verified
+</Badge>
+
+
+
+
+---------- (Breadcrumb) ----------
+
+* By default a server component.
+
+* All components:
+
+    * Breadcrumb
+    * BreadcrumbList
+    * BreadcrumbItem
+    * BreadcrumbLink
+    * BreadcrumbPage
+    * BreadcrumbSeparator
+    * BreadcrumbEllipsis
+
+
+* Breadcrumb:
+    Parent component.
+
+
+* BreadcrumbList:
+    To wrap all BreadcrumbItems.
+
+
+* BreadcrumbItem:
+    Specify each Breadcrumb item.
+
+
+* BreadcrumbLink:
+    To create a BreadcrumbItem that can navigate to a previous route.
+    Color with opacity.
+    Can click.
+
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link href="/docs/components">Components</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+
+
+* BreadcrumbPage:
+    To specify current route.
+    Bright color than BreadcrumbLink
+    Unclickable.
+
+        <BreadcrumbItem>
+          <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+        </BreadcrumbItem>
+
+
+* BreadcrumbSeparator:
+    To add separator icon between BreadcrumbItems. ( > )
+
+        <BreadcrumbSeparator />
+
+
+* BreadcrumbEllipsis:
+    To create collapsed Breadcrumb ( ... )
+    Color with opacity.
+    Unclickable.
+
+        <BreadcrumbItem>
+          <BreadcrumbEllipsis />
+        </BreadcrumbItem>
+
+
+
+
+* Basic structure:
+
+    Breadcrumb
+      BreadcrumbList
+        BreadcrumbItem1
+        BreadcrumbSeparator
+        BreadcrumbItem2
+        ...
+
+
+Ex:
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink asChild>
+        <Link href="/">Home</Link>
+      </BreadcrumbLink>
+    </BreadcrumbItem>
+
+    <BreadcrumbSeparator />
+
+    <BreadcrumbItem>
+      <BreadcrumbEllipsis />
+    </BreadcrumbItem>
+
+    <BreadcrumbSeparator />
+
+    <BreadcrumbItem>
+      <BreadcrumbLink asChild>
+        <Link href="/docs/components">Components</Link>
+      </BreadcrumbLink>
+    </BreadcrumbItem>
+
+    <BreadcrumbSeparator />
+
+    <BreadcrumbItem>
+      <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>
+
+
+
+
+---------- (Collapsible) ----------
+
+* By default a client component.
+
+* It internally manages data-state="open" | "closed".
+  We can use it for styling with tailwind  "data-*" attribute.
+
+* All components:
+
+    * Collapsible
+    * CollapsibleTrigger
+    * CollapsibleContent
+
+
+* Collapsible:
+    Parent component.
+
+
+* CollapsibleTrigger:
+    To wrap the collapse toggle component.
+
+
+* CollapsibleContent:
+    To define the show/hide toggle content.
+
+
+Ex:
+
+<Collapsible defaultOpen>
+  <CollapsibleTrigger>Can I use this in my project?</CollapsibleTrigger>
+  <CollapsibleContent>
+    Yes. Free to use for personal and commercial projects. No attribution
+    required.
+  </CollapsibleContent>
+</Collapsible>
+
+
+
+
+---------- (Command) ----------
+
+* By default a client component.
+
+* We should always use CommandDialog style. Create a custom component
+  called ResponsiveCommandDialog and use it. Instructions are below.
+
+* All components:
+
+    * Command
+    * CommandDialog
+    * CommandInput
+    * CommandList
+    * CommandEmpty
+    * CommandGroup
+    * CommandItem
+    * CommandShortcut
+    * CommandSeparator
+
+
+* Command:
+    Parent component.
+
+
+* CommandDialog:
+    To open command component as a dialog.
+
+
+* CommandInput:
+    Command input field. Can type here.
+
+
+* CommandList:
+    To wrap CommandEmpty, CommandGroups & CommandSeparators.
+
+
+* CommandEmpty:
+    To define the component which shows if not result found.
+
+
+* CommandGroup:
+    To group multiple CommandItems.
+
+
+* CommandItem:
+    To define each suggestion item.
+    Use "onSelect" to Select values.
+
+
+* CommandShortcut:
+    To specify command shortcut icon in CommandItem.
+
+
+* CommandSeparator:
+    To add horizontal separators between groups or items.
+
+
+* Basic structure:
+    Command
+      CommandInput
+
+      CommandList
+        CommandEmpty
+
+        CommandGroup1
+          CommandItem1
+
+        CommandSeparator1
+
+
+Ex: Search field button with Command dialog (ctrl+j shortcut),
+    Can copy paste this from shadcn command documentation.
+
+export function CommandDialogDemo() {
+  const [open, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setIsOpen((open) => !open);
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
+
+  function openDialog() {
+    setIsOpen(true);
+  }
+
+  function handleSelect(value: string) {
+    console.log(value);
+    setIsOpen(false);
+  }
+
+  return (
+    <>
+      <Button
+        variant="outline"
+        onClick={openDialog}
+        className="w-[240px] justify-start"
+        size="sm"
+      >
+        <SearchIcon />
+        Search...
+        <kbd className="ml-auto bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
+          <span className="text-xs">⌘</span>J
+        </kbd>
+      </Button>
+
+      <CommandDialog open={open} onOpenChange={setIsOpen}>
+        <CommandInput placeholder="Type a command or search..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Suggestions">
+            <CommandItem onSelect={() => handleSelect("Calendar")}>
+              <Calendar />
+              <span>Calendar</span>
+            </CommandItem>
+            <CommandItem>
+              <Smile />
+              <span>Search Emoji</span>
+            </CommandItem>
+            <CommandItem>
+              <Calculator />
+              <span>Calculator</span>
+            </CommandItem>
+          </CommandGroup>
+          <CommandSeparator />
+          <CommandGroup heading="Settings">
+            <CommandItem>
+              <User />
+              <span>Profile</span>
+              <CommandShortcut>⌘P</CommandShortcut>
+            </CommandItem>
+            <CommandItem>
+              <CreditCard />
+              <span>Billing</span>
+              <CommandShortcut>⌘B</CommandShortcut>
+            </CommandItem>
+            <CommandItem>
+              <Settings />
+              <span>Settings</span>
+              <CommandShortcut>⌘S</CommandShortcut>
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
+    </>
+  );
+}
+
+
+* Create a responsive command dialog:
+
+1. Go to command original shadcn component and copy following components,
+
+    * Command
+    * CommandDialog
+
+2. Create a new custom file called "responsive-command-dialog.tsx" and paste them.
+
+3. Change the name of CommandDialog to "ResponsiveCommandDialog".
+
+4. Define useMobile hook inside the ResponsiveCommandDialog.
+
+    const isMobile = useIsMobile();
+
+5. Copy below code and paste it under the useMobile hook.
+
+if (isMobile) {
+  return (
+    <Drawer {...props} autoFocus={props.open}>
+      <DrawerContent className="overflow-hidden p-0"> // add "h-[]" if you need a fixed height.
+        <DrawerHeader className="sr-only">
+          <DrawerTitle>{title}</DrawerTitle>
+          <DrawerDescription>{description}</DrawerDescription>
+        </DrawerHeader>
+
+        {/* paste Command here */}
+      </DrawerContent>
+    </Drawer>
+  );
+}
+
+6. Now copy the "Command" component from below Dialog component and paste it inside
+   DrawerContent. If you want to add some gap between drawer handler icon and Command
+   add "mt-4" to Command's className.
+
+7. Now always use "ResponsiveCommandDialog" instead of CommandDialog.
+
+
+
+
+---------- (Dialog) ----------
+
+* By default a client component.
+
+* All components:
+
+    * Dialog
+    * DialogClose
+    * DialogContent
+    * DialogDescription
+    * DialogFooter
+    * DialogHeader
+    * DialogOverlay
+    * DialogPortal
+    * DialogTitle
+    * DialogTrigger
+
+
+* Dialog:
+    Parent component.
+
+
+* DialogClose:
+    To wrap dialog close components.
+
+
+* DialogContent:
+    To define the content of the dialog.
+
+    Use following style to make it responsive if the content exceeds the screen
+    height.
+
+        className="max-h-[90vh] overflow-y-auto"
+
+    By default if you click outside of the dialog, it disappears. To prevent it,
+
+        onInteractOutside={(e) => {
+          e.preventDefault();
+        }}
+
+
+* DialogDescription:
+    To define the description of the content.
+
+
+* DialogFooter:
+    To define the bottom content of the dialog.
+    Like buttons.
+
+
+* DialogHeader:
+    To define the DialogTitle & DialogDescription.
+
+
+* DialogOverlay:
+    Low level component. No need to use.
+    Applied by default to darken the dialog background.
+
+
+* DialogPortal:
+    Low level component. No need to use.
+    Applied by default.
+
+
+* DialogTitle:
+    To define the title of the dialog.
+
+
+* DialogTrigger:
+    To wrap the component which triggers the dialog.
+
+
+Ex:
+
+export default function DialogDemo() {
+  const [open, isOpen] = useState(false);
+
+  function handleSaveChanges() {
+    console.log("Do something");
+    isOpen(false);
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={isOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline">Open Dialog</Button>
+      </DialogTrigger>
+      <DialogContent
+        className="max-h-[90vh] overflow-y-auto"
+        onInteractOutside={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <DialogHeader>
+          <DialogTitle>Are you absolutely sure?</DialogTitle>
+          <DialogDescription>
+            This action cannot be undone. This will permanently delete your
+            account and remove your data from our servers.
+          </DialogDescription>
+        </DialogHeader>
+
+        {/* Extra content here */}
+
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DialogClose>
+
+          <Button onClick={handleSaveChanges}>Save changes</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+
+
+
+---------- (Drawer) ----------
+
+* By default a client component.
+
+* You will get warnings in console when you use DrawerTrigger. Therefore don't
+  use it. Use,
+
+    * const [open, setIsOpen] = useState(false);
+    * <Drawer open={open} onOpenChange={setIsOpen} autoFocus={open}>
+    * <Button variant="outline" onClick={openDrawer}>Open Drawer</Button>
+
+* Max height is already set by default. To check how to handle content overflow,
+  check the example below.
+
+* Most of the time we use the drawer as responsive dialog. Only for mobiles.
+  You can copy paste that ResponsiveDialog code from shadcn Drawer documentation.
+
+* All components:
+
+    * Drawer
+    * DrawerPortal
+    * DrawerOverlay
+    * DrawerTrigger
+    * DrawerClose
+    * DrawerContent
+    * DrawerHeader
+    * DrawerFooter
+    * DrawerTitle
+    * DrawerDescription
+
+
+* Drawer:
+    Parent component.
+
+
+* DrawerPortal:
+    Low level component. No need to use. Applied by default to show the drawer.
+
+
+* DrawerOverlay:
+    Low level component. No need to use. Applied by default to darken the drawer
+    background.
+
+
+* DrawerTrigger:
+    Don't use this. use,
+      * const [open, setIsOpen] = useState(false);
+      * <Drawer open={open} onOpenChange={setIsOpen} autoFocus={open}>
+      * <Button variant="outline" onClick={openDrawer}>Open Drawer</Button>
+
+
+* DrawerClose:
+    To wrap the close component of the drawer.
+
+
+* DrawerContent:
+    To define the content of the drawer.
+
+    Use following prop to prevent drawer close on click outside.
+
+      onInteractOutside={(e) => {
+        e.preventDefault();
+      }}
+
+
+* DrawerHeader:
+    To define the header of the drawer.
+
+
+* DrawerFooter:
+    To define the footer of the drawer.
+
+
+* DrawerTitle:
+    To define the title of the drawer.
+
+
+* DrawerDescription:
+    To define the description of the drawer.
+
+
+Ex:
+
+export default function DrawerDemo() {
+  const [open, setIsOpen] = useState(false);
+
+  function openDrawer() {
+    setIsOpen(true);
+  }
+
+  return (
+    <Drawer open={open} onOpenChange={setIsOpen} autoFocus={open}>
+      <Button variant="outline" onClick={openDrawer}>
+        Open Drawer
+      </Button>
+
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+
+          <DrawerDescription>This action cannot be undone.</DrawerDescription>
+        </DrawerHeader>
+
+        <div className="overflow-y-auto">{/* Content */}</div>
+
+        <DrawerFooter>
+          <Button>Submit</Button>
+
+          <DrawerClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  );
+}
+
+
+
+
+---------- (DropdownMenu) ----------
+
+* It is a client component.
+
+* Use when you are offering action(s).
+
+* It is responsive. Use, className="w-56" align="start" for more control.
+  If height is smaller than DropdownMenu, It will become scrollable automatically.
+
+  Ex:
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">Label</Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent className="w-56" align="start" side="top">
+        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem onClick={() => handleClick(Values.GitHub)}>
+          {Values.GitHub}
+          <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem onClick={() => handleClick(Values.API)}>
+          {Values.API}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+
+* All components:
+
+    * DropdownMenu
+    * DropdownMenuPortal
+    * DropdownMenuTrigger
+    * DropdownMenuContent
+    * DropdownMenuGroup
+    * DropdownMenuLabel
+    * DropdownMenuItem
+    * DropdownMenuCheckboxItm,
+    * DropdownMenuRadioGroup
+    * DropdownMenuRadioItem
+    * DropdownMenuSeparator
+    * DropdownMenuShortcut
+    * DropdownMenuSub
+    * DropdownMenuSubTrigger
+    * DropdownMenuSubContent
+
+* DropdownMenu:
+    Parent component.
+
+* DropdownMenuTrigger:
+    We define drop-down-menu trigger component here. Most of the time we use a
+    Button for this with,
+
+      * variant="outline"
+      * className="w-<custom> justify-between"
+
+* DropdownMenuContent:
+    We define the content of the drop-down-menu in this component.
+
+    Can handle the width of the drop-down-menu using,
+      * className="w-<custom>"
+
+    Can change vertical alignment with trigger component,
+      * align="start"
+
+    Can change horizontal alignment with trigger component,
+      * side="top"
+
+* DropdownMenuLabel:
+    To add a title to the drop-down-menu.
+
+* DropdownMenuSeparator:
+    To add a horizontal seperator line.
+
+* DropdownMenuItem:
+    Represent each clickable item it drop-down-menu.
+
+    Can disable using,
+      * disabled={true} prop.
+
+* DropdownMenuShortcut
+    To specify shortcut icon for each item.
+
+    Use inside DropdownMenuItem components.
+
+* DropdownMenuGroup:
+    Only to visually organize the code by grouping items.
+
+* DropdownMenuRadioGroup:
+    To wrap all DropdownMenuRadioItems to track,
+      * default value (value)
+      * changes (onValueChange)
+
+* DropdownMenuRadioItem:
+    To define drop-down-menu radio items. Use value prop to specify the value of
+    each item.
+      * value={Values.Bottom}
+
+* DropdownMenuCheckboxItem:
+    To define drop-down-menu checkbox items. Contains props to track current
+    state and changes.
+
+      * checked={showStatusBar}
+      * onCheckedChange={setShowStatusBar}
+
+* If you want to open sub items from a drop-down-menu item,
+
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+
+      <DropdownMenuPortal>
+        <DropdownMenuSubContent>
+          <DropdownMenuItem>Email</DropdownMenuItem>
+
+          <DropdownMenuItem>Message</DropdownMenuItem>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuItem>More...</DropdownMenuItem>
+        </DropdownMenuSubContent>
+      </DropdownMenuPortal>
+    </DropdownMenuSub>
+
+
+
+
+1. Use DropdownMenu to execute commands.
+
+  * Button label is static.
+
+  * Normal DropdownMenuItems.
+
+enum Values {
+  GitHub = "GitHub",
+  API = "API",
+}
+
+export default function DropdownMenuDemo() {
+  function handleClick(value: Values) {
+    console.log(value);
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">Label</Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent className="w-56" align="start" side="top">
+        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem onClick={() => handleClick(Values.GitHub)}>
+          {Values.GitHub}
+        </DropdownMenuItem>
+
+        <DropdownMenuItem onClick={() => handleClick(Values.API)}>
+          {Values.API}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+
+
+
+2. Use DropdownMenu to select single option (Radio).
+
+  * Button label is static.
+
+  * Show a dot (radio) before the label of selected item.
+
+enum Values {
+  Top = "Top",
+  Bottom = "Bottom",
+  Right = "Right",
+}
+
+export function DropdownMenuRadioGroupDemo() {
+  const [position, setPosition] = useState<string | undefined>();
+
+  function handleValueChange(value: string) {
+    setPosition(value);
+    console.log(value);
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">Panel Position</Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>Panel Position</DropdownMenuLabel>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuRadioGroup
+          value={position}
+          onValueChange={handleValueChange}
+        >
+          <DropdownMenuRadioItem value={Values.Top}>Top</DropdownMenuRadioItem>
+
+          <DropdownMenuRadioItem value={Values.Bottom}>
+            Bottom
+          </DropdownMenuRadioItem>
+
+          <DropdownMenuRadioItem value={Values.Right}>
+            Right
+          </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+
+
+
+3. Use DropdownMenu to select multiple options (Checkboxes).
+
+  * Button label is static.
+
+  * Show a tick mark (check) before the label of selected items.
+
+type CheckboxState = boolean | undefined;
+
+export function DropdownMenuCheckboxes() {
+  const [showStatusBar, setShowStatusBar] = useState<CheckboxState>();
+  const [showActivityBar, setShowActivityBar] = useState<CheckboxState>();
+  const [showPanel, setShowPanel] = useState<CheckboxState>();
+
+  useEffect(() => {
+    console.log(`StatusBar  : ${showStatusBar}`);
+    console.log(`ActivityBar: ${showActivityBar}`);
+    console.log(`Panel      : ${showPanel}`);
+  }, [showStatusBar, showActivityBar, showPanel]);
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">Open</Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuCheckboxItem
+          checked={showStatusBar}
+          onCheckedChange={setShowStatusBar}
+        >
+          Status Bar
+        </DropdownMenuCheckboxItem>
+
+        <DropdownMenuCheckboxItem
+          checked={showActivityBar}
+          onCheckedChange={setShowActivityBar}
+        >
+          Activity Bar
+        </DropdownMenuCheckboxItem>
+
+        <DropdownMenuCheckboxItem
+          checked={showPanel}
+          onCheckedChange={setShowPanel}
+        >
+          Panel
+        </DropdownMenuCheckboxItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+
+
+
+---------- (Separator) ----------
+
+* Comes as a client component.
+
+* Used to add separation lines horizontally and vertically.
+
+* All Components:
+
+    * Separator
+
+Ex:  <Separator />
+
+
+
+
+---------- (Select) ----------
+
+* It is a client component.
+
+* It is like <Input/> component. Use when you are collecting a input via <form/>
+
+* All components:
+
+    * Select
+    * SelectContent
+    * SelectGroup
+    * SelectItem
+    * SelectLabel
+    * SelectScrollDownButton
+    * SelectScrollUpButton
+    * SelectSeparator
+    * SelectTrigger
+    * SelectValue
+
+* Select:
+    Parent component.
+
+* SelectContent
+    To define the content of the select popup.
+    Use following props to handle alignment of the popup to SelectValue.
+      * side="bottom"
+      * align="end"
+
+* SelectGroup:
+    If you have multiple group of items, then you can group them using this component.
+
+* SelectItem:
+    To specify each select item.
+
+* SelectLabel:
+    To specify the group names if available.
+
+* SelectScrollDownButton:
+* SelectScrollUpButton:
+    Both of them are used to handle scroll behavior. But no need to handle manually.
+    They are implemented internally and applied by default.
+
+* SelectSeparator:
+    To add seperator lines between groups or items.
+
+* SelectTrigger:
+    To wrap the component which open select popup.
+
+* SelectValue:
+    Component which is used to open select popup.
+
+Ex: As a form item.
+
+    <FormField
+      control={form.control}
+      name="tz"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Email</FormLabel>
+          <Select
+            onValueChange={field.onChange}
+            defaultValue={field.value}
+            name="tz" // Add this to remove browser issue warnings.
+          >
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a verified email to display" />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent side="bottom" align="end">
+              <SelectGroup>
+                <SelectLabel>North America</SelectLabel>
+                <SelectItem value="est">
+                  Eastern Standard Time (EST)
+                </SelectItem>
+                <SelectItem value="cst">
+                  Central Standard Time (CST)
+                </SelectItem>
+                <SelectItem value="mst">
+                  Mountain Standard Time (MST)
+                </SelectItem>
+                <SelectItem value="pst">
+                  Pacific Standard Time (PST)
+                </SelectItem>
+                <SelectItem value="akst">
+                  Alaska Standard Time (AKST)
+                </SelectItem>
+                <SelectItem value="hst">
+                  Hawaii Standard Time (HST)
+                </SelectItem>
+              </SelectGroup>
+
+              <SelectSeparator />
+
+              <SelectGroup>
+                <SelectLabel>Europe & Africa</SelectLabel>
+                <SelectItem value="gmt">
+                  Greenwich Mean Time (GMT)
+                </SelectItem>
+                <SelectItem value="cet">
+                  Central European Time (CET)
+                </SelectItem>
+                <SelectItem value="eet">
+                  Eastern European Time (EET)
+                </SelectItem>
+                <SelectItem value="west">
+                  Western European Summer Time (WEST)
+                </SelectItem>
+                <SelectItem value="cat">
+                  Central Africa Time (CAT)
+                </SelectItem>
+                <SelectItem value="eat">East Africa Time (EAT)</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <FormDescription>
+            You can manage email addresses in your{" "}
+            <Link href="/examples/forms">email settings</Link>.
+          </FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+
+
+
+
+---------- (Sheet) ----------
+
+* It is a client component.
+
+* If you use Shadcn Button component for SheetTrigger ass "asChild" prop to SheetTrigger
+
+* You can select the side which the Sheet appears using "side" prop of SheetContent
+
+* SheetHeader is a required component. If you don't need it, add className="sr-only" (screen render only)
+
+* All components
+
+    * Sheet
+    * SheetTrigger
+    * SheetClose
+    * SheetContent
+    * SheetHeader
+    * SheetFooter
+    * SheetTitle
+    * SheetDescription
+
+* Sheet:
+    Parent component.
+
+* SheetTrigger:
+    To wrap the child which shows the sheet. If you get any error for components
+    like <Button/>, then use "asChild" prop.
+
+* SheetClose:
+    To wrap the child which close the sheet. If you get any error for components
+    like <Button/>, then use "asChild" prop.
+
+* SheetContent:
+    To define the content of the sheet. Paddings are not applied.
+    Use "overflow-y-auto" for {/* Content */} if the content is exeeded the height.
+
+* SheetHeader:
+    To define SheetTitle & SheetDescription.
+    Paddings are applied automatically (px-4).
+
+* SheetFooter:
+    To define some content at the bottom of the sheet.
+    Paddings are applied automatically (px-4).
+
+* SheetTitle:
+    Title of the sheet.
+
+* SheetDescription:
+    Description of the sheet.
+
+Ex:
+export default function SheetSample() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  function handleClick() {
+    setIsOpen(false);
+  }
+
+  return (
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        <Button>Open</Button>
+      </SheetTrigger>
+
+      <SheetContent className="w-[400px] sm:w-[540px]" side="left">
+        <SheetHeader>
+          <SheetTitle>Are you absolutely sure?</SheetTitle>
+
+          <SheetDescription>
+            This action cannot be undone. This will permanently delete your
+            account and remove your data from our servers.
+          </SheetDescription>
+        </SheetHeader>
+
+        {/* Content */}
+
+        <SheetFooter>
+          <Button onClick={handleClick}>Close using - useState</Button>
+
+          <SheetClose asChild>
+            <Button variant="outline">Close using - SheetClose</Button>
+          </SheetClose>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+
+
+
+---------- (Sidebar) ----------
+
+* Always use documentation when you create a new sidebar to copy paste.
+
+* All components:
+
+    * Sidebar
+    * SidebarContent
+    * SidebarFooter
+    * SidebarGroup
+    * SidebarGroupAction
+    * SidebarGroupContent
+    * SidebarGroupLabel
+    * SidebarHeader
+    * SidebarInput
+    * SidebarInset
+    * SidebarMenu
+    * SidebarMenuAction
+    * SidebarMenuBadge
+    * SidebarMenuButton
+    * SidebarMenuItem
+    * SidebarMenuSkeleton
+    * SidebarMenuSub
+    * SidebarMenuSubButton
+    * SidebarMenuSubItem
+    * SidebarProvider
+    * SidebarRail
+    * SidebarSeparator
+    * SidebarTrigger
+    * useSidebar
+
+
+* Sidebar:
+    Parent component.
+    Can change side                      : side="left"
+    Can change variant                   : variant="floating"
+    In desktop screen colla only to icons: collapsible="icon"
+
+
+* SidebarContent:
+    To define the content of the sidebar.
+
+
+* SidebarFooter:
+    To add a sticky footer to the sidebar.
+    Define at same level with SidebarContent.
+
+
+* SidebarGroup:
+    To group multiple SidebarMenuItems.
+
+
+* SidebarGroupAction:
+    To add a component at right side of SidebarGroupLabel to perform a action.
+    Like + button.
+    Define at same level with SidebarGroupLabel.
+
+    Dropdown example:
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarGroupAction title="Add something">
+              <Plus />
+            </SidebarGroupAction>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
+            <DropdownMenuItem>
+              <span>Acme Inc</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <span>Acme Corp.</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+
+    onClick example:
+
+        <SidebarGroupAction
+          title="do something"
+          onClick={() => {
+            console.log("hello");
+          }}
+        >
+          <Plus />
+        </SidebarGroupAction>
+
+
+* SidebarGroupContent:
+    To define the content inside SidebarGroup.
+
+
+* SidebarGroupLabel:
+    To provide a visible name to a SidebarGroup.
+
+
+* SidebarHeader:
+    To add a sticky header to the sidebar.
+    Define at same level with SidebarContent.
+
+
+* SidebarInput:
+    Don't use directly.
+
+
+* SidebarInset:
+    SidebarProvider is a "flex flex-row" container.
+    In left side we have Sidebar.
+    In right side we have SidebarTrigger or page header with SidebarTrigger
+    If we don't use SidebarInset right side part is not acquire all available width.
+
+
+* SidebarMenu:
+    To wrap all SidebarMenuItems is a SidebarGroup.
+
+
+* SidebarMenuAction:
+    To define an action button in each SidebarMenuItem.
+    Define as a direct child of SidebarMenuItem.
+    Define as a direct sibling of SidebarMenuButton.
+
+
+* SidebarMenuBadge:
+    To specify some badge in each SidebarMenuItem.
+
+    It is a direct child of SidebarMenuItem.
+
+      <SidebarMenuItem>
+        <SidebarMenuButton />
+        <SidebarMenuBadge>24</SidebarMenuBadge>
+      </SidebarMenuItem>
+
+
+* SidebarMenuButton:
+    Use inside SidebarMenuItems
+
+    Important to specify "asChild". Otherwise styles are not applied correctly.
+
+    Structure:
+
+      * If it is a link
+
+        SidebarMenuButton asChild
+          Link
+            <item.icon/>
+            <span>{item.name}</span>
+
+
+      * If it is not a link. (can click. do nothing)
+
+        SidebarMenuButton
+            <item.icon/>
+            <span>{item.name}</span>
+
+    Can use "isActive" prop to mark active state."
+
+
+* SidebarMenuItem:
+    To create each item in Sidebar.
+
+    If you create a single SidebarMenuItem:
+
+      SidebarMenu
+        SidebarMenuItem
+
+    If you create multiple SidebarMenuItems:
+
+      SidebarMenu
+        SidebarMenuItem1
+        SidebarMenuItem2
+        ...
+
+
+* SidebarMenuSkeleton:
+    To show the loading state of a SidebarMenuItem.
+    Use directly inside SidebarMenuButton.
+
+
+* SidebarMenuSub:
+    To wrap a group of SidebarMenuSubItems.
+    Can think as SidebarMenu.
+
+    Structure:
+
+      SidebarMenuItem
+        SidebarMenuButton
+
+        SidebarMenuAction
+
+        SidebarMenuSub
+          SidebarMenuSubItem
+            SidebarMenuSubButton
+              Link
+                <span>{subItem.title}</span>
+
+
+* SidebarMenuSubButton:
+    Define inside SidebarMenuSubItems.
+
+    Structure:
+
+      * If it is a link
+
+        SidebarMenuSubButton asChild
+          Link
+            <span>{item.name}</span>
+
+
+      * If it is not a link. (can click. do nothing)
+
+        SidebarMenuSubButton
+            <span>{item.name}</span>
+
+
+* SidebarMenuSubItem:
+    To define sidebar menu sub items inside a SidebarMenuSub.
+
+
+* SidebarProvider:
+    To wrap a layout which has a Sidebar.
+
+
+* SidebarRail:
+    Add at most bottom of Sidebar.
+
+    When you add this you can see the cursor is changing when we move it to the
+    seperator line of sidebar and content. By using this you can toggle the sidebar.
+
+
+* SidebarSeparator:
+    To add a horizontal seperator between SidebarGroups.
+
+
+* SidebarTrigger:
+    Sidebar toggle icon button.
+
+    To change the icon:
+
+      1. Goto SidebarTrigger implementation in sidebar.tsx file.
+      2. const { isMobile, open, toggleSidebar } = useSidebar();
+      3. {isMobile || !open ? <PanelLeftIcon /> : <PanelLeftCloseIcon />}
+
+
+* useSidebar:
+    The hook to control sidebar.
+
+    const {
+      open,
+      setOpen,
+      ... (Read documentation for more)
+    } = useSidebar();
+
+    * open: boolean
+        Sidebar is opened or not.
+
+    * setOpen: To open or close manually. Use inside useEffect.
+
+        useEffect(() => {
+          setOpen(false);
+        }, []);
+
+
+
+
+* Sidebar basic structure:
+
+    Sidebar
+      SidebarHeader (Sticky)
+
+      SidebarContent (Scrollable)
+        SidebarGroup1
+          SidebarGroupLabel
+
+          SidebarGroupAction
+
+          SidebarGroupContent
+            SidebarMenu
+              SidebarMenuItem1
+                SidebarMenuButton
+                  Link
+                    <item.icon />
+                    <span>{item.title}</span>
+
+                SidebarMenuAction
+
+                SidebarMenuSub
+                  SidebarMenuSubItem1
+                    SidebarMenuSubButton
+                      Link
+                        <span>{subItem.title}</span>
+
+      SidebarFooter (Sticky)
+
+
+
+
+* Basic design:
+
+  * app-sidebar.tsx
+
+      <Sidebar>
+        <SidebarContent>
+          <div>Sidebar Content</div> // Sidebar content
+        </SidebarContent>
+      </Sidebar>
+
+  * page.tsx
+
+      <div className="h-full flex justify-center items-center"> // Page content
+        <h1>Dashboard Page</h1>
+      </div>
+
+  * layout.tsx (4 sidebar related components)
+
+      <SidebarProvider>
+        <MySidebar />
+
+        <SidebarInset>
+          <header className="flex items-center">
+            <SidebarTrigger />
+            <p className="ml-auto">some content</p>
+          </header>
+
+          <main>{children}</main>
+        </SidebarInset>
+      </SidebarProvider>
+
+
+
+
+* Add basic content to Sidebar:
+
+const group = {
+  title: "Projects",
+  items: [
+    {
+      title: "Design Engineering",
+      url: "#",
+      icon: Frame,
+    },
+    {
+      title: "Sales & Marketing",
+      url: "#",
+      icon: PieChart,
+    },
+    {
+      title: "Travel",
+      url: "#",
+      icon: Map,
+    },
+  ],
+};
+
+export function MySidebar() {
+  return (
+    <Sidebar>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Application</SidebarGroupLabel>
+
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {group.items.map((menuItem) => (
+                <SidebarMenuItem key={menuItem.title}>
+                  <SidebarMenuButton asChild>
+                    <Link href={menuItem.url}>
+                      <menuItem.icon />
+                      <span>{menuItem.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  );
+}
+
+
+
+
+* Make it collapsible. (collapsible sidebar groups)
+
+  1. Wrap the SidebarGroup with Collapsible component.
+
+  2. Provide following tailwind class to Collapsible component.
+
+        className="group/collapsible"
+
+
+  3. Create "CollapsibleTrigger" inside "SidebarGroupLabel" and provide "asChild"
+     SidebarGroupLabel
+
+  4. Now define the collapsible icon and group name inside CollapsibleTrigger
+     as follows.
+
+        <SidebarGroupLabel asChild>
+          <CollapsibleTrigger>
+            <span>Application</span>
+
+            <ChevronDown />
+          </CollapsibleTrigger>
+        </SidebarGroupLabel>
+
+  4. Now wrap the SidebarGroupContent with CollapsibleContent.
+
+  5. Now you can see the collapsible functionality is working. But there are 2 issues.
+      * Icon is not aligned properly.
+      * Icon is not responding to the collapse state.
+
+  6. To fix it add following className to icon.
+
+      className="ml-auto group-data-[state=open]/collapsible:rotate-180 transition-transform"
+
+
+
+
+* Collapsible sidebar sub items.
+
+  1. Wrap the SidebarMenuItem with Collapsible component.
+
+  2. Provide following tailwind class to Collapsible component.
+
+        className="group/collapsible"
+
+  3. Wrap SidebarMenuButton with CollapsibleTrigger as follows.
+
+      <CollapsibleTrigger asChild>
+        <SidebarMenuButton>
+          <PieChart />
+          <span>Projects</span>
+          <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+        </SidebarMenuButton>
+      </CollapsibleTrigger>
+
+  4. Wrap the SidebarMenuSub with CollapsibleContent.
+
+
+* Define the sidebar at right side.
+
+    1. Add side="right" to <Sidebar/>
+
+    2. Change the positions of sidebar related components in layout.tsx
+
+        <SidebarProvider>
+          <SidebarInset>
+            <header className="flex items-center">
+              <p>some content</p>
+              <SidebarTrigger className="ml-auto" />
+            </header>
+
+            <main>{children}</main>
+          </SidebarInset>
+
+          <MySidebar />
+        </SidebarProvider>
+
+    3. Change icons.
+
+
+
+
+---------- (Skeleton) ----------
+
+* It is a server component by default.
+
+* Used to show some loading states.
+
+* by using Skeleton component, we should manually create components which are aligh
+  with our needs.
+
+* Can copy paste 2 designs from shadcn.
+
+    1. ListTile like design.
+    2. Video & Title like design.
+
+Ex:
+    <div className="flex items-center space-x-4">
+      <Skeleton className="h-12 w-12 rounded-full" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[250px]" />
+        <Skeleton className="h-4 w-[200px]" />
+      </div>
+    </div>
+
+
+
+
+---------- (Table) ----------
+
+* If you need a table you can copy and past it from,
+
+    1. Shadcn Table component.
+
+    2. Shadcn Typography note.
+
+
+* All components:
+
+    * Table
+    * TableHeader
+    * TableBody
+    * TableFooter
+    * TableHead
+    * TableRow
+    * TableCell
+    * TableCaption
+
+
+* Table:
+    Parent component.
+
+
+* TableHeader:
+    To wrap the header row.
+
+
+* TableBody:
+    To wrap all body rows.
+
+
+* TableFooter:
+    To wrap the last row of the table.
+
+
+* TableHead:
+    To define each table header cell.
+
+
+* TableRow:
+    To define a table row.
+
+
+* TableCell:
+    To define a table each table cell.
+
+
+* TableCaption:
+    To show the table description under the table.
+
+
+Notes:
+
+    Can use, className="text-right" to align text inside a TableCell or a TableHead.
+
+    Can use colSpan={3} to expand a TableCell or TableHead to specified number of cells.
+
+
+
+
+---------- (Textarea) ----------
+
+* By defaultt a server component.
+
+* Mostly used with <form/>
+
+* All components:
+
+    * Textarea
+
+
+
+Ex:
+
+<FormField
+  control={form.control}
+  name="bio"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Bio</FormLabel>
+      <FormControl>
+        <Textarea
+          placeholder="Tell us a little bit about yourself"
+          className="resize-none"
+          {...field}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Toasts --------------------------------------------------------------
+
+* If you want to only redirect to another page without showing a toast message,
+  just use server side redirect.
+
+      redirect();
+
+
+* If you want to perform redirect & to show a toast, then use toast function &
+  client side redirect using router in useEffect.
+
+    useEffect(() => {
+      if(state?.success) {
+        toast.success(...);
+        router.push(...);
+      } else if (state && !state.success) {
+        toast.error(...);
+      }
+    }, [state, router]);
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Shadcn prebuild components ------------------------------------------
+
+---------- (showToast - function) ----------
+
+Note: Add this inside very bottom of <body></body> tag: <Toaster />
+
+import { CircleCheckBig, CircleX } from "lucide-react";
+import { toast } from "sonner";
+
+type ShowToastProps = {
+  success: boolean;
+  message: string;
+};
+
+function showToast({ success, message }: ShowToastProps) {
+  if (success) {
+    toast.success(message, {
+      icon: <CircleCheckBig size={16} className="size-4 shrink-0" />,
+    });
+  } else {
+    toast.error(message, {
+      icon: <CircleX size={16} className="size-4 shrink-0" />,
+    });
+  }
+}
+
+export default showToast;
+
+
+
+
+---------- (ButtonPending) ----------
+
+import { Loader2Icon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+import { Button } from "@/components/ui/button";
+
+type Props = {
+  children: React.ReactNode;
+  isPending?: boolean;
+  className?: string;
+  type?: "submit" | "reset" | "button";
+  size?: "default" | "icon" | "lg" | "sm";
+  variant?:
+    | "default"
+    | "destructive"
+    | "ghost"
+    | "link"
+    | "outline"
+    | "secondary";
+  onClick?: () => void;
+};
+
+export function ButtonPending({
+  children,
+  isPending,
+  className,
+  type,
+  size,
+  variant,
+  onClick,
+}: Props) {
+  return (
+    <Button
+      disabled={isPending}
+      type={type}
+      size={size}
+      variant={variant}
+      className={cn("w-fit", className)}
+      onClick={onClick}
+    >
+      {isPending && <Loader2Icon className="animate-spin" />}
+      {isPending ? "Please wait" : children}
+    </Button>
+  );
+}
+
+
+
+
+---------- (LoginForm) ----------
+
+"use client";
+
+import { startTransition, useActionState, useEffect } from "react";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { login } from "@/actions/login";
+import { LoginFormSchema } from "@/lib/validators";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { ButtonLoading } from "../button-loading";
+import FormErrorMessage from "../form-error-message";
+import showToast from "../show-toast";
+
+export function LoginForm() {
+  const [state, loginAction, isPending] = useActionState(login, undefined);
+
+  useEffect(() => {
+    if (state && state.success) {
+      showToast({ success: true, message: state.message });
+    } else if (state && !state.success) {
+      showToast({ success: false, message: state.message });
+    }
+  }, [state]);
+
+  const form = useForm<z.infer<typeof LoginFormSchema>>({
+    resolver: zodResolver(LoginFormSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  function onSubmit(data: z.infer<typeof LoginFormSchema>) {
+    startTransition(() => {
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+      loginAction(formData);
+    });
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormControl>
+                <Input
+                  id="email"
+                  autoComplete="off"
+                  placeholder="john@example.com"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <ButtonPending isPending={isPending}>Login</ButtonPending>
+      </form>
+    </Form>
+  );
+}
+
+
+
+
+---------- (Message) ----------
+
+import { CircleCheckBig, CircleX } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+type ErrorMessageProps = {
+  success: boolean;
+  message: string;
+  className?: string;
+};
+
+export default function Message({
+  success,
+  message,
+  className,
+}: ErrorMessageProps) {
+  if (!message) return null;
+
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-x-3 text-sm px-3 py-2 rounded-md w-fit",
+        success ? "text-emerald-500 bg-emerald-500/15" : "text-destructive bg-destructive/15",
+        className
+      )}
+    >
+      {success ? (
+        <CircleCheckBig className="size-4 shrink-0" size={16} />
+      ) : (
+        <CircleX className="size-4 shrink-0" size={16} />
+      )}
+      {message}
+    </div>
+  );
+}
+
+
+
+
+---------- Custom Searchbar ----------------------------------------------------
+
+* On Enter key:
+
+type Props = {
+  className?: string;
+  onSearch?: (query: string) => void;
+  placeholder?: string;
+};
+
+export default function Searchbar({ className, onSearch, placeholder }: Props) {
+  const [query, setQuery] = useState("");
+
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    setQuery(event.target.value);
+  }
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter" && query) {
+      onSearch?.(query);
+    }
+  }
+
+  return (
+    <div className="relative">
+      <Search className="absolute size-4 top-1/2 -translate-y-1/2 left-2 opacity-50" />
+      <Input
+        id="search"
+        value={query}
+        className={cn("w-60 pl-8", className)}
+        placeholder={placeholder ?? "Search..."}
+        autoComplete="off"
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+      />
+    </div>
+  );
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Custom card style ---------------------------------------------------
+
+className="p-6 border bg-card bg-gradient-to-t from-primary/5 to-card rounded-xl"
+
+* border = border-1
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Covert normal shadcn form to ReactHookForm --------------------------
+
+1. Install shadcn form component.
+
+2. Extract the normal <form/> to a seperate client component.
+
+3. Create the zod schema for all the fields of the <form/>.
+
+  Ex:
+    export const SignInSchema = z.object({
+      email: z
+        .string({ message: "Email is required" })
+        .min(1, { message: "Email is required" })
+        .email({ message: "Invalid email" }),
+
+      password: z
+        .string({ message: "Password is required" })
+        .min(1, { message: "Password is required" })
+        .min(8, { message: "Need at least 8 characters" }),
+    });
+
+4. Create the "form" object as follows and provide defaultValues for all fields.
+
+  Ex:
+    const form = useForm<z.infer<typeof SignInSchema>>({
+      resolver: zodResolver(SignInSchema),
+      defaultValues: {
+        email: "",
+        password: "",
+      },
+    });
+
+5. Create the "onSubmit" function.
+
+    function onSubmit(data: z.infer<typeof SignInSchema>) {
+      console.log(data);
+    }
+
+6. Wrap the entire <form/> component with <Form/> component and provide the
+    "form" object to it as follows,
+
+      <Form {...form}>
+      </Form>
+
+7. Add this to <form/> component.
+
+    onSubmit={form.handleSubmit(onSubmit)}
+
+8. Now visually seperate each form item (Label & Input) to identify easily.
+
+9. Replace each of them one by one with following <FormField/> component and
+   modify them according to current item values.
+
+    <FormField
+      control={form.control}
+      name="email"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel htmlFor="email">Email</FormLabel>
+          <FormControl>
+            <Input
+              id="email"
+              autoComplete="off"
+              placeholder="john@example.com"
+              {...field}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+
+10. If you want add something with <FormLabel/> like "Forgot password", then
+    replace form label with following code.
+
+      <div className="flex items-center">
+        <FormLabel htmlFor="password">Password</FormLabel>
+        <a
+          href="#"
+          className="ml-auto text-sm underline-offset-2 hover:underline"
+        >
+          Forgot password?
+        </a>
+      </div>
+
+11. If you need a password field, get it from shadcn form builder github repository
+    components/ui/password-input.tsx directory. Change it's Eye icons to lucide-react
+    icons.
+
+      import { Eye, EyeOff } from "lucide-react";
+
+12. You can now replace Buttons with ButtonPendings.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Metadata ------------------------------------------------------------
+
+---------- (In root layout) ----------
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s | Finance",
+    default: "Welcome | Finance",
+  },
+  description: "Finance website description",
+};
+
+
+
+
+---------- (In other pages) ----------
+
+export const metadata: Metadata = {
+  title: "Page Title",
+};
+
+Note: A layout's metadata does not affect the page at the same route level
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Server side redirect in try-catch -----------------------------------
+
+Note: In Nextjs you cannot define redirect() inside a try-catch block directly
+
+---------- (Solution) ----------
+try {
+  // Part 1 of try block
+
+} catch (error) {
+  // do something if there is an error
+
+  // Must use return at the end of catch block
+  return;
+}
+
+// Part 2 of try block
+redirect(`/auth/verify-email?email=${rawData.email}`);
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Apply 2 layouts for one page.tsx in same route ----------------------
+
+* Use route groups.
+
+Ex:
+
+/route
+    layout.tsx
+
+    /(group_name)
+        layout.tsx
+        page.tsx
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Dashboard & Authentication routes -----------------------------------
+
+---------- (Auth routes) ----------
+
+app/(auth)/sign-in/page.tsx
+app/(auth)/sign-up/page.tsx
+
+
+
+
+---------- (Dashboard route) ----------
+
+app/(dashboard)/page.tsx
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Responsive Design ---------------------------------------------------
+
+---------- (Page paddings) ----------
+
+px-4 sm:px-6 lg:px-8 xl:px-12 (Skip md & 2xl)
+
+
+
+
+---------- (Hide an element based on screen size) ----------
+
+If the element is a flexbox:
+  className="hidden lg:flex"
+
+Otherwise:
+  className="hidden lg:block"
+
+
+
+
+---------- (Navigation) ----------
+
+"use client";
+
+import { useMedia } from "react-use";
+
+import NavigationDesktop from "./navigation-desktop";
+import NavigationMobile from "./navigation-mobile";
+
+const routes = [
+  { href: "/", label: "Dashboard" },
+  { href: "/transactions", label: "Transactions" },
+  { href: "/accounts", label: "Accounts" },
+  { href: "/categories", label: "Categories" },
+] as const;
+
+export default function Navigation() {
+  const isMobile = useMedia("(max-width: 1024px)", false);
+
+  if (isMobile) {
+    return <NavigationMobile routes={routes} />; // Use shadcn Sheet component
+  }
+
+  return <NavigationDesktop routes={routes} />;
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Redux Toolkit -------------------------------------------------------
+
+* Installation: (can find from official redux toolkit web page quick start)
+
+    npm install @reduxjs/toolkit react-redux
+
+
+* Folder structure
+
+/src
+  /redux
+    /features
+      /feature1
+        feature1-slice1.ts
+        feature1-slice2.ts
+
+    store.ts
+
+
+* we should use serializable values with redux toolkit.
+
+Primitives:
+
+  string
+  number
+  boolean
+  null
+  undefined
+
+
+Arrays of primitives:
+
+  [1, 2, 3]
+  ["a", "b"]
+  [false, true]
+
+
+Objects with primitive keys.
+
+  {
+    value: 1,
+    isTrue: false,
+    count: null,
+  }
+
+
+
+
+---------- (Setup) ----------
+
+1. Create a global provider (AppProvider) for all providers (redux + other).
+
+"use client";
+
+import { Provider } from "react-redux";
+import store from "./redux/store";
+
+type Props = {
+  children: React.ReactNode;
+};
+
+export default function AppProvider({ children }: Props) {
+  return <Provider store={store}>{children}</Provider>;
+}
+
+
+
+
+---------- (Create store) ----------
+
+* File name: store.ts
+
+
+Ex:
+
+import { configureStore } from "@reduxjs/toolkit";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+
+import counterSlice from "./features/counter-slice";
+
+const store = configureStore({
+  reducer: {
+    counter: counterSlice.reducer,
+  },
+});
+
+export const useAppSelector: TypedUseSelectorHook<
+  ReturnType<typeof store.getState>
+> = useSelector;
+export const useAppDispatch: () => typeof store.dispatch = useDispatch;
+
+export default store;
+
+
+
+
+---------- (Create a slice) ----------
+
+* File naming convension: <feature_name>-slice.ts (Ex: posts-slice.ts)
+
+
+Ex:
+
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+const initialState = {
+  count: 0,
+};
+
+const counterSlice = createSlice({
+  name: "counter",
+  initialState,
+  reducers: {
+    incrementCount: (state, action: PayloadAction<number>) => {
+      state.count += action.payload;
+    },
+
+    decrementCount: (state) => {
+      state.count--;
+    },
+  },
+});
+
+export const { incrementCount, decrementCount } = counterSlice.actions;
+
+export default counterSlice;
+
+
+
+
+---------- (Listening to value changes) ----------
+
+const value = useAppSelector((state) => state.counter.count);
+
+
+* Can use only inside a client component.
+
+* It rebuilds the component when the state is changed.
+  In this case the component is listening only to count value but not other
+  properties in counter state.
+
+
+
+
+---------- (Just access the value without listening) ----------
+
+const currentState = store.getState();
+const value = currentState.counter.count;
+
+
+
+
+---------- (Change state) ----------
+
+const dispatch = useAppDispatch();
+dispatch(decrementCount(<args_if_available>));
+
+
+* Can use only inside a client component.
+
+* It doesn't rebuild the component.
+
+
+
+
+---------- Async actions ----------
+
+* If the operation is an async, we have to use "createAsyncThunk".
+
+1. Create the asyncThunk function as follow,
+
+      export const incrementCount = createAsyncThunk<
+        number, // success type
+        number, // function args
+        { rejectValue: string } // reject value
+      >("counter/incrementCount", async (amount, { rejectWithValue }) => {
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          return amount;
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Something went wrong!";
+          return rejectWithValue(message);
+        }
+      });
+
+
+2. Now add isPending & message props to initialState.
+
+      type InitialState = {
+        count: number;
+        isPending: boolean;
+        message: string;
+      };
+
+      const initialState: InitialState = {
+        count: 0,
+        isPending: false,
+        message: "",
+      };
+
+
+3. Now add extraReducers as follows in createSlice.
+
+      extraReducers: (builder) => {
+      builder
+        .addCase(incrementCount.pending, (state) => {
+          state.isPending = true;
+        })
+        .addCase(incrementCount.fulfilled, (state, action) => {
+          state.isPending = false;
+          state.count += action.payload;
+          state.message = "Success";
+        })
+        .addCase(incrementCount.rejected, (state, action) => {
+          state.isPending = false;
+          state.message = action.payload ?? "Unknown error";
+          console.log(state.message);
+        });
+      },
+
+
+* Usage:
+    Now you can call asyncThunk function by importing it just like exported
+    action.
+
+        dispatch(<async_thunk_function>(<args>))
+
+
+
+
+---------- RTK Query ----------
+
+* File naming convension: <feature_name>-api.ts (Ex: posts-api.ts)
+
+
+* Fetching (GET):
+
+    import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"; // must be query/react
+
+    type Post = {
+      userId: number;
+      id: number;
+      title: string;
+      body: string;
+    };
+
+    const postsApi = createApi({
+      reducerPath: "posts",
+      baseQuery: fetchBaseQuery({
+        baseUrl: "https://jsonplaceholder.typicode.com",
+      }),
+      endpoints: (builder) => ({
+        getPosts: builder.query<Post[], void>({
+          //  query generics: result value, query callback arg
+          query: () => "/posts",
+        }),
+      }),
+    });
+
+    export const { useGetPostsQuery } = postsApi;
+
+    export default postsApi;
+
+
+    * Access data:
+
+      const { data: posts, isLoading, isError } = useGetPostsQuery(<args>);
+
+          Note:
+              1. During the initial render:
+
+                  * isLoading: true
+
+                  * data: undefined
+
+
+              2. If the response status code is not 2XX (200-299), then RTK
+                 Query consider it as an error.
+
+
+              3. We can catch http errors as follows:
+
+                  const { isLoading, isError, error } = useVerifyTokenQuery();
+
+                  useEffect(() => {
+                    if (isHttpError(error)) {
+                      const err = error as HttpError;
+                      toast.error(err.data.message);
+                    } else if (error) {
+                      toast.error("Something went wrong!, Please try again later");
+                    }
+                  }, [error]);
+
+
+                  Place in src/lib/utils.ts
+
+                      export function isHttpError(error: unknown): boolean {
+                        const result =
+                          error &&
+                          typeof error === "object" &&
+                          "status" in error &&
+                          "data" in error &&
+                          typeof error.status === "number";
+
+                        return result as boolean;
+                      }
+
+
+                  Place in src/types/http-error.ts
+
+                      export type HttpError = {
+                        status: number;
+                        data: {
+                          success: boolean;
+                          message: string;
+                        };
+                      };
+
+
+
+
+* Mutations (POST, DELETE, PATCH):
+
+    type Post = {
+      userId: number;
+      id: number;
+      title: string;
+      body: string;
+    };
+
+    const postsApi = createApi({
+      reducerPath: "posts",
+      baseQuery: fetchBaseQuery({
+        baseUrl: "https://jsonplaceholder.typicode.com",
+      }),
+      endpoints: (builder) => ({
+        getPosts: builder.query<Post[], void>({
+          //  query generics: result value, query callback arg
+          query: () => "/posts",
+        }),
+
+        createPost: builder.mutation<Post, Omit<Post, "id">>({
+          query: (post) => ({
+            url: "/posts",
+            method: "POST",
+            body: post,
+          }),
+        }),
+      }),
+    });
+
+    export const { useCreatePostMutation, useGetPostsQuery } = postsApi;
+
+    export default postsApi;
+
+
+    * Access data:
+
+      const [createPostMutation, { data: post, isLoading, isError }] = useCreatePostMutation();
+
+          Note:
+              During the initial render:
+
+                  * isLoading: true
+
+                  * data: undefined
+
+
+      createPostMutation({ body: "", title: "", userId: 1 });
+
+
+
+
+* Define the api slice inside the store:
+
+    * We have to specify it in 2 places:
+
+        1. in "reducer"
+
+        2. in "middleware"
+
+
+Ex:
+
+export const store = configureStore({
+  reducer: {
+    [<apiSlice1>.reducerPath]: <apiSlice1>.reducer,
+    [<apiSlice2>.reducerPath]: <apiSlice2>.reducer,
+  },
+
+  middleware: (getDefaultMiddleware) => {
+    return getDefaultMiddleware().concat(
+      <apiSlice1>.middleware,
+      <apiSlice2>.middleware,
+    );
+  }
+});
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- React email ---------------------------------------------------------
+
+* Installation:
+
+    Use manual installation guide of the React Email official website.
+
+
+* Set emails directory & port in script:
+
+    "email:dev": "email dev --dir src/components/emails --port 4000"
+
+--------------------------------------------------------------------------------

@@ -1,0 +1,1034 @@
+---------- Fixes ---------------------------------------------------------------
+
+---------- (VS Code keyring issue at sign in) ----------
+
+* Step 1:
+
+      sudo pacman -S gnome-keyring libsecret
+
+
+* Step 2:
+
+      Select "configure runtime arguments" in vscode command palette. It will
+      open the file called "argv.json".
+
+
+* Step 3:
+
+      Add  following key-value pair to it:
+
+            "password-store": "gnome-libsecret"
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Clean AndroidStudio -------------------------------------------------
+
+* Delete following folders to remove unused versions:
+
+      ~/.cache/Google
+      ~/.config/Google
+
+
+* Delete following folders to clean gradle:
+
+      ~/.gradle/.tmp
+      ~/.gradle/caches
+      ~/.gradle/kotlin-profile
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Basics --------------------------------------------------------------
+
+* Create a file:
+
+      touch <file_name>
+
+
+* Delete a file:
+
+      rm <file_name>
+
+
+* Create a folder:
+
+      mkdir <folder_name>
+
+
+* Delete a folder:
+
+      rm -r <folder_name>
+
+
+* Move / Rename:
+
+      file / folder:
+
+            mv <name> <destination_directory>/<optional_new_name>
+
+
+* Copy:
+
+      file:
+
+            cp <file_name> <destination_directory>/<optional_new_name>
+
+
+      folder:
+
+            Same command with "-r"
+
+
+* Check size of a file / folder:
+
+      du -sh <file_or_folder>
+
+            s - summary
+            h - human readable form
+
+
+* Check overall disk usage:
+
+      df -h
+
+
+* Check file type:
+
+      file <file_name>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Date & Time -------------------------------------------------------
+
+* Show current status:
+
+      timedatectl
+
+      Make sure that:
+
+            System clock synchronized: yes
+            NTP service: active
+
+
+* Show all available timezones:
+
+      timedatectl list-timezones
+
+
+* Change timezone:
+
+      sudo timedatectl set-timezone <timezone>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Check ip addresses --------------------------------------------------
+
+* Local:
+
+      ip address show
+
+      - Ignore LOOPBACK
+
+      - Select the interface with UP + LOWER_UP
+
+
+      or you can use: hostname -i
+
+
+* Public:
+
+      curl -4 ifconfig.me (for IP4 adress)
+
+      curl -6 ifconfig.me (for IP6 adress)
+
+      (ifconfig - interface configurations)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Control system services ---------------------------------------------
+
+* Check the status:
+
+      sudo systemctl status <service>
+
+
+* Stop a service:
+
+      - Stop the service immediately.
+
+      - Service could start again automatically when the system boot.
+
+      - Command:
+
+            sudo systemctl stop <service>
+
+      - To start again:
+
+            sudo systemctl start <service>
+
+
+* Disable a service:
+
+      - Prevents the service from starting automatically on boot.
+
+      - It does not stop anything currently running.
+
+      - Command:
+
+            sudo systemctl disable <service>
+
+      - To enable again:
+
+            sudo systemctl enable <service>
+
+
+* Stop + Disable:
+
+      sudo systemctl disable <service>.service --now
+
+
+* Enable + Start:
+
+      sudo systemctl enable <service>.service --now
+
+
+* Restart a service:
+
+      sudo systemctl restart <name>.service
+
+
+* Sometimes ssh.socket service start the ssh.service automatically even if you
+  stop and disable it. Therefore to stop and disable ssh.service, firstly stop
+  and disable the ssh.socket service.
+
+
+* To prevent a service from being started in any way:
+
+      sudo systemctl mask <service>
+
+      Stop + Mask:
+
+            sudo systemctl mask <service> --now
+
+
+* To remove the mask:
+
+      sudo systemctl unmask <service>
+
+      Unmask + Start:
+
+            sudo systemctl unmask <service> --now
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Install package -----------------------------------------------------
+
+---------- (pacman) ----------
+
+* Official arch package manager.
+
+* To install a package:
+
+      sudo pacman -S <package_name>
+
+
+
+
+---------- (.xz / .gz) ----------
+
+* Step 1:
+
+      Extract it into Downloads directory.
+
+
+* Step 2:
+
+      Move them to: /opt/
+
+
+* Step 3:
+
+      Update PATH variables for a CLI application or create a .desktop entry for
+      an UI application in
+
+            ~/.local/share/applications
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- File permissions ----------------------------------------------------
+
+* Permission values:
+
+      Read   : 4
+      Write  : 2
+      Execute: 1
+
+
+* Command:
+
+      chmod <permission_number> <file>
+
+
+Ex: Remove all permission for a file for group and others and allow only read
+    permissions for the user
+
+            chmod (4 + 0 + 0)(0 + 0 + 0)(0 + 0 + 0) <filename>
+
+            chmod 400 <filename>
+
+
+* Default permissions:
+
+      Files  : 644
+      Folders: 755
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Clipboard -----------------------------------------------------------
+
+* Installation:
+
+      sudo pacman -S wl-clipboard --needed
+
+
+* Copy the result of a command:
+
+      <command> | wl-copy
+
+      * The content is copied with a new line at the end.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Screen Command ------------------------------------------------------
+
+* The "screen" command is used to create and manage multiple terminal sessions
+  inside a single SSH or terminal connection.
+
+
+* Start a new session:
+
+      screen -S <name>
+
+
+* List running screen sessions:
+
+      screen -ls
+
+
+* Detach from current session:
+
+      Press and hold "Ctrl + A", then press "D"
+
+
+* Reattach to a session:
+
+      screen -r <name>
+
+
+* Kill a session from outside:
+
+      screen -SX <name> quit
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- SSH -----------------------------------------------------------------
+
+* To install both client and server:
+
+      sudo pacman -S openssh
+
+
+* ssh client:
+
+      - To connect to a remote servers
+
+      - Connect to a ssh server:
+
+            ssh -p <port> <user>@<ssh_server_ip>  (default port 22)
+
+            Instead of adding the public key to ssh agent using ssh-add <key>,
+            we can specify the public key with "-i" option as follows:
+
+                  ssh -i <key_path> -p <port> <user>@<ssh_server_ip>
+
+
+
+
+* ssh server:
+
+      - To keep listening for incomming ssh connections
+
+      - To check status:
+
+            sudo systemctl status sshd.service
+
+      - To enable the server:
+
+            sudo systemctl enable sshd.service
+
+      - To disable the server:
+
+            sudo systemctl disable sshd.service
+
+      - To see the port which the ssh server is running:
+
+            grep -i 'port' /etc/ssh/sshd_config
+
+
+
+
+* Recommended location to store all of your ssh keys:
+
+      ~/.ssh/
+
+
+* Generate a secure ssh key pair:
+
+      ssh-keygen -t ed25519 -C <comment> -f ~/.ssh/<name_of_keys>
+
+
+* To start the ssh-agent:
+
+      eval $(ssh-agent -s)
+
+
+* Add a ssh private key to the ssh agent:
+
+      ssh-add <path>
+
+
+* List all ssh keys that are currently loaded into your ssh agent:
+
+      ssh-add -l
+
+
+
+
+---------- (Transfer files between systems over ssh) ----------
+
+* scp (Secure Copy Protocol):
+
+      - For one time transfer without interactive sessions.
+
+
+      - Copy a file from client to server:
+
+            scp -i <private_key> -P <port> <file_name> <user>@<public_ip_of_server>:<path_to_copy> (default port: 22)
+
+
+      - Copy a file from server to client:
+
+            scp -i <private_key> -P <port> ubuntu@15.206.89.142:<file_path_in_server> <path_to_copy_in_client>
+
+
+
+
+* sftp (Secure File Transfer Protocol):
+
+      - For continuous file management and interactive transfers.
+
+
+      - Need a ssh server.
+
+
+      - Encrypted.
+
+
+      - Connect to a ssh server:
+
+            To connect with the user password:
+
+                  1. sftp -P <port> <user>@<public_ip_of_server>  (default port: 22)
+
+                  2. Then enter the password of the user.
+
+
+            To connect with a private key:
+
+                  sftp -i <private_key_path> -P <port> <user>@<public_ip_of_server>
+
+
+      - To transfer files:
+
+            - Cannot transfer multiple files or folders at once. Send the one by
+              one
+
+            - For folders use "-r" option.
+
+            - Get a file from the server
+
+                  get <filepath_in_server>
+
+                  File is downloaded to pwd of the client.
+
+            - Upload a file to the server:
+
+                  put <filepath_in_client>
+
+                  File is uploaded to pwd of the server.
+
+
+
+
+* ftp (File Transfer Protocol):
+
+      - Completely different from sftp.
+
+
+      - Needs a seperate FTP server.
+
+
+      - Not encrypted.
+
+
+      - Connect to a ftp server:
+
+            ftp -p <user>@<ftp_server_ip> <port>
+
+                  default port: 22
+
+                  -p for passive mode
+
+
+            Then enter the password of the user.
+
+
+      - Transter files:
+
+            Cannot send folders. Only one file can be transfered at once.
+
+
+            Get a file from the server:
+
+                  get <filepath_in_server>
+
+                  File is downloaded to pwd of the client.
+
+
+            Upload a file to the server:
+
+                  put <filepath_in_client>
+
+                  File is uploaded to pwd of the server.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Implement a ssh key for github --------------------------------------
+
+* Step 1:
+
+      Following command will generate a public key and a private key and they will
+      be stored in ~/.ssh/ directory.
+
+          ssh-keygen -t ed25519 -C "<comment>" -f <name_of_keys>
+
+          -t -----> Type of the keys
+          -C -----> Comment (can see with "ssh-add -l" command)
+          -f -----> File names of the keys
+
+      Recommended location to store keys: ~/.ssh/
+
+
+* Step 2:
+
+      Then copy the public key and add it to the GitHub.
+
+
+* Step 3:
+
+      Add the remote repository's ssh url to git repository.
+
+
+* Step 4:
+
+      Add the private key to the ssh agent to easy access. No need to enter
+      passphrase every time.
+
+        ssh-add <private_key_path>
+
+
+            If you get any error here, then start ssh-agent as follows and add
+            the private key again to ssh-agent by "ssh-add <key>" command:
+
+                  eval $(ssh-agent -s)
+
+
+      Check already added private keys in ssh-add:
+
+            ssh-add -l
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Archives ------------------------------------------------------------
+
+---------- (Tarball) ----------
+
+* Create:
+
+      With gzip compression (.tar.gz):
+
+            tar -czvf <archive_name>.tar.gz <folder>
+
+
+      With xz compression (.tar.xz):
+
+            tar -cJvf <archive_name>.tar.xz <folder>
+
+
+      Note:
+
+            c - create
+            z - gzip
+            J - xz
+            v - verbose / show progress
+            f - specify folder name
+
+
+            Always specify the compression algorithm after "-c"
+
+
+
+
+* To extract:
+
+      tar -xvf <archive_name>
+
+
+      Note:
+
+            x - extract
+
+
+            No need to specify the compression algorithm. It will be detected
+            automatically.
+
+
+
+
+---------- (Zip) ----------
+
+* Installation:
+
+      sudo pacman -S zip unzip --needed
+
+
+* Zip a folder:
+
+      zip -r <output_name> <folder_name>
+
+
+* Unzip a zip:
+
+      unzip <zip_file_name>
+
+
+* To hide the file list (quiet mode):
+
+      Zip  : zip -rq <output_name> <folder_name>
+
+      Unzip: unzip -q <zip_file_name>
+
+
+
+
+---------- (Encryption) ----------
+
+* Generate a random password:
+
+      pwgen -sync <length> <num_of_passwords>
+
+
+      Note:
+
+            s - Generate completely random passwords
+            y - Include at least one special symbol in the password
+            n - Include at least one number in the password
+            c - Include at least one capital letter in the password
+
+
+* If you want to encrypt a folder, create a tarball for that forlder first.
+
+
+* Encryption:
+
+
+      gpg --symmetric --no-symkey-cache --cipher-algo aes256 <file_name>
+
+
+      Note:
+
+            When you execute this command you can enter the encryption password.
+            After that a file named <file_name>.gpg will be created.
+
+
+* Decryption:
+
+      gpg --output gpg_manual.txt --decrypt gpg_manual.txt.gpg
+
+
+      Note:
+
+            If you don't specify --output, decrypted data will be printed in
+            the console.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Hashing -------------------------------------------------------------
+
+* There are multiple hash functions:
+
+      sha1sum
+      sha256sum
+      sha512sum
+
+
+* Generate a hash:
+
+      For a file:
+
+            sha256sum <file_name>
+
+
+      For a string:
+
+            echo -n "<string>" | sha256sum
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Base64 coding -------------------------------------------------------
+
+* Base64 encoded file is ~33% larger than original file.
+
+
+* Encode:
+
+      A file:
+
+            base64 <filename> > <encoded_file>.<original_file_ext>.b64
+
+
+      A string:
+
+            echo -n <string> | base64
+
+
+* Decode:
+
+      A file:
+
+            base64 -d <encoded_file>.<ext>.b64 > <filename>.ext
+
+
+      A String:
+
+            echo -n <encoded_string> | base64 -d
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Curl ----------------------------------------------------------------
+
+* Download a file:
+
+      curl -O <url>
+
+      If you don't specify the -O (uppercase o), the downloaded result will be
+      printed to console.
+
+      Sometimes when you use "curl -O <url>" it doesn't download the file. In
+      this case we have to follow the redirects.
+
+            curl -LO <url>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- fd command --------------------------------------------------------
+
+* Modern, faster, and simpler alternative to the "find" command.
+
+
+* It finds files and folders in given directory including sub directories.
+
+
+* Search for both files and directories:
+
+      fd <full_or_part_of_the_name> <path>
+
+
+* Search only for files:
+
+      fd -t f <full_or_part_of_the_name> <path>
+
+            * -t : Type
+            * f  : File
+
+
+* Search only for directories:
+
+      fd -t d <full_or_part_of_the_name> <path>
+
+            * -t : Type
+            * d  : Directory
+
+
+* Default path is the current directory.
+
+
+* Use -H option to include hidden files and directories.
+
+
+* fd command is not case sensitive by default. To make it case sensitive, use
+  -s option.
+
+
+* Practical usage:
+
+      * Go to the directory
+
+      * Then:
+
+            fd -H -t d/f <full_or_part_of_the_name>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- grep Command --------------------------------------------------------
+
+* grep is a powerful text-search utility (Global Regular Expression Print)
+
+
+* A word means:
+
+      * Letters (a-z, A-Z)
+      * Numbers (0-9)
+      * Underscore (_)
+
+
+* Word boundary: \b
+
+      * At start of a regex:
+
+            previous character is a non-word character
+            next character is a word character
+
+
+      * At end of a regex:
+
+            previous character is a word character
+            next character is a non-word character
+
+
+      * No \b means like * (zero or more characters)
+
+
+* Some useful options:
+
+      -n : To show line numbers
+      -i : To ignore case sensitivity
+      -E : Extended regular expressions
+
+
+
+
+---------- (Search for lines) ----------
+
+* Any match:
+
+      grep -E "<pattern>" <file>
+
+
+* Whole words only:
+
+      grep -E "\b<pattern>\b" <file>
+
+
+* Search for multiple patterns:
+
+      grep -E -e "<pattern1>" -e "<pattern2"> <file>
+
+
+
+
+---------- (Extract searched patterns) ----------
+
+* Use -o option
+
+
+
+
+---------- (Find file names) ----------
+
+* Show file names which contain given pattern.
+
+
+* Use:
+
+      -r : Doesn't follow symlinks
+      -R : Follows symlinks
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Terminal Multiplexer (tmux) -----------------------------------------
+
+* Start a new session:
+
+      With a given name:
+
+            tmux new -s <session_name> (-s : session)
+
+
+      Without a given name:
+
+            tmux
+
+            * Default names are : 0, 1, 2, 3, ...
+
+
+* Detach from the current session:
+
+      * Press "ctrl + b"
+      * Then press "d"
+
+
+* To close the current session:
+
+      exit
+
+
+* To close a given session:
+
+      tmux kill-session -t <session_name>
+
+
+* Attach to a session:
+
+      tmux attach -t <session_name> (-t : target)
+
+
+* List all sessions:
+
+      tmux ls
+
+
+* Switch sessions inside tmux:
+
+      * Press "ctrl + b"
+      * Then press "s"
+
+      * Then use "k" and "j" to navigate up and down
+
+
+
+
+* Manage windows:
+
+      * One session can contains multiple windows:
+
+
+      * Create a new window:
+
+            With a name:
+
+                  tmux new-window -n <name>
+
+
+            Without a name:
+
+                  tmux new-window
+
+
+      * Rename current window:
+
+            * Press "ctrl + b"
+            * Then press ","
+            * Then remove previous name and type new name and press enter
+
+
+      * Switch between windows:
+
+            * Press "ctrl + b"
+            * Then press "w"
+
+
+      * To close current window:
+
+            exit
+
+
+
+
+* Manage panes:
+
+      * One window can contains multiple panes.
+
+
+      * Split the pane:
+
+            * Press "ctrl + b"
+
+                  Vertically   : %
+                  Horizontally : "
+
+
+      * Close a pane:
+
+            exit
+
+
+      * Cycles to next pane:
+
+            * Press "ctrl + b"
+            * Then press "o" (lowecase)
+
+--------------------------------------------------------------------------------

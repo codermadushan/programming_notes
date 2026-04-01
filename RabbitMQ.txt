@@ -1,0 +1,134 @@
+---------- Introduction --------------------------------------------------------
+
+* RabbitMQ is a message broker.
+
+
+* Basically a middleman that lets different part of your system talk to each
+  other asynchronously.
+
+
+* Key functions of a message broker:
+
+      * Message queuing
+      * Message routing
+      * Message transformation
+      * Handling message delivery
+
+
+* Core concepts:
+
+    1. Producer:
+
+        * An app/service that sends messages to RabbitMQ.
+
+
+    2. Queue:
+
+        * Where RabbitMQ stores messages.
+
+
+    3. Consumer:
+
+        * An app/service that receives and processes messages from RabbitMQ.
+
+
+    4. Exchange:
+
+        * Routing mechanism.
+
+        * Types: Direct, Fanout, Topic, Headers
+
+
+    5. Binding:
+
+        * Link between a exchange and a queue.
+
+
+    6. Routing Key:
+
+        * A string that helps the exchange to determine where to send a message.
+
+        * For direct exchanges, the routing key is compared to the binding key of queues
+
+        * For topic exchanges, the routing key acts as a pattern-matching string.
+
+
+    7. Message:
+
+        * It consists of two parts.
+
+            Body: The actual data or content of the message.
+
+            Headers/Properties: Metadata that can be attached to the message.
+
+
+    8. Virtual Hosts:
+
+        * A logical separation within the RabbitMQ broker.
+
+
+    9. Clustering:
+
+        * Allowing you to distribute the workload across multiple servers.
+
+
+    10. Management Plugin:
+
+        * RabbitMQ provides a management plugin that allows you to manage and
+          monitor RabbitMQ through a web-based interface.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- AMQP & Other Protocols ----------------------------------------------
+
+* AMQP: Advanced Message Queuing Protocol
+
+    * Open standard for messaging and is the primary protocol used by RabbitMQ.
+
+
+    * Defines the structure of messages, and the interaction between message
+      brokers, producers, and consumers in a messaging system.
+
+
+    * Key features:
+
+        * Reliable delivery
+        * Queuing
+        * Routing
+        * Security
+        * Flow control
+
+
+    * Why is AMQP better?
+
+        * Advanced Routing
+        * Reliability
+        * Extensibility
+
+
+    * Why does RabbitMQ use AMQP?
+
+        * Interoperability
+        * Message Reliability
+        * Scalability
+        * Routing Flexibility
+
+
+
+
+* MQTT (Message Queuing Telemetry Transport)
+
+
+
+
+* STOMP (Simple Text Oriented Messaging Protocol)
+
+
+
+
+* HTTP (Hypertext Transfer Protocol)
+
+--------------------------------------------------------------------------------

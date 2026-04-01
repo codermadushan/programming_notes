@@ -1,0 +1,642 @@
+---------- Semantic html -------------------------------------------------------
+
+* Basic page structure.
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <header>
+      <img src="" alt="Logo" />
+
+      <nav>
+        <ul>
+          <li><a href=""></a></li>
+        </ul>
+
+        <ul>
+          <li><a href=""></a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        <h2></h2>
+
+        <p></p>
+      </section>
+
+      <section>
+        <h2></h2>
+
+        <p></p>
+      </section>
+
+      <aside></aside>
+      // for like some content in side of main like sidebar
+    </main>
+
+    <footer>
+      <ul>
+        // For footer links. Usually don't use nav here.
+        <li><a href=""></a></li>
+      </ul>
+    </footer>
+  </body>
+</html>
+
+
+* Figure (for cards, testimonials, etc)
+
+<figure>
+  <img src="" alt="">
+
+  <figcaption>Our amazing team at the 2025 annual retreat in Goa</figcaption>
+</figure>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Common styles -------------------------------------------------------
+
+---------- (Apply a common style for each html element globally) ----------
+
+@layer base {
+  body {
+    @apply bg-gray-500;
+  }
+}
+
+
+
+
+---------- (Create a custom utility class) ----------
+
+@utility custom-card {
+  @apply bg-emerald-500 aspect-video rounded-md;
+}
+
+
+
+
+---------- (Scrollbar style) ----------
+
+Copy paste them directly to the:
+
+    @layer base {}
+
+::-webkit-scrollbar {
+  @apply w-3;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-muted-foreground/50 border-2 border-transparent bg-clip-content;
+}
+
+
+
+
+---------- (Style a table) ----------
+
+<table className="w-4xl">
+  <thead>
+    <tr className="*:border *:px-4 *:py-2 *:text-left">
+      <th>Name</th>
+      <th>Age</th>
+    </tr>
+  </thead>
+
+  <tbody className="*:even:bg-muted">
+    <tr className="*:border *:px-4 *:py-2">
+      <td>Madushan</td>
+      <td>26</td>
+    </tr>
+
+    <tr className="*:border *:px-4 *:py-2">
+      <td>Kaweesha</td>
+      <td>23</td>
+    </tr>
+
+    <tr className="*:border *:px-4 *:py-2">
+      <td>Kaweesha</td>
+      <td>23</td>
+    </tr>
+
+    <tr className="*:border *:px-4 *:py-2">
+      <td>Kaweesha</td>
+      <td>23</td>
+    </tr>
+  </tbody>
+</table>
+
+
+* Apply following styles to each <th/> or <td/>, (cell level)
+
+    className="border px-4 py-2"
+
+    1. border
+    2. px-4
+    3. py-2
+
+
+* "border-collapse" is applied automatically by tailwind. No need to worry about it.
+
+
+* To align text in each cell, (cell level)
+
+    className="text-right"
+
+
+* To add colored backgroud to even rows, apply following style for each row. (row level)
+
+    even:bg-muted
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- before & after elements ---------------------------------------------
+
+* To add some small content to the current element like labels.
+
+
+* Always you must specify the elements as follows. Otherwise styles are not
+  applied as expected:
+
+    className="before:absolute before:content-['']"
+
+    className="after:absolute after:content-['']"
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- z index -------------------------------------------------------------
+
+* To control the stacking order in z axis.
+
+
+* To apply the z index, the element must be one of followings:
+
+    * relative
+    * absolute
+    * fixed
+
+
+* If you don't need a specific positioning, just use: relative
+
+
+* Send an item to the bottom of the stack:
+
+    -z-<value>
+
+
+* Send an item to the top of the stack:
+
+    z-<value>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Grid ----------------------------------------------------------------
+
+* Default:
+
+    * width: Acquire the width as much as possible.
+
+    * height: Based on the content.
+
+    * grid columns = 1
+
+
+*  The grid is devided into grid cells by horizontal & verical grid lines.
+
+
+* There is a special way to specify the positions of these grid lines.
+
+    Horizontal:
+      left to right : 1, 2, 3, 4, ...
+      right to left : -1, -2, -3, -4, ...
+
+    Vertical:
+      top to bottom : 1, 2, 3, 4, ...
+      bottom to top : -1, -2, -3, -4, ...
+
+
+* The most outer html element of each grid cell acquires full width and height
+  of the cell. (size-full)
+
+
+* The height of a grid row is bases on the grid cell which has the maximum height.
+
+
+
+
+---------- Container level classes ----------
+
+* grid : convert a html element to a grid.
+
+
+* grid-cols-2: Specify the number of columns of the grid. (default 1)
+
+
+* gap-x-2 : Horizontal gap between grid cells.
+
+
+* gap-y-2 : Vertical gap between grid cells.
+
+
+* gap-2 : Both Horizontal & vertical gap.
+
+
+* Align items in each grid cell:
+
+    * Horizontally: justify-items-<position> (Default: justify-items-stretch)
+
+    * Vertically  : items-<position> (Default: items-start)
+
+
+
+
+---------- Cell level classes ----------
+
+* To expand a cell in 2 columns including current one: col-span-2
+
+* To expand a cell in 2 rows including current one   : row-span-2
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Responsive Design ---------------------------------------------------
+
+---------- (Page paddings) ----------
+
+* px-4 md:px-6 lg:px-8 xl:px-12 (skip sm & 2xl - first and last)
+
+
+
+
+---------- Body text ---------- (only md & lg)
+
+* text-sm md:text-base lg:text-lg
+
+
+
+
+---------- Headings ---------- (Ignore 2xl break point)
+
+tag    font-sizes    letter-spacing    line-spacing    font-weight
+
+h1     text-3xl      tracking-tight    leading-tight   font-extrabold
+       sm:text-4xl
+       md:text-5xl
+       lg:text-6xl
+       xl:text-7xl
+
+
+h2     text-2xl      tracking-tight    leading-tight   font-bold
+       sm:text-3xl
+       md:text-4xl
+       lg:text-5xl
+       xl:text-6xl
+
+
+h3     text-xl       tracking-normal   leading-snug    font-semibold
+       sm:text-2xl
+       md:text-3xl
+       lg:text-4xl
+       xl:text-5xl
+
+
+h4     text-lg       tracking-normal   leading-snug    font-semibold
+       sm:text-xl
+       md:text-2xl
+       lg:text-3xl
+       xl:text-4xl
+
+
+h5     text-base     tracking-normal   leading-normal  font-medium
+       sm:text-lg
+       md:text-xl
+       lg:text-2xl
+       xl:text-3xl
+
+
+h6     text-sm       tracking-wide     leading-normal   font-medium
+       sm:text-base
+       md:text-lg
+       lg:text-xl
+       xl:text-2xl
+
+
+* When to use each <h/> tags:
+
+    h1: Page’s main title.
+
+    h2: Main sections under the H1.
+
+    h3: Subsections under H2.
+
+    h4: Sub-subsections under H3 (rare)
+
+    h5: Deeply nested content (very rare)
+
+    h6: Lowest-level nested content (rare)
+
+
+
+
+---------- (Show / Hide elements) ----------
+
+Note: Tailwind "hidden" class doesn't render the element to DOM.
+
+* className="hidden md:block"
+
+
+* If the container is a flexbox:
+
+    className="hidden md:flex"
+
+
+* If the container is a grid:
+
+    className="hidden md:grid"
+
+
+
+
+---------- (Flexbox & Grid in responsive design) ----------
+
+* Flexbox:
+    If you want to arrange items only horizontal direction or verical direction.
+
+
+* Grid:
+    Else use grid.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- States --------------------------------------------------------------
+
+---------- Data attribute ----------
+
+* Syntax: data-<state_name>=<string_value>
+
+    Ex: data-state="open"
+
+
+* Normal usage:
+
+<div
+  data-color="green"
+  className="bg-amber-500 data-[color=green]:bg-emerald-500 w-96 aspect-video rounded-md"
+></div>
+
+
+
+
+* With peer:
+
+<div className="min-h-screen flex gap-4 justify-center items-center">
+  <div
+    data-color="amber"
+    className="peer bg-amber-500 w-96 aspect-video rounded-md"
+  ></div>
+
+  <div className="bg-slate-500 w-96 peer-data-[color=amber]:bg-amber-500 aspect-video rounded-md"></div>
+</div>
+
+
+
+
+* With peer + custom name:
+
+<div className="min-h-screen flex gap-4 justify-center items-center">
+  <div
+    data-color="amber"
+    className="peer/first bg-amber-500 w-96 aspect-video rounded-md"
+  ></div>
+
+  <div className="bg-slate-500 w-96 peer-data-[color=amber]/first:bg-amber-500 aspect-video rounded-md"></div>
+</div>
+
+
+
+
+* With group:
+
+<div
+  data-color="amber"
+  className="group bg-slate-500 w-96 aspect-video rounded-md flex justify-center items-center"
+>
+  <div className="bg-amber-500 group-data-[color=amber]:bg-emerald-500 w-80 aspect-video rounded-md"></div>
+</div>
+
+
+
+
+* With group + custom name:
+
+<div
+  data-color="amber"
+  className="group/parent bg-slate-500 w-96 aspect-video rounded-md flex justify-center items-center"
+>
+  <div className="bg-amber-500 group-data-[color=amber]/parent:bg-emerald-500 w-80 aspect-video rounded-md"></div>
+</div>
+
+
+
+
+* An example with useState:
+
+export default function HomePage() {
+  const [state, setState] = useState<"close" | "open">("close");
+
+  function handleState() {
+    setState(state == "open" ? "close" : "open");
+  }
+
+  return (
+    <div className="min-h-screen flex gap-4 justify-center items-center">
+      <Button onClick={handleState}>Toggle</Button>
+
+      <ChevronDown
+        data-state={state}
+        className="data-[state=close]:rotate-180 transition-transform"
+      />
+    </div>
+  );
+}
+
+Note: We use "transition-transform" tailwind class for smooth transforms.
+
+
+
+
+---------- Track a state from current element ----------
+
+* <td align="center" className="[&[align=center]]:text-center">
+
+    Note that align prop is deprecated in HTML 5.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Set full screen image, opacity & content ----------------------------
+
+<div className="h-screen relative px-4">
+  <Image
+    src={natureImage}
+    alt="Nature image"
+    fill
+    className="object-top object-cover"
+  />
+
+  <div className="absolute bg-black/60 inset-0" />
+
+  <div className="relative bg-emerald-500 max-w-3xl mx-auto top-1/3">
+    Content
+  </div>
+</div>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Set backgroud image, opacity & content to a container ---------------
+
+<div className="relative py-24 px-4">
+  <Image src={natureImage} alt="Nature image" fill />
+
+  <div className="absolute bg-black/60 inset-0" />
+
+  <div className="relative bg-emerald-500 max-w-3xl mx-auto">Content</div>
+</div>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Container Queries ---------------------------------------------------
+
+* For styling based on parent container(s) width. (Not based on screen width)
+
+
+* Pre-defined container sizes:
+
+    xs  ----------> 20rem
+    sm  ----------> 24rem
+    md  ----------> 28rem
+    lg  ----------> 32rem
+    xl  ----------> 36rem
+    2xl ----------> 42rem
+    3xl ----------> 48rem
+    4xl ----------> 56rem
+    5xl ----------> 64rem
+    6xl ----------> 72rem
+    7xl ----------> 80rem
+
+
+
+
+* Based on one parent container (@container):
+
+<div className="@container">
+  <div className="flex flex-col @md:flex-row">
+    // Content
+  </div>
+</div>
+
+
+
+
+* Based on nested parent containers (@container/<name>):
+
+<div className="@container/main">
+  <div className="flex flex-col @md/main:flex-row">
+    // Content
+  </div>
+</div>
+
+
+
+
+* Create reusable custom container sized:
+
+    @theme {
+      --container-<container_size_name>: <width>;
+    }
+
+
+
+
+* Using arbitrary values:
+
+    @min-[475px]
+    @max-[475px]
+
+    <div className="@container">
+      <div className="flex flex-col @min-[475px]:flex-row">
+        // Content
+      </div>
+    </div>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Gradient ------------------------------------------------------------
+
+* Linear:
+
+    className="bg-gradient-to-l from-emerald-500 to-slate-500"
+
+
+* Radial:
+
+    className="bg-radial from-emerald-500 to-slate-500"
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Techniques ----------------------------------------------------------
+
+* Create a square with size of parent container width:
+
+    className="w-full aspect-square"
+
+
+* Gradient text:
+
+    className="bg-gradient-to-l from-amber-500 to-emerald-500 text-transparent bg-clip-text"
+
+    If the text overflow the backgroud, use pt-2 or pb-2 to fix it.
+
+--------------------------------------------------------------------------------

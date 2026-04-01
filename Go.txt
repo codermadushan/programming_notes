@@ -1,0 +1,9362 @@
+---------- Installation --------------------------------------------------------
+
+* Define GOROOT environment variables in .bashrc:
+
+      export GOROOT=/opt/go
+      export PATH=$PATH:$GOROOT/bin
+
+
+* Download from official website.
+
+
+* Then extract it and move the extracted "go" folder to /opt folder.
+
+
+* Check version: go version
+
+
+* Now open vscode command pallet and search for "Go:Install/Update Tools". Then
+  select all tools and click "ok".
+
+
+
+
+---------- Remove go completely (linux) ----------------------------------------
+
+* Remove following folders from the system:
+
+      /usr/local/go
+
+      ~/go
+
+      ~/.config/go
+      ~/.config/gopls
+
+      ~/.cache/go-build
+      ~/.cache/goimports
+      ~/.cache/gopls
+
+
+
+
+---------- (VsCode settings) ----------
+
+1: Install official Go extension in VsCode.
+
+
+2:
+  * Open command pallet and search for: "Go:Install/Update" Tools.
+  * Then select all and click "ok".
+
+
+3: Add following configs to user settings in VsCode.
+
+  "gopls": {
+    "formatting.gofumpt": true,
+    "ui.diagnostic.staticcheck": true,
+    "ui.semanticTokens": true
+  },
+
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  }
+
+
+Note:
+    For more details: https://code.visualstudio.com/docs/languages/go
+
+
+    To check static checks are working or not:
+
+        time.Now().UTC() // UTC doesn't have side effects and its return value is ignored (SA4017)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Run a go program ----------------------------------------------------
+
+* Command: go run <go_file_name>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Compile a go program ------------------------------------------------
+
+* Command:
+
+    go build <go_file_name>
+
+
+* With custom file name:
+
+    go build -o <output_executable_name> <go_file_name>
+
+
+* Run the executable:
+
+    .\<executable_name>
+
+
+* For production:
+
+    * For production build, use garber for code obfuscation:
+
+        CGO_ENABLED=0 GOFLAGS="-buildvcs=false" garble -seed=random -literals -tiny build -trimpath -ldflags="-s -w -buildid=" -o <output_executable_name> ./main.go
+
+
+    * To check the binary is fully static or not:
+
+          ldd <executable_path>
+
+          (ldd -> List Dynamic Dependencies)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- First go program ----------------------------------------------------
+
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Print("Madushan")
+}
+
+
+* Go allows only ONE main() function per package, and by default, all .go files
+  in a folder belong to the same package (unless explicitly specified otherwise).
+
+
+* In Go, if you're writing an executable program, it must:
+
+    Use "package main"
+
+    Have a main() function as the entry point
+
+    If you try to run a file without "package main" or without a "main()"
+    function, you’ll get an error.
+
+
+* "package <name>"  (name is not main) is a library-style packages — used for
+  reusable code. They don’t need a main() function, and they’re not meant to be
+  executed directly with "go run".
+
+
+* In this case <import "fmt"> means, we import "Formatted Input & Output package" from Standart Library of Go.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Imports -------------------------------------------------------------
+
+* import a package:
+
+    import "fmt"
+
+
+* import a package with a name (named import):
+
+    import <name> "fmt"
+
+
+Note: Go imports use "Tree Shaking" process to increase performance of the application.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Variables -----------------------------------------------------------
+
+* Define a variable:
+
+    var <variable_name> <variable_data_type> = <value>
+
+
+    If you provide the value to the variable at the time of declaration, then
+    no need to specify the datatype.
+
+        var name = "Madushan"
+
+        Inside a function we can further simplify this as follows, But it is
+        valid only inside functions (will be formatted automatically by go extension)
+
+            var name = "Madushan" ----> name := "Madushan"
+
+
+    If you don't provide the value at the time of declaration, then the data type
+    is required.
+
+        var name string
+
+
+When we create a variable without providing a value at the time of declaration,
+default values of each datatype will be assigned to the variable.
+
+  * int: 0
+
+  * float64: 0
+
+  * string: "" (Empty string)
+
+  * bool: false
+
+  * Function: var value func(string) int : nill
+
+  * Pointer : var value *int             : nill
+
+  * Map     : var value map[string]int   : nill
+
+  * Slice   : var value []int            : nill
+
+  * Struct  : var value Person           : { 0 }
+    The value { 0 } is just a representation. In this case default values are applied
+    to the properties of the "Person" struct.
+
+
+* We can assign values to multiple variables in one line as follows:
+
+    const name, age = "Madushan", 10
+
+
+* Scope:
+    A variable can be accessed only inside the block which that variable is declared.
+
+    global variables can be accessed from anywhere within the same package.
+    But not necessarily across packages unless you make them exported.
+
+        PascalCase = Exported
+
+        camelCase = private (within the package)
+
+
+* Naming conventions
+  1. PascalCase: structs, interfaces, enums
+
+  2. snake_case: file names
+
+  3. camelCase : variables
+
+  4. UPPERCASE : constants
+
+  5. lowercase : package names
+
+
+* Constants:
+      To prevent re-assign values to variables, use "const" instead of "var". const
+      variables must be initialized at the time of declaration.
+
+          const name string (incorrect)
+
+          const name = "Madushan" (correct)
+          const Pi = 3.14159 (correct)
+
+          const name string = "Madushan" (correct, but no need to specify the type of the variable)
+
+          * Define multiple consts at once (Const Block)
+            const (
+              const1 = 1
+              const2 = 2
+            )
+
+
+      Always use "const" to define variables, use "var" only if you cannot use const
+
+
+
+
+* variable1 = variable2
+
+      If the variable2 is a:
+
+          int, float, bool, string
+          array
+          struct
+
+          then, new copy will be created and will be assigned to the variable1.
+
+
+      Otherwise variable1 is a new reference to the variable2
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Arithmetic operations -----------------------------------------------
+
+* Addition      : +
+* Subtraction   : -
+* Multiplication: *
+* Divition      : /
+
+Note: In Above 4 cases,
+  * If both are int, Result is int
+  * At least one is float, Result is float
+
+* Modulo: % (only for integers)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Loops ---------------------------------------------------------------
+
+---------- For loop ----------
+
+* Iterate integers from 1 to 100:
+
+    for i := 1; i <= 100; i++ {
+      fmt.Println(i)
+    }
+
+    Shortcut: "for"
+
+
+
+
+* If you want to iterate integers from "0" to "n-1":
+
+    for i := range n {
+      fmt.Println(i)
+    }
+
+    Shortcut: "forr" (for range)
+
+
+
+
+* Iterate over collection:
+
+    arr := [5]int{10, 20, 30, 40, 50}
+
+
+    // Access both indexes and values
+    for index, value := range arr {
+      fmt.Println(index, value)
+    }
+
+
+    // Access only indexes
+    for index := range arr {
+      fmt.Println(index)
+    }
+
+
+    // Access only values
+    for _, value := range arr {
+      fmt.Println(value)
+    }
+
+
+    // Access nothing
+    for range arr {
+      //
+    }
+
+
+
+
+* We can use "break" and "continue" statements like in other languages to control
+  the flow of the loop.
+
+
+
+
+---------- while loop ----------
+
+* There is no "while" loop in go language. We can achieve it using "for" loop.
+
+    i := 1
+    for i <= 5 {
+      fmt.Println(i)
+      i++
+    }
+
+
+* To create an infinite loop:
+
+    for {
+      // body
+    }
+
+
+* We can use "break" and "continue" keywords to control the flow of the loop.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Operators -----------------------------------------------------------
+
+---------- Logical operators ----------
+
+* NOT: !
+* AND: &&
+* OR : ||
+
+
+
+
+---------- Comparison operators ----------
+
+* Less than            : <
+* Less than or equal   : <=
+* Greater than         : >
+* Greater than or equal: >=
+* Not equal            : !=
+* Equal                : ==
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Conditional statements ----------------------------------------------
+
+---------- if else ----------
+
+    if age < 30 {
+      //
+    } else if age < 40 {
+      //
+    } else {
+      //
+    }
+
+
+
+
+---------- switch ----------
+
+* No need to use "break" at the end of each condition body. But if you want to
+  without break behavior we can use "fallthrough" keyword. It will fallthrough
+  the control to the next case also. but not all cases.
+
+
+Ex:
+
+    func findStr(str string) {
+      switch str {
+      case "hello":
+        fmt.Println("str is hello")
+
+      case "world":
+        fmt.Println("str is world")
+
+      default:
+        fmt.Println("Neither hello or world")
+      }
+    }
+
+
+* To check the type of a value, use "<value>.(type)" as the expression.
+
+Ex:
+
+    func findValueType(value any) {
+      switch value.(type) {
+      case int:
+        fmt.Println("value is a int")
+
+      case string:
+        fmt.Println("value is a string")
+
+      default:
+        fmt.Println("value is neither int nor string")
+      }
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Arrays --------------------------------------------------------------
+
+* The size of an array must be a fixed number.
+
+
+* All values must be in same data type.
+
+
+* We cannot use "const" to define arrays. We have to use "var".
+
+
+* Declaration:
+
+    With size:
+
+        var <array_name> [<length_of_array>]<data_type>
+
+        Ex: var numbers [5]int
+
+
+    With values:
+
+        <array_name> := [<length>]<data_type>{value1, value2, ...}
+
+        Ex: numbers := [3]int{1, 2, 3}
+
+
+
+
+* The data type of the array is:
+
+      [<size>]<type_of_a_value>
+
+
+
+
+* Change the value at specific index:
+
+    <array_name>[<index>] = <new_value>
+
+    Ex: numbers[0] = 10
+
+
+
+
+* Check the length of an array:
+
+    len(array)
+
+
+
+
+* Comparing arrays:
+
+    To compare arrays, the types of both arrays must be same.
+
+    numbers1 := [3]int{1, 2, 3}
+    numbers2 := [3]int{1, 2, 3}
+
+    fmt.Println(numbers1 == numbers2) // true
+
+
+    Note: <, <=, >, >= are not defined for arrays.
+
+
+
+
+* 2D arrays:
+
+      numbers := [3][3]int{
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9},
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Slices --------------------------------------------------------------
+
+* A slice is a pointer to an underlying array. The length of a slice is not
+  a fixed value like an array.
+
+
+* But internally slices use arrays. To get the length of current underline array
+  of a slice:
+
+      cap(<slice>)
+
+
+
+
+---------- Creation ----------
+
+1. Without values:
+
+  Option 1:
+      var slice []int
+
+  Option 2:
+      slice = make([]int, <initialLength>)
+
+
+2. With values:
+
+    numbers := []int{20, 40, 60, 80, 100}
+
+
+3. From an array:
+
+    numbersArray := [5]int{20, 40, 60, 80, 100}
+
+    slice1 := numbersArray[n:m]  (from index n to m-1)
+    slice2 := numbersArray[:m]  (from index 0 to m-1)
+    slice3 := numbersArray[n:] (from index n to last)
+
+
+4. From a slice:
+
+    numbersSlice := []int{20, 40, 60, 80, 100}
+
+    slice1 := numbersSlice[n:m]  (from index n to m-1)
+    slice2 := numbersSlice[:m]  (from index 0 to m-1)
+    slice3 := numbersSlice[n:] (from index n to last)
+
+
+
+
+---------- Add a new value ----------
+
+    numbersSlice = append(numbersSlice, 10, 20)
+
+
+
+
+---------- Make a copy of an existing slice ----------
+
+* We cannot create a copy of an exising slice by assigning the existing slice to
+  a new variable using = operation. In this case new variable becomes a new
+  reference to existing slice.
+
+
+Step 1:
+    Create a new slice with the same length and type of existing slice.
+
+    sliceCopy = make([]int, len(slice))
+
+
+Step 2:
+    Use copy function to copy values to new slice.
+
+    copy(sliceCopy, slice)
+
+
+
+
+---------- Access values ----------
+
+* We can access values of a slice using indexes.
+
+    slice[<index>]
+
+
+
+
+---------- Iterating over a slice ----------
+
+    slice := []int{20, 40, 60, 80}
+
+    for index, value := range slice {
+      fmt.Println(index, value)
+    }
+
+
+
+
+---------- Functions of slices ----------
+
+* To compare the equality of 2 slices (compare length & values). Cannot compare
+  2 slices in different data types.
+
+      slices.Equal(slice1, slice2)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Maps ----------------------------------------------------------------
+
+* Map provides an efficient way to store and retrieve key value pairs.
+
+* Each key must be unique.
+
+* They are unordered collections. There is no guaranteed order when iterating
+  over them.
+
+
+
+
+---------- Creation ----------
+
+* Without values:
+
+      mapVariable2 := make(map[string]int)
+
+
+* With values:
+
+    mapVariable := map[string]int{
+      "key1": 89,
+      "key2": 26,
+    }
+
+
+
+
+---------- Add a new pair to existing map ----------
+
+* In this case if the key already exists, then the existing value will be
+  replaced with new value.
+
+      mapVariable["key2"] = 3
+
+
+
+
+---------- Access values ----------
+
+* By using keys we can access values. If the key doesn't exist, then default
+  value of values data type will be returned.
+
+    Option 1:
+
+        value := mapVariable[<key>]
+
+
+    Option 2:
+
+        value, isKeyExist := mapVariable[<key>]
+
+
+
+
+---------- Delete key value pairs ----------
+
+* If the key doesn't exist, nothing will be happened.
+
+
+* Delete one pair:
+
+      delete(<map>, <key>)
+
+
+* Delete all pairs:
+
+      clear(<map>)
+
+
+
+
+---------- Map functions ----------
+
+* maps.Equal(mapVariable1, mapVariable2):
+
+      To check both maps contain same key value pairs or not.
+
+
+
+
+---------- Iterate over a map ----------
+
+* Order is not preserved.
+
+      mapVariable := map[string]int{
+        "key1": 1,
+        "key2": 2,
+        "key3": 3,
+        "key4": 4,
+        "key5": 5,
+      }
+
+      for key, value := range mapVariable {
+        fmt.Println(key, value)
+      }
+
+
+
+
+---------- Get number of key value pairs in a map ----------
+
+* len(mapVariable)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Range ---------------------------------------------------------------
+
+* Ranges in go provide a convenient way to iterate over various data structures
+  like,
+
+      ints
+      strings
+      arrays
+      slices
+      maps
+      ...
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Functions -----------------------------------------------------------
+
+func <name>(<parameters>) <returnType> {
+  // body
+
+  return <value>
+}
+
+
+* When you pass an argument to a function new copy will be created for,
+
+      ints, floats, bools, strings, arrays and structs.
+
+  For other data types, parameter will becomes a reference to the original value.
+
+
+* Without a return value:
+
+      func testFunction() {
+        fmt.Println("TestFunction")
+      }
+
+
+* All parameters in same data type:
+
+      func add(a, b int) int {
+        return a + b
+      }
+
+
+* Parameters in different data types:
+
+      func getAge(name string, age int) string {
+        return fmt.Sprintf("%s is %d years old", name, age)
+      }
+
+
+* Parameters in mixed types:
+
+      func testFunction(a, b int, c string) {
+        fmt.Println(a, b, c)
+      }
+
+
+
+
+---------- Anonymous functions ----------
+
+* If we want to create a function inside another function, it must be an
+  anonymous function.
+
+
+* Execute immediately:
+
+      func() {
+        fmt.Println("Madushan")
+      }()
+
+
+* Assign to a variable:
+
+      operation := func() {
+        fmt.Println("Madushan")
+      }
+
+
+
+
+---------- Function as an argument ----------
+
+func applyOperation(a, b int, operation func(int, int) int) int {
+	return operation(a, b)
+}
+
+func main() {
+	add := func(a, b int) int {
+		return a + b
+	}
+
+	result := applyOperation(10, 20, add)
+
+	fmt.Println(result) // 30
+}
+
+
+
+
+---------- Return a function from a function ----------
+
+func createMultiplier(factor int) func(int) int {
+	return func(x int) int {
+		return x * factor
+	}
+}
+
+func main() {
+	multiplier := createMultiplier(10)
+
+	result := multiplier(4)
+
+	fmt.Println(result)
+}
+
+
+
+
+---------- Multiple return values ----------
+
+* We must access all return values at the time of calling. Otherwise you will
+  get an error.
+
+      func getUserInfo() (string, int) {
+        return "Madushan", 26
+      }
+
+      func main() {
+        name, age := getUserInfo() // Must access both name and age
+
+        fmt.Println(name, age)
+      }
+
+
+* Simple error handling:
+
+      func compare(a, b int) (string, error) {
+        if a < b {
+          return "b is greater than a", nil
+        } else if a > b {
+          return "a is greater than b", nil
+        }
+        return "", errors.New("both values are equal")
+      }
+
+      func main() {
+        result, error := compare(10, 10)
+
+        if error != nil {
+          fmt.Println("Error:", error)
+        } else {
+          fmt.Println(result)
+        }
+      }
+
+
+* When we return multiple values from a function, we can variable names of
+  return types. In this case specified variables are created with their zeroth
+  values and we are only require to specify "return" keyword.
+
+
+Ex:
+
+    func getAddMul(a, b int) (add int, mul int) {
+      add = a + b
+      mul = a * b
+      return
+    }
+
+
+
+
+---------- Variadic functions ----------
+
+* Functions that accept variable number of arguments.
+
+
+* Variable number of parameter is a "slice" and it must be the last parameter.
+
+
+Ex:
+
+    func calculateTotal(numbers ...int) int {
+      total := 0
+
+      for _, value := range numbers {
+        total += value
+      }
+
+      return total
+    }
+
+    func main() {
+      numbers := []int{10, 20, 30, 40, 50}
+
+      result := calculateTotal(numbers...)  // Like spread operator
+
+      fmt.Println(result)
+    }
+
+
+
+
+---------- defer keyword ----------
+
+* defer <expression>
+
+
+* "defer" expressions are executed at the very end of the function in LIFO order.
+
+
+Ex:
+
+    func main() {
+      fmt.Println("Start")
+
+      defer fmt.Println("One")
+      defer fmt.Println("Two")
+
+      fmt.Println("Middle")
+
+      defer fmt.Println("Three")
+      defer fmt.Println("Four")
+
+      fmt.Println("End")
+    }
+
+
+Output:
+
+    Start
+    Middle
+    End
+    Four
+    Three
+    Two
+    One
+
+
+
+
+* Difer statements evaluate immediately when they are encountered. But executed
+  at the very end of the function in LIFO order.
+
+
+Ex:
+
+    func main() {
+      i := 10
+
+      fmt.Println("Start")
+
+      defer fmt.Println("value of 'i' in defer statement:", i)
+
+      i++
+
+      fmt.Println("Real value of 'i':", i)
+
+      fmt.Println("End")
+    }
+
+
+Output:
+
+    Start
+    Real value of 'i': 11
+    End
+    value of 'i' in defer statement: 10
+
+
+
+
+* Practical use cases of defer:
+
+    Resource cleanup
+    Unlocking mutexes
+    Logging and Tracing
+
+
+* Best practices:
+
+    Keep deferred actions short
+    Understand evaluation timing
+    Avoid complex control flow
+
+
+
+
+---------- panic keyword ----------
+
+* panic(<anyValue>)
+
+
+* Main goroutine panic stops the full program.
+
+
+* Other goroutine panic stops only that goroutine, program continues.
+
+
+Ex:
+
+    func process(input int) {
+      if input < 0 {
+        panic("input must be a non-negative number")
+      }
+
+      fmt.Println("processing input:", input)
+    }
+
+
+
+
+---------- defer with panic ----------
+
+* All the difer expressions that are evaluated before panic statement will be
+  executed before panic in LIFO order.
+
+
+Ex:
+
+    func process(input int) {
+      defer fmt.Println("difer statement 1")
+
+      defer fmt.Println("difer statement 2")
+
+      if input < 0 {
+        fmt.Println("before panic")
+
+        panic("input must be a non-negative number")
+      }
+
+      fmt.Println("processing input:", input)
+
+      defer fmt.Println("difer statement 3")
+    }
+
+    func main() {
+      process(-2)
+
+      fmt.Println("End")
+    }
+
+
+Output:
+
+    before panic
+    difer statement 2
+    difer statement 1
+    panic: input must be a non-negative number
+
+
+
+
+---------- recover ----------
+
+* We use recover() function to recover from a panic.
+
+
+* If there is not panic in the function execution, recover() returns nil,
+  otherwise it returns the panic.
+
+
+Ex:
+
+    func process() {
+      defer func() {
+        if r := recover(); r != nil {
+          fmt.Println("recovered:", r)
+        }
+      }()
+
+      fmt.Println("Start of process")
+
+      panic("Something went wrong!")
+
+      fmt.Println("End of process")
+    }
+
+    func main() {
+      fmt.Println("Start of program")
+
+      process()
+
+      fmt.Println("End of program")
+    }
+
+
+Output:
+
+    Start of program
+    Start of process
+    recovered: Something went wrong!
+    End of program
+
+
+* Practical use cases:
+
+    Graceful recovery
+    Cleanup
+    Logging & Reporting
+
+
+* Best practices:
+
+    Use with defer
+    Avoid silent recovery
+    Avoid overuse
+
+
+
+
+---------- exit ----------
+
+* Terminate the full program immediately:
+
+      os.Exit(<exitCode>)
+
+
+
+
+---------- init function ----------
+
+* A special function that can be declared in any package. It is used to perform
+  initialization tasks for the package before it is used.
+
+
+* It doesn't have any parameter or return value.
+
+
+* It will be executed before the main function.
+
+
+* It will be executed only once even if we import that package multiple times.
+
+
+* We can define multiple init functions in single package. They will be executed
+  in their declaration order.
+
+
+Ex:
+
+    func init() {
+      fmt.Println("Initialization 1")
+    }
+
+    func init() {
+      fmt.Println("Initialization 2")
+    }
+
+    func main() {
+    }
+
+
+Output:
+
+    Initialization 1
+    Initialization 2
+
+
+* Practical use cases:
+
+    Setup tasks
+    Configuration
+    Registering components
+    Database initialization
+
+
+
+
+---------- (Custom function types) ----------
+
+* If the custom function type method has a value receiver:
+
+      Ex:
+
+          type FuncType func(i, j int)
+
+          func (ft FuncType) call(i, j int) {
+            ft(i, j)
+          }
+
+          func main() {
+            f := func(i, j int) {
+              fmt.Println(i + j)
+            }
+
+            FuncType(f).call(10, 20)
+          }
+
+
+* If the custom function type method has a pointer receiver:
+
+      Ex:
+
+          type FuncType func(i, j int)
+
+          func (ft *FuncType) call(i, j int) {
+            (*ft)(i, j)
+          }
+
+          func main() {
+            f := func(i, j int) {
+              fmt.Println(i + j)
+            }
+
+            ft := FuncType(f)
+            (&ft).call(10, 20)
+          }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Closures ------------------------------------------------------------
+
+Ex:
+
+    func adder() func() int {
+      i := 0
+
+      fmt.Println("Value of i:", i)
+
+      return func() int {
+        i++
+
+        fmt.Println("Added 1 to i")
+
+        return i
+      }
+    }
+
+    func main() {
+      adder1 := adder()
+
+      fmt.Println(adder1())
+      fmt.Println(adder1())
+
+      fmt.Println("-----------------------------------")
+
+      adder2 := adder()
+
+      fmt.Println(adder2())
+      fmt.Println(adder2())
+    }
+
+
+Output:
+
+    Value of i: 0
+    Added 1 to i
+    1
+    Added 1 to i
+    2
+    -----------------------------------
+    Value of i: 0
+    Added 1 to i
+    1
+    Added 1 to i
+    2
+
+
+* If we call "adder1" multiple times, "i" will be incremented one by one and the
+  the state of "i" will be persisted in the RAM.
+
+
+* "adder2" maintains a seperate state which is independent from "adder1".
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Recursions ----------------------------------------------------------
+
+* Every resursive function must have a base case.
+
+
+Ex:
+
+    func factorial(n int) int {
+      if n == 0 {
+        return 1
+      }
+
+      return n * factorial(n-1)
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Pointers ------------------------------------------------------------
+
+* A pointer is a variable that stores the memory address of another variable.
+
+
+* Type of the variable must be matched with the type of pointer.
+
+
+* Go doesn't support pointer arithmetics.
+
+
+* Creation:
+
+      Option 1: Create pointer and then assign a value
+
+          var ptr *int
+          value := 10
+          ptr = &value  // Referencing
+
+
+      Option 2: Create pointer and assign a value together
+
+          value := 10
+          ptr := &value  // Referencing
+
+
+* Access the value from a pointer variable (Dereferencing):
+
+      *<pointerVariable>
+
+
+* Update the value of a pointer variable using a function:
+
+      func modifyInt(i *int) {
+        *i++
+      }
+
+      func main() {
+        value := 10
+
+        modifyInt(&value)
+
+        fmt.Println(value)  // 11
+      }
+
+
+
+
+---------- (new function) ----------
+
+* Allocate zeroth value of the specified data type in memory and return its
+  memory address (pointer).
+
+
+Ex:
+
+    intPointer := new(int)
+    fmt.Println(*intPointer) // 0
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Strings -------------------------------------------------------------
+
+* Strings in go are immutable.
+
+
+* To consider everything as a plain string use ``. Multilines are allowed.
+
+      `sample string`
+
+
+* To support escape characters use "". Multilines are not allowed.
+
+      "sample string"
+
+
+* In go, we can consider a string as an array of runes.
+
+
+* Get the length of a string:
+
+      len(<string>)
+
+
+* We can access characters (runes) in a string using indexes:
+
+      name := "Madushan"
+      fmt.Printf("%c", name[0]) // M
+
+
+* We can perform string concatenation using + operator.
+
+      str1 := "abc"
+      str2 := "def"
+
+      str := str1 + str2
+
+      fmt.Println(str) // abcdef
+
+
+* String comparison is performed character by character from start to end.
+
+    Ex 1:
+
+      str1 := "abc"
+      str2 := "ab"
+      fmt.Println(str1 > str2) // true
+
+
+    Ex 2:
+      str1 := "abc"
+      str2 := "abd"
+      fmt.Println(str1 > str2) // false
+
+
+* Iterating over a string:
+
+      for _, char := range name {
+        fmt.Printf("%c", char)
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Runes ---------------------------------------------------------------
+
+* Runes are int32 integers represent characters.
+
+
+* We use single quotes to define runes.
+
+      char := 'a' or (var char rune = 'a')
+      fmt.Println("Type of value:", char) // 97
+
+
+* Convert a rune to a string:
+
+      char := 'a'
+      str := string(char)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Formatting verbs ----------------------------------------------------
+
+%%  - To print %
+
+%T  - Type of the value
+
+%v  - Default value
+
+
+
+
+---------- Integers ----------
+
+* Base 2:
+
+      %b
+
+
+* Base 10:
+
+      %d
+
+      %<number>d
+          If the number of characters in the value less than specified number,
+          then add spaces to left side to set the length of the value to the
+          specified number. (%4d)
+
+          If the specified number is negative, then add the spaces from right
+          side. (%-4d)
+
+          If the specified number is specified with 0, then add zeros to left
+          side. (%04d)
+
+          If the number of characters in the value greater than or equal to
+          specified number, then print the normal value.
+
+
+
+* Base 16:
+
+      %x - Value in lowercase
+      %X - Value in uppercase
+
+
+
+
+---------- Floats ----------
+
+* Decimal point:
+
+      %f
+
+      %.<number>f - Default width, Precision <number>
+
+      %<number1>.<number2>f - Width <number1>, Precision <number2>
+
+
+* Scientific notation with "e" as exponent:
+
+      %e
+
+
+
+
+---------- Booleans ----------
+
+* %t
+
+
+
+
+---------- Strings ----------
+
+* Value as a plain string:
+
+      %s
+
+      %<number>s - Length is <number>. Right justified.
+
+      %<-number>s - Length is <number>. Left justified.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- fmt package ---------------------------------------------------------
+
+---------- Printing functions ----------
+
+* fmt.Println:
+
+      To print one or more values.
+      New line will be added at the end.
+      An space will be added between each value.
+
+
+* fmt.Print:
+
+      To print one or more values.
+      New line won't be added at the end.
+
+
+* fmt.printf:
+
+      To print with formatting verbs.
+
+
+
+
+---------- Formatting functions ----------
+
+* fmt.Sprint / fmt.Sprintln / fmt.Sprintf:
+
+      Same as printing functions. But nothing will be printed. Formatted string
+      will be returned.
+
+
+
+
+---------- Scanning functions ----------
+
+* To take inputs from the user.
+
+
+* fmt.Scan:
+
+      var name string
+      var age int
+
+      fmt.Print("Enter your name and age:")
+      fmt.Scan(&name, &age)
+
+      fmt.Printf("Name: %s, Age: %d", name, age)
+
+
+      We can enter inputs by seperating them using spaces or new lines.
+
+
+* fmt.Scanln:
+
+      Simillar to fmt.Scan. But inputs can be seperated only using spaces.
+
+
+* fmt.Scanf:
+
+      To get inputs in specific format
+
+          var name string
+          var age int
+
+          fmt.Print("Enter your name and age:")
+          fmt.Scanf("%s %d", &name, &age)
+
+          fmt.Printf("Name: %s, Age: %d", name, age)
+
+
+
+
+---------- Error formatting functions ----------
+
+* fmt.Errorf:
+
+      To format error messages.
+
+      Ex:
+          func checkAge(age int) error {
+            if age < 18 {
+              return fmt.Errorf("age %d is too young to drive", age)
+            }
+            return nil
+          }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Structs -------------------------------------------------------------
+
+* Structs in go are composite data types that allow you to group together
+  defferent type of variables under single name.
+
+
+* They are simillar to classes in object oriented languages. But they do not
+  support inheritance.
+
+
+* Creation:
+
+      type <name> struct {
+        <property1> <dataType>
+        <property2> <dataType>
+        ...
+      }
+
+      Ex:
+          type Person struct {
+            name string
+            age  int
+          }
+
+
+* Initialization:
+
+      person := Person {
+        name: "Madushan",
+        age:  26,
+      }
+
+      If we omit the initialization of any field, the default value of that data
+      type will be assigned to that field.
+
+
+* Access fields:
+
+      p := Person {
+        name: "Madushan",
+        age:  26,
+      }
+
+      fmt.Printf("Name: %s, Age: %d", p.name, p.age)
+
+
+* Update fields:
+
+      p := Person {
+        name: "Madushan",
+        age:  26,
+      }
+
+      p.age = 30
+
+
+* Anonymous structs:
+
+      user := struct {
+        userName string
+        email    string
+      } {
+        userName: "codermadushan",
+        email:    "codermadushan@gmail.com",
+      }
+
+
+
+
+---------- Struct methods ----------
+
+* We can define methods for structs in go. But we cannot define them inside the
+  struct.
+
+
+* We can create structs inside functions. But if you want to create methods for
+  a struct, that struct must be defined in package level. Because we cannot
+  create struct methods inside any function.
+
+
+Ex: (With value receiver)
+
+    type Person struct {
+      firstName string
+      lastName  string
+      age       int
+    }
+
+    func (p Person) fullName() string {
+      return p.firstName + " " + p.lastName
+    }
+
+    func main() {
+      p := Person{
+        firstName: "Madushan",
+        lastName:  "Wijewardhana",
+        age:       26,
+      }
+      fmt.Println(p.fullName())
+    }
+
+
+Ex: (With pointer receiver)
+
+    type Person struct {
+      name string
+      age  int
+    }
+
+    func (p *Person) incrementAge() {
+      p.age++ // same as (*p).age++
+    }
+
+    func main() {
+      p := Person{
+        name: "Madushan",
+        age:  26,
+      }
+
+      p.incrementAge()
+
+      fmt.Println(p) // {Madushan 27}
+    }
+
+
+
+
+---------- Embedded struct ----------
+
+* Embed a struct to a struct:
+
+      type A struct {
+        ...
+      }
+
+      type B struct {
+        A
+        ...
+      }
+
+
+      * All fields and methods of A are directly available to B and we can
+        override them if required.
+
+      * To provide fields related to A, we have to use "A" as the field name
+        inside B.
+
+
+
+
+* Embed an interface to a struct:
+
+      type A interface {
+        ...
+      }
+
+      type B struct {
+        A
+        ...
+      }
+
+
+      * B has an anonymous field "A".
+
+      * That field can hold any value that implements the A interface.
+
+      * Now we can call to methods defined inside A using  a instance of B. In
+        this case methods are called on the instance which is hold by A
+        anonymous field.
+
+      * But we can override that methods if required.
+
+
+
+
+* Use one struct inside another.
+
+
+Ex:
+
+    type Address struct {
+      city    string
+      country string
+    }
+
+    type Person struct {
+      name    string
+      age     int
+      address Address
+    }
+
+    func main() {
+      p := Person{
+        name: "Madushan",
+        age:  26,
+        address: Address{
+          city:    "Kurunegala",
+          country: "Sri Lanka",
+        },
+      }
+
+      fmt.Println(p.address.city)    // Kurunegala
+      fmt.Println(p.address.country) // Sri Lanka
+    }
+
+
+
+
+---------- Anonymous fields ----------
+
+* We can access properties of a anonymous field directly without nested field
+  names (field promotion).
+
+
+Ex:
+
+    type Address struct {
+      city    string
+      country string
+    }
+
+    type Person struct {
+      name string
+      age  int
+      Address
+    }
+
+    func main() {
+      p := Person{
+        name: "Madushan",
+        age:  26,
+        Address: Address{
+          city:    "Kurunegala",
+          country: "Sri Lanka",
+        },
+      }
+
+      fmt.Println(p.city)    // Kurunegala
+      fmt.Println(p.country) // Sri Lanka
+    }
+
+
+
+
+---------- Embedded methods ----------
+
+* We can call methods in embedded structs with anonymous fields directly without
+  nested field names (method promotion).
+
+
+Ex:
+
+    type Rectangle struct {
+      width  float64
+      height float64
+    }
+
+    func (r Rectangle) area() float64 {
+      return r.width * r.height
+    }
+
+    type Shape struct {
+      Rectangle
+    }
+
+    func main() {
+      r := Rectangle{
+        width:  22.9,
+        height: 11.8,
+      }
+
+      s := Shape{
+        Rectangle: r,
+      }
+
+      fmt.Println(s.area())
+    }
+
+
+* In this case all fields and methods of "Rectangle" is directly accessible to
+  "Shape" (If it is an interface, all method definitions are available to).
+
+
+
+
+---------- Struct comparison ----------
+
+* Structs do not supports: <, <=, >, >=
+
+
+* It supports != and == for structs in same type.
+
+
+Ex:
+
+    type Person struct {
+      name string
+      age  int
+    }
+
+    func main() {
+      p1 := Person{
+        name: "Madushan",
+        age:  26,
+      }
+
+      p2 := Person{
+        name: "Madushan",
+        age:  26,
+      }
+
+      fmt.Println(p1 == p2) // true
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Methods -------------------------------------------------------------
+
+* We can define methods with both value receivers and pointer receivers.
+
+      1. Value receiver:
+
+          * A value receiver gets a copy of the value for following types:
+
+              int, float, string, bool
+              array, struct
+
+          * Otherwise the value receiver is a reference to the original data.
+
+
+      2. Pointer receiver:
+
+          * A pointer receiver gets the memory address of the original data.
+
+
+* Go does not support method overloading.
+
+
+Ex: (With value receiver)
+
+    type Person struct {
+      firstName string
+      lastName  string
+      age       int
+    }
+
+    func (p Person) fullName() string {
+      return p.firstName + " " + p.lastName
+    }
+
+    func main() {
+      p := Person{
+        firstName: "Madushan",
+        lastName:  "Wijewardhana",
+        age:       26,
+      }
+      fmt.Println(p.fullName())
+    }
+
+
+Ex: (With pointer receiver)
+
+    type Person struct {
+      name string
+      age  int
+    }
+
+    func (p *Person) incrementAge() {
+      p.age++ // same as (*p).age++
+    }
+
+    func main() {
+      p := Person{
+        name: "Madushan",
+        age:  26,
+      }
+
+      p.incrementAge()
+
+      fmt.Println(p) // {Madushan 27}
+    }
+
+
+* Always use pointer receivers unless you have a strong reason not to.
+
+
+* We can define methods for any user defined types also.
+
+      Ex:
+
+          type MyInt int
+
+          func (i MyInt) isPositive() bool {
+            return i > 0
+          }
+
+          func main() {
+            value1 := MyInt(1)
+            value2 := MyInt(-1)
+
+            fmt.Println(value1.isPositive())
+            fmt.Println(value2.isPositive())
+          }
+
+
+* If we don't want to access the type instance inside the method, we can define
+  the method without type instance.
+
+      Ex:
+
+          type MyInt int
+
+          func (MyInt) welcome() string {
+            return "Welcome"
+          }
+
+          func main() {
+            value := MyInt(10)
+
+            fmt.Println(value.welcome())
+          }
+
+
+
+
+* Go automatically takes the address or dereferences values when calling
+  methods, so both values and pointers can call value or pointer receiver
+  methods.
+
+      Ex (With value receiver):
+
+          type Person struct {
+            Name string
+            Age  int
+          }
+
+          func (p Person) showDetails() {
+            fmt.Println("Name", p.Name)
+            fmt.Println("Age: ", p.Age)
+          }
+
+          func main() {
+            p := Person{
+              Name: "John",
+              Age:  30,
+            }
+
+            p.showDetails()
+          }
+
+
+
+
+      Ex (With pointer receiver):
+
+          type Person struct {
+            Name string
+            Age  int
+          }
+
+          func (p *Person) showDetails() {
+            fmt.Println("Name", p.Name)
+            fmt.Println("Age: ", p.Age)
+          }
+
+          func main() {
+            p := Person{
+              Name: "John",
+              Age:  30,
+            }
+
+            p.showDetails()
+          }
+
+
+* Go does not perform automatic address-taking or Dereferencing for interfaces.
+  A type implements an interface only if its actual method set maatches exactly.
+
+      Ex (With value receiver):
+
+          type Person struct {
+            Name string
+            Age  int
+          }
+
+          func (p Person) ShowDetails() {
+            fmt.Println("Name", p.Name)
+            fmt.Println("Age: ", p.Age)
+          }
+
+          type Data interface {
+            ShowDetails()
+          }
+
+          func tryInterface(data Data) {
+            data.ShowDetails()
+          }
+
+          func main() {
+            p := Person{
+              Name: "John",
+              Age:  30,
+            }
+
+            tryInterface(p) // Correct
+
+            tryInterface(&p) // Correct
+          }
+
+
+          * The reason is a method with a value receiver is included in the
+            method set of both the value type T and the pointer type *T.
+
+
+
+
+      Ex (With pointer receiver):
+
+          type Person struct {
+            Name string
+            Age  int
+          }
+
+          func (p *Person) ShowDetails() {
+            fmt.Println("Name", p.Name)
+            fmt.Println("Age: ", p.Age)
+          }
+
+          type Data interface {
+            ShowDetails()
+          }
+
+          func tryInterface(data Data) {
+            data.ShowDetails()
+          }
+
+          func main() {
+            p := Person{
+              Name: "John",
+              Age:  30,
+            }
+
+            tryInterface(p) // Wrong
+
+            tryInterface(&p) // Correct
+          }
+
+
+          * The reason is a method with a pointer receiver is included only in
+            the method set of *T, not T.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Interfaces ----------------------------------------------------------
+
+* Interfaces provide a way to specify behaviors. They defines a set of method
+  signatures that a type must implements.
+
+
+* We cannot define methods for interfaces.
+
+
+* The default value of an interface is "nil".
+
+
+Ex:
+
+    type Geometry interface {
+      area() float64
+      perim() float64
+    }
+
+    // ---------------------------------------
+
+    type Rectangle struct {
+      width, height float64
+    }
+
+    func (r Rectangle) area() float64 {
+      return r.width * r.height
+    }
+
+    func (r Rectangle) perim() float64 {
+      return 2 * (r.width + r.height)
+    }
+
+    // ---------------------------------------
+
+    type Circle struct {
+      radius float64
+    }
+
+    func (c Circle) area() float64 {
+      return math.Pi * c.radius * c.radius
+    }
+
+    func (c Circle) perim() float64 {
+      return 2 * math.Pi * c.radius
+    }
+
+    // ---------------------------------------
+
+    func measure(g Geometry) {
+      fmt.Println("Area :", g.area())
+      fmt.Println("Perim:", g.perim())
+    }
+
+    // ---------------------------------------
+
+    func main() {
+      r := Rectangle{
+        width:  10.1,
+        height: 20.8,
+      }
+
+      c := Circle{
+        radius: 12.4,
+      }
+
+      measure(r)
+      measure(c)
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Create a custom type ------------------------------------------------
+
+* Using a single type:
+
+      type <customType> <existing_type>
+
+
+
+
+* Using multiple types:
+
+      type <customType> interface {
+        <existing_type_1> | <existing_type_2> ...
+      }
+
+      * Can use only with parameters, not variables.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Generics ------------------------------------------------------------
+
+* [T any] or [T type1 | type2 | ...]
+
+
+* To get the default value of a generic type we can use following approach:
+
+      var zero T
+
+
+
+
+---------- (With functions) ----------
+
+    func swap[T any](a, b T) (T, T) {
+      return b, a
+    }
+
+    func main() {
+      x1, y1 := 1, 2
+      x1, y1 = swap(x1, y1)
+      fmt.Println(x1, y1) // 2 1
+
+      x2, y2 := "John", "Doe"
+      x2, y2 = swap(x2, y2)
+      fmt.Println(x2, y2) // Doe John
+    }
+
+
+
+
+---------- (With structs) ----------
+
+* Generics in struct definition:
+
+    type Stack[T any] struct {
+      elements []T
+    }
+
+
+* Generics in struct methods:
+
+      func (s *Stack[T]) push(element T) {
+        s.elements = append(s.elements, element)
+      }
+
+      func (s *Stack[T]) pop() (T, bool) {
+        if s.isEmpty() {
+          var zero T
+          return zero, false
+        }
+
+        element := s.elements[len(s.elements)-1]
+        s.elements = s.elements[:len(s.elements)-1]
+        return element, true
+      }
+
+      func (s *Stack[T]) isEmpty() bool {
+        return len(s.elements) == 0
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Errors --------------------------------------------------------------
+
+* In Go errors are also values (struct).
+
+
+Ex:
+
+    func sqrt(value float64) (float64, error) {
+      if value < 0 {
+        return 0, errors.New("square root of negative number")
+      }
+
+      return math.Sqrt(value), nil
+    }
+
+    func main() {
+      value, err := sqrt(-1)
+      if err != nil {
+        fmt.Println(err)
+        return
+      }
+      fmt.Println(value)
+    }
+
+
+* To create error value with a static string:
+
+      errors.New(<string>)
+
+
+* To create error value with a dynamic string:
+
+      fmt.Errorf(<string>)
+
+
+
+
+---------- (Custom errors) ----------
+
+* In go we use built in "error" interface as the type of any error.
+
+      type error interface {
+        Error() string
+      }
+
+
+* To make our custom error struct compatible with error interface, we have to
+  define a method named "Error()" with a pointer receiver.
+
+
+* When return the custom error, return its memory address (pointer).
+
+
+Ex:
+
+    type AppError struct {
+      code    int
+      message string
+    }
+
+    func (e *AppError) Error() string {
+      return fmt.Sprintf("Error %d: %s\n", e.code, e.message)
+    }
+
+    func sqrt(value float64) (float64, error) {
+      if value < 0 {
+        return 0, &AppError{
+          code:    404,
+          message: "sample error",
+        }
+      }
+
+      return math.Sqrt(value), nil
+    }
+
+    func main() {
+      value, err := sqrt(1)
+      if err != nil {
+        fmt.Println(err)
+        return
+      }
+
+      fmt.Println(value)
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- String functions ----------------------------------------------------
+
+* To get the length of a string:
+
+      len(<string>)
+
+
+* Convert an int to a string:
+
+      numStr := strconv.Itoa(<number>)
+
+
+* Split a string based on given sub string:
+
+      strSlices := strings.Split(<string>, <seperator>)
+
+
+* Join a collection of strings to a single string:
+
+      str := strings.Join(<slice>, <seperator>)
+
+
+* To check a given sub string is exist or not in a string:
+
+      isAvailable := strings.Contains(<string>, <subString>)
+
+
+* To replace substrings in a given string:
+
+      strings.Replace(<string>, <oldSubString>, <newSubString>, <numOfOccurances>)
+
+
+* Remove spaces from left and right of a string:
+
+      strings.TrimSpace(<string>)
+
+
+* Convert a string to lowercase:
+
+      strings.ToLower(<string>)
+
+
+* Convert a string to uppercase:
+
+      strings.ToUpper(<string>)
+
+
+* Create a string by repeating a string given number of times:
+
+      strings.Repeat(<string>, <count>)
+
+
+* Count the number of occurances of a given sub string:
+
+      strings.Count(<string>, <subString>)
+
+
+* Check a given string starts with given sub string:
+
+      strings.HasPrefix(<string>, <subString>)
+
+
+* Check a given string ends with given sub string:
+
+      strings.HasSuffix(<string>, <subString>)
+
+
+
+
+---------- (String Builder) ----------
+
+* Concatenate strings in memory efficient way. Suitable to concatenate with
+  large strings.
+
+
+Ex:
+    var builder strings.Builder
+
+    builder.WriteString("hello, ")
+    builder.WriteString("world")
+
+    str := builder.String()
+
+
+* To reset the builder:
+
+      builder.Reset()
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Text templates ------------------------------------------------------
+
+* To create string templates.
+
+
+* Type of a template is:
+
+      *template.Template
+
+
+* Syntax for placeholders:
+
+      {{.<mapFieldName>}}
+
+
+* Create a template:
+
+      tmplt := template.Must(template.New("email").Parse("My name is {{.name}} and i'm {{.age}} years old."))
+
+
+* To access template name:
+
+      tmplt.Name()
+
+
+* Generate a string:
+
+      func main() {
+        tmplt := template.Must(template.New("email").Parse("My name is {{.name}} and i'm {{.age}} years old."))
+
+        var strBuilder strings.Builder
+
+        person := map[string]any{
+          "name": "Madushan",
+          "age":  26,
+        }
+
+        err := tmplt.Execute(&strBuilder, person)
+        if err != nil {
+          panic(err)
+        }
+
+        fmt.Println(strBuilder.String())
+      }
+
+
+* Print to console:
+
+      func main() {
+        tmplt := template.Must(template.New("email").Parse("My name is {{.name}} and i'm {{.age}} years old."))
+
+        person := map[string]any{
+          "name": "Madushan",
+          "age":  26,
+        }
+
+        err := tmplt.Execute(os.Stdout, person)
+        if err != nil {
+          panic(err)
+        }
+      }
+
+
+* We can write the output to a file also.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Regular expressions -------------------------------------------------
+
+* To represent exactly one character use it directly. But if it is one of below,
+  then use it with \ (backslash)
+
+      *
+      .
+      +
+      ?
+      ^
+      $
+      |
+      - (dash)
+      \ and /
+      ( and )
+      [ and ]
+      { and }
+
+      (16 characters)
+
+
+* We use [] to represent exactly one character and that character has 2 or more
+  posibilities.
+
+      .           - any character (dot)
+      [abc]       - "a" or "b" or "c"
+      [^abc]      - anything except "a" or "b" or "c"
+      [a-z]       - any lowercase english alphabet
+      [A-Z]       - any uppercase english alphabet
+      [0-9]       - any number
+      [a-zA-Z0-9] - any lowercase or uppercase alphabet or any number.
+
+
+* We use quantifiers to define multiple occurances for a character:
+
+      []?     - 0 or 1 times
+      []+     - 1 or more times
+      []*     - 0 or more times
+      []{n}   - exactly n times
+      []{n,}  - n or more times
+      []{n,m} - n or more times, but less than m times
+
+
+* We use () to group multiple characters.
+
+
+* To create the expression always use ``:
+
+      re := regexp.MustCompile(`<regex>`)
+
+
+* Check a given string is matched to the regex:
+
+      re.MatchString(<string>)
+
+
+* Extract all matches from a given string for a given regex:
+
+      re.FindAllString(<strings>, -1)
+
+
+* Replace all sub strings that are matched with given regex with given sub
+  string.
+
+      re.ReplaceAllString(<source>, <subString>)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Time ----------------------------------------------------------------
+
+* Current local time:
+
+      time.Now()
+
+
+* Specify a exact date:
+
+      time.Date(
+        <year>,        - like 2025
+        <month>,       - time.<month> or 1 - 12
+        <day>,         - from 1 to 31
+        <hour>,        - from 0 to 23
+        <minutes>,     - from 0 to 59
+        <seconds>,     - from 0 to 59
+        <nanoseconds>, - from 0 to 999999999
+        <timezone>     - time.UTC / time.Local
+      )
+
+
+* Convert local time to UTC time:
+
+      localTime.UTC()
+
+
+* Convert time to local:
+
+      anyTime.Local()
+
+
+* Go uses a reference time instead of format codes like other languages:
+
+      Year     : 2006 (4 digits) / 06 (2 digits)
+      Month    : 1 / 01 / Jan / January
+      Day      : Mon / Monday
+      Date     : 2 / 02
+      Hour     : 3 / 03 (12h) | 15 (24h)
+      minute   : 4 / 04
+      second   : 5 / 05
+      timezone : -0700
+
+
+* Convert a string to a time:
+
+      time.Parse(<layout>, <timeString>)
+
+
+      Ex:
+          date, err := time.Parse("2006-01-02 15:00:00 -0700", "2009-11-03 09:00:00 +0530")
+
+
+      Note:
+
+          Layout is the format of the time string which uses pre-defined
+          references.
+
+          If layout contains timezone (-0700), then given time will be considered
+          in provided timezone. Otherwise provided time will be considered in
+          UTC.
+
+
+* Convert a time to specific string format:
+
+      <time>.Format(<layout>)
+
+      Note:
+          Layout for ISO 8601 standard string: RFC3339
+
+
+* To get weekday of a given time:
+
+      <time>.Weekday() // like Sunday, Monday, ...
+
+
+* Get a given time in specific timezone:
+
+      loc, _ := time.LoadLocation("Asia/Colombo")
+      <time>.In(loc)
+
+
+* Round a time:
+
+      now.Round(time.Hour) - To nearest hour
+
+      now.Truncate(time.Hour):
+          Same as Round, but rounds to floor only.
+
+
+* Convert a given time to unix:
+
+      <time>.Unix()
+
+
+* Convert a unix time to time.Time:
+
+      time.Unix(<time>, 0)
+
+
+* Convert a time to iso string:
+
+      time.Now().Format(time.RFC3339)
+
+
+
+
+---------- (Time Calculations) ----------
+
+* Add a given duration to a time:
+
+      <time>.Add(<duration>)
+
+
+* Subtract a given duration from a time:
+
+      <time>.Add(-1 * <duration>)
+
+
+* Get the duration between two given times:
+
+      <time1>.Sub(<time2>)
+
+      * If time2 is later than time1, you get a negative duration.
+
+
+* Divide a duration by a given integer:
+
+      * If the number is a constant:
+
+            interval := <duration> / <int_value>
+
+
+      * If the number is a variable:
+
+            interval := <duration> / time.Duration(<int_value>)
+
+
+* Multiply a duration by a given integer:
+
+      * If the number is a constant:
+
+            duration := <duration> * <number>
+
+
+      * If the number is a variable:
+
+            duration := <duration> * time.Duration(<number>)
+
+
+      * If the speed is 5m per second and the duration is given:
+
+            speed := 5 // meters per second
+            duration := <given_duration>
+
+            * If the speed is a float:
+
+                length := speed * duration.Seconds()
+
+
+            * If the speed is an int:
+
+                length := float64(speed) * duration.Seconds()
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Random numbers ------------------------------------------------------
+
+* Generate a random int minInt <= n <= maxInt
+
+      minInt + rand.Intn(maxInt - minInt + 1)
+
+
+* Generate a random float64 0.0 <= n < 1:
+
+      rand.Float64()
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Number parsing ------------------------------------------------------
+
+* Convert a base 10 string to a number:
+
+      convNumber, err := strconv.Atoi(numberStr)
+
+
+* Convert a string to a number with given base and bitsize:
+
+      convNumber, err := strconv.ParseInt(<numberStr>, <base>, <bitSize>)
+
+
+* Convert a string to a float with given bitSize:
+
+      convNumber, err := strconv.ParseFloat(<numberStr>, <bitSize>)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- URL parsing ---------------------------------------------------------
+
+func main() {
+	urlStr := "https://username:password@www.example.com:8080/segment1/segment2?query1=param1&&query2=param2#fragment"
+
+	parsedUrl, err := url.Parse(urlStr)
+
+	fmt.Println(err)
+
+	fmt.Println(parsedUrl.Scheme) // https
+
+	fmt.Println(parsedUrl.User)            // username:password
+	fmt.Println(parsedUrl.User.Username()) // username
+	fmt.Println(parsedUrl.User.Password()) // password true
+
+	fmt.Println(parsedUrl.Host)       // www.example.com:8080
+	fmt.Println(parsedUrl.Hostname()) // www.example.com
+	fmt.Println(parsedUrl.Port())     // 8080
+
+	fmt.Println(parsedUrl.Path) // /segment1/segment2
+
+	fmt.Println(parsedUrl.Query())  // map[query1:[param1] query2:[param2]]
+	fmt.Println(parsedUrl.RawQuery) // query1=param1&&query2=param2
+
+	fmt.Println(parsedUrl.Fragment) // fragment
+}
+
+
+
+
+---------- (Access query params) ----------
+
+    urlStr := "https://username:password@www.example.com:8080/segment1/segment2?query1=param1&&query2=param2#fragment"
+
+    parsedUrl, _ := url.Parse(urlStr)
+
+    queryParams := parsedUrl.Query()
+
+    fmt.Println(queryParams.Get("query1"))
+    fmt.Println(queryParams.Get("query2"))
+
+
+
+
+---------- (Building a url) ----------
+
+func main() {
+	baseUrl := url.URL{
+		Scheme: "https",
+		Host:   "example.com",
+		Path:   "/path",
+	}
+
+	query := baseUrl.Query()
+	query.Set("name", "john")
+	query.Set("age", "40")
+	baseUrl.RawQuery = query.Encode()
+
+	fmt.Println(baseUrl.String())
+}
+
+
+
+
+---------- (Add query params to an existing url) ----------
+
+func main() {
+	baseUrl := "https://example.com/path"
+
+	values := url.Values{}
+	values.Add("name", "john")
+	values.Add("age", "32")
+
+	queryParams := values.Encode()
+
+	baseUrl = baseUrl + "" + queryParams
+
+	fmt.Println(baseUrl)
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- bufio package -------------------------------------------------------
+
+* Wrapper around input/output (like files, network connections, or standard
+  input/output) to make reading and writing more efficient.
+
+
+* How reading works:
+
+      Beffering reads a fixed size-chuck (like 4kb, 8kb , or 16kb) from the file
+      into memory. Not the whole file.
+
+      Then your program reads from that in-memory chunk instead of calling the
+      os each time.
+
+      When buffer runs out, bufio automarically fills it again with the next
+      chunk.
+
+
+* How writing works:
+
+      When you perform writing with buffer, it doesn't write data to disk
+      or network immediately.
+
+      Stores the data in a memory buffer (temporary area).
+
+      Writes the entire buffer to the underlying writer only when:
+
+          - The buffer is full
+
+          - You explicitly flush it.
+
+
+
+
+---------- (Reading) ----------
+
+* Initialize a reader:
+
+      reader := bufio.NewReader(<io_reader>)
+
+
+* Read data
+
+      buff := make([]byte, <k>)
+      n, err := reader.Read(buff)
+
+
+      k - Number of bytes to read at once. if k <= 4096, reader.Read reads
+          k number of bytes from the file. If k > 4096, then reader.Read reads
+          4096 bytes from the file.
+
+      n - Number of bytes read by reader.Read
+
+
+* reader.ReadString(<delimiter>):
+
+      Read data from the reader until a specified delimiter and returns it as a
+      string.
+
+
+
+
+---------- (Writing) ----------
+
+    func main() {
+      writer := bufio.NewWriter(os.Stdout)
+
+      buff := []byte("Hello, bufio package!\n")
+      n, err := writer.Write(buff)
+      if err != nil {
+        fmt.Println(err)
+        return
+      }
+      writer.Flush()
+      fmt.Println(n)
+    }
+
+
+* writer.WriteString(<str>):
+
+      To write strings.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Base64 coding -------------------------------------------------------
+
+* Represent any data using a string.
+
+
+* Base64 encoded string size is ~33% bigger than original size of the data.
+
+
+* Before convert data to a base64 string, we have to convert data to an byte
+  slice.
+
+
+
+
+---------- (Encoding) ----------
+
+data := []byte("Hello, Base64 encoding")
+
+encoded := base64.StdEncoding.EncodeToString(data)
+
+
+
+
+---------- (Decoding) ----------
+
+base64Str := "SGVsbG8sIEJhc2U2NCBlbmNvZGluZw=="
+
+data, err := base64.StdEncoding.DecodeString(base64Str)
+
+fmt.Println(string(data))
+
+
+
+
+---------- (URL encoding / decoding) ----------
+
+* To encode and decode strings to pass via urls. Because urls consider some
+  base64 characters as url specific characters. (like /, +)
+
+
+* base64.URLEncoding.EncodeToString(<byte_slice>)
+
+
+* base64.URLEncoding.DecodeString(<string>)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Hashing -------------------------------------------------------------
+
+* SHA-256 hashing:
+
+      password := "Password123"
+
+      hashedByteSlice := sha256.Sum256([]byte(password))
+
+      fmt.Printf("%x", hashedByteSlice)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Writing files -------------------------------------------------------
+
+* Initialize a file:
+
+      os.Create(<filename>)
+
+
+      - A new file is created.
+
+      - If the file already exists, Then existing file is initialized and all
+        previous content is removed.
+
+      - Must must be closed at the end.
+
+            file, err := os.Create("output.txt")
+            if err != nil {
+              fmt.Println("Something went wrong")
+              return
+            }
+            defer file.Close() // execute this line only if there is no error
+
+
+* Write bytes:
+
+      data := []byte("Hello my name is Madushan\n")
+
+      _, err = file.Write(data)
+      if err != nil {
+        fmt.Println("Something went wrong")
+        return
+      }
+
+
+* Write strings:
+
+      data := "Hello my name is Madushan\n"
+
+      _, err = file.WriteString(data)
+      if err != nil {
+        fmt.Println("Something went wrong")
+        return
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Reading files -------------------------------------------------------
+
+* Open a file to read:
+
+      file, err := os.Open("output.txt")
+      if err != nil {
+        fmt.Println(err)
+        return
+      }
+      defer func() {
+        fmt.Println("Closing opened file")
+        file.Close()
+      }()
+
+
+* Read as a byte slice:
+
+      data := make([]byte, 1024)
+
+      _, err2 := file.Read(data)
+      if err2 != nil {
+        fmt.Println(err2)
+        return
+      }
+
+
+* Read line by line:
+
+      scanner := bufio.NewScanner(file)
+      for scanner.Scan() {
+        line := scanner.Text()
+        fmt.Println("Line:", line)
+      }
+      err = scanner.Err()
+      if err != nil {
+        fmt.Println(err)
+        return
+      }
+
+
+* Filter lines in a file that contains specific keywords:
+
+      func main() {
+        file, err := os.Open("output.txt")
+        if err != nil {
+          fmt.Println("Failed to open the file:", err)
+          return
+        }
+        defer file.Close()
+
+        scanner := bufio.NewScanner(file)
+
+        keyword := "important"
+
+        for scanner.Scan() {
+          line := scanner.Text()
+          if strings.Contains(line, keyword) {
+            fmt.Println("Filtered line:", line)
+          }
+        }
+        err = scanner.Err()
+        if err != nil {
+          fmt.Println("Failed to scan the file:", err)
+          return
+        }
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- File paths ----------------------------------------------------------
+
+* Joins any number of path elements into a single path
+
+      path := filepath.Join("Home", "Documents", "Downloads", "file.txt")
+
+
+* Cleans a given path:
+
+      path := "./data/../data/file.txt"
+      cleanedPath := filepath.Clean(path)
+      fmt.Println(cleanedPath) // data\file.txt
+
+
+* Access directory path and file name from a path:
+
+      path := "/home/user/docs/file.txt"
+      dir, file := filepath.Split(path)
+      fmt.Println("Directory:", dir)
+      fmt.Println("File     :", file)
+
+
+* Access the last segment of a path (can be a file / folder):
+
+      path := "/home/user/docs/"
+      base := filepath.Base(path)
+      fmt.Println(base)
+
+
+* Check a path is absolute or not:
+
+      relativePath := "./data/file.txt"
+      absolutePath := "/home/user/docs/file.txt"
+
+      fmt.Println("Is Absolute:", filepath.IsAbs(relativePath)) // false
+      fmt.Println("Is Absolute:", filepath.IsAbs(absolutePath)) // true
+
+
+* Access the extension of a file:
+
+      file := "/home/file.txt"
+      ext := filepath.Ext(file)
+      fmt.Println(ext) // .txt
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Directories ---------------------------------------------------------
+
+* Create a folder:
+
+      os.Mkdir(<folderName>, <permission>)
+
+
+* Create nested folders:
+
+      os.MkdirAll(<dirPath>, <permission>)
+
+
+* Remove a folder:
+
+      os.Remove(<folder>)
+
+
+* Remove a folder and its sub folders:
+
+      os.RemoveAll(<folder>)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Embed directive -----------------------------------------------------
+
+* To embed static files or directories to go binaries at build time.
+
+
+
+
+---------- (Embed a file) ----------
+
+    package main
+
+    import (
+      _ "embed"
+      "fmt"
+    )
+
+    //go:embed example.txt
+    var content string
+
+    func main() {
+      fmt.Println(content)
+    }
+
+
+
+
+---------- (Embed a folder) ----------
+
+    package main
+
+    import (
+      "embed"
+      "fmt"
+    )
+
+    //go:embed basics
+    var basicsFolder embed.FS
+
+    func main() {
+      content, err := basicsFolder.ReadFile("basics/example.txt")
+      if err != nil {
+        fmt.Println(err)
+        return
+      }
+
+      fmt.Println(string(content))
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Command line arguments ----------------------------------------------
+
+* os.Args:
+
+      The slice of all arguments. os.Args[0] is always the path of the binary
+      executable.
+
+      Ex: ./executable <arg1> <arg2> ...
+
+
+
+
+---------- (Flags) ----------
+
+func main() {
+	var name string
+	var age int
+	var male bool
+
+	flag.StringVar(&name, "name", "Madushan", "Name of the user")
+	flag.IntVar(&age, "age", 18, "Age of the user")
+	flag.BoolVar(&male, "male", true, "Gender of the user")
+
+	flag.Parse()
+
+	fmt.Println("Name:", name)
+	fmt.Println("Age :", age)
+	fmt.Println("Male:", male)
+}
+
+
+* Use --help to show the all details about the command line flags:
+
+      go run main.go --help or ./main --help
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Environment variables -----------------------------------------------
+
+* Access an existing environment variable:
+
+      os.Getenv(<key>)
+
+
+
+
+* Set an environment variable:
+
+      * Using Go:
+
+            os.Setenv(<key>, <value>)
+
+
+      * Using terminal:
+
+            * Define all environment variables in the .env file.
+
+            * Then run: set -a && source .env && set +a
+
+
+
+
+* Remove an existing environment variable:
+
+      os.Unsetenv(<key>)
+
+
+
+
+* Remove all existing environment variables:
+
+      os.Clearenv()
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Logging -------------------------------------------------------------
+
+* We use "log" package in standard library.
+
+
+* To log a simple message with date and timestamp:
+
+      log.Println("This is an info message") // 2025/11/09 10:16:04 <message>
+
+
+* To log a message with a prefix:
+
+      log.SetPrefix("INFO: ")
+      log.Println(<message>)
+
+
+* To specify login informations:
+
+      log.SetFlags(log.Ltime | log.Ldate | log.Lshortfile)
+      log.Println(<message>)
+
+
+* Create a custom logger:
+
+      var infoLogger = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime)
+      infoLogger.Println(<message>)
+
+
+* Write logs to a file:
+
+      func main() {
+        file, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+        if err != nil {
+          log.Fatalln("Failed to open the file:", err)
+        }
+        defer file.Close()
+
+        infoLogger := log.New(file, "INFO: ", log.LstdFlags|log.Lmicroseconds|log.LUTC)
+
+        infoLogger.Println("This is the test message")
+      }
+
+
+
+
+      os.O_CREATE: Create the file if not available.
+
+      os.O_RDONLY: Allow only the read operation.
+
+      os.O_WRONLY: Allow only the write operation.
+
+      os.O_RDWR  : Allow both read and write.
+
+      os.O_APPEND: Do not override existing content. Writes are added to the end.
+
+      os.O_TRUNC : Removes all existing content in the file as soon as it is
+                   opened, but only if,
+
+                      1. The file already exists
+
+                      2. You open the file with write permissions
+
+      os.O_EXCL  : Error if file already exists (used with os.O_CREATE)
+
+
+
+
+      log.LstdFlags     = Ldate|Ltime
+
+      log.Lmicroseconds : To show time with microseconds
+
+      log.LUTC          : To show date and time in UTC time
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- JSON ----------------------------------------------------------------
+
+* When we work with json in go, we have to use tags in structs to provide
+  meta data like field names of converted json data.
+
+
+* To define struct tags we often use: `` (back ticks)
+
+
+
+
+---------- (Convert struct to json / Marshal) ----------
+
+* In this case we use struct tags as follows to provide field names:
+
+      `json:"<field_name>"`
+
+
+* If you want to ignore the fields which are not provided when we create the
+  struct object:
+
+      `json:"<field_name>,omitempty"`
+
+
+* To always omit a field:
+
+      `json:"-"`
+
+
+Ex:
+
+    type Person struct {
+      Name string `json:"name"`
+      Age  int    `json:"age,omitempty"`
+    }
+
+    func main() {
+      person := Person{
+        Name: "Madushan",
+      }
+
+      jsonData, err := json.Marshal(person)
+      if err != nil {
+        fmt.Println("Failed to convert data to json:", err)
+        return
+      }
+
+      fmt.Println(string(jsonData)) // {"name":"Madushan"}
+    }
+
+
+
+
+---------- (Convert json to struct / Unmarshal) ----------
+
+Ex:
+
+    type Address struct {
+      City    string `json:"city"`
+      Country string `json:"country"`
+    }
+
+    type Person struct {
+      FullName string  `json:"full_name"`
+      Age      int     `json:"age"`
+      Address  Address `json:"address"`
+    }
+
+    func main() {
+      jsonData := `{"full_name": "Madushan Wijewardhana", "age": 30, "address": {"city": "Colombo", "country": "Sri Lanka"}}`
+
+      var person Person
+      err := json.Unmarshal([]byte(jsonData), &person)
+      if err != nil {
+        fmt.Println("Failed to Unmarshal:", err)
+        return
+      }
+
+      fmt.Println(person)
+    }
+
+
+
+
+* If we don't know the structure of the json data, Then we have to convert it to
+  a map to access data:
+
+
+    func main() {
+      jsonData := `{"full_name": "Madushan Wijewardhana", "age": 30, "address": {"city": "Colombo", "country": "Sri Lanka"}}`
+
+      var data map[string]any
+      err := json.Unmarshal([]byte(jsonData), &data)
+      if err != nil {
+        fmt.Println("Failed to unmarshal:", err)
+        return
+      }
+
+      fmt.Println(data)
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Type conversions ----------------------------------------------------
+
+* For type conversions, both types must be compatible.
+
+
+* Syntax:
+
+      <target_type>(<source_value>)
+
+      Ex:
+          value := 10
+          convertedValue := float64(value)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Detect the real type of "any" type ----------------------------------
+
+* v, ok := <any_type_variable>.(<expected_type>)
+
+
+Ex:
+
+    var value any = 10.25
+
+    v1, ok1 := value.(int)
+    fmt.Println("OK:", ok1, "Value:", v1) // OK: false Value: 0
+
+    v2, ok2 := value.(float64)
+    fmt.Println("OK:", ok2, "Value:", v2) // OK: true Value: 10.25
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- IO package ----------------------------------------------------------
+
+---------- (io.Reader) ----------
+
+* A reader is any type that implements the "io.Reader" interface.
+
+
+* The "io.Reader" interface has only one method signature called "Read":
+
+      type Reader interface {
+        Read(p []byte) (n int, err error)
+      }
+
+
+* "io.Reader" represent a source you can read bytes from.
+
+
+* If a type has a "Read" method with this exact signature, then it is a
+  reader.
+
+
+* Readers allow you to read data abstractly, without caring where the data
+  comes from.
+
+
+* Even if "Read" returns an error, the "n" value may still be greater than
+  0, meaning some data was successfully read before the error happened. So
+  your code must use the data (n bytes) first, and only then handle error.
+
+
+* Any proper "io.Reader" implementation must return "io.EOF" error when it
+  reaches the end of its data.
+
+
+
+
+* Some common implementations of the "io.Reader":
+
+      os.File:
+          Used to read data from a file.
+
+
+      strings.Reader:
+          Creates a new reader from the provided string. But we cannot create a
+          string reader directly using "strings.Reader". The reason is it
+          requires internal fields to be initialized correctly.
+
+          Therefore we use "strings.NewReader" constructor function to create an
+          initialized string reader directly.
+
+
+      bufio.Reader:
+          Implements "Read" for improved performance, using buffers for reading.
+
+          But instead of manually create and initialize "bufio.Reader" we
+          directly use "bufio.NewReader" constructor function.
+
+
+      http.Request.Body:
+          Allows you to supply the request body via reader.
+
+
+      bytes.Reader:
+          Allows you to read from a byte slice.
+
+          But instead of manually create and initialize "bytes.Reader" we use
+          "bytes.NewReader" constructor function.
+
+
+      bytes.Buffer:
+          Used for reading from in-memory byte buffers.
+
+          In this case often we use "bytes.Buffer" in practice intead of using
+          "bytes.NewBuffer" constructor function.
+
+
+
+
+* Read data from a reader
+
+    Read in chunks with a buffer:
+
+        func readFromReader(r io.Reader) error {
+          buff := make([]byte, 4)
+
+          for {
+            n, err := r.Read(buff)
+
+            // Check number of read bytes before error
+            if n > 0 {
+              fmt.Print(string(buff[:n]))
+            }
+
+            // Check EOF before other errors
+            if err == io.EOF {
+              return nil
+            }
+
+            if err != nil {
+              return err
+            }
+          }
+        }
+
+
+    To read in chunks with a inbuilt function, use following method. It uses
+    a byte slice with length 512 initially:
+
+        data, err := io.ReadAll(reader)
+
+
+
+
+* Combine multiple readers to one reader:
+
+      r1 := strings.NewReader("hello")
+      r2 := strings.NewReader("world")
+
+      r := io.MultiReader(r1, r2)
+
+
+      process:
+
+          It reads from the first reader until it hits io.EOF
+
+          Then it automatically moves to next reader. then next reader, and so on.
+
+          It returns io.EOF only when all readers are finished.
+
+
+
+
+---------- (io.ReaderAt) ----------
+
+* An interface in io package that contains only one method signature called
+  "ReadAt".
+
+
+    type ReaderAt interface {
+      ReadAt(p []byte, off int64) (n int, err error)
+    }
+
+
+* ReadAt:
+
+      Reads from a given offset, cursor doesn't move.
+
+
+Ex:
+
+    func main() {
+      file, err := os.Open("data.txt")
+      if err != nil {
+        log.Fatalln("Failed to open the file:", err)
+      }
+      defer file.Close()
+
+      buff := make([]byte, 7)
+
+      // Read 7 bytes starting from offset 10
+      n, err := file.ReadAt(buff, 4)
+      if err != nil {
+        log.Fatalln("Failed to read data:", err)
+      }
+
+      fmt.Println("Read data:", string(buff))      // Read data: o world
+      fmt.Println("Successfully read", n, "bytes") // Successfully read 7 bytes
+    }
+
+
+
+
+---------- (io.WriteTo) ----------
+
+* It is an interface defined in io package that contains only one method called
+  "WriteTo":
+
+      type WriteTo interface {
+        WriteTo(w Writer) (n int64, err error)
+      }
+
+
+* "WriteTo" lets a reader write all its data directly to a writer efficiently.
+
+
+* "io.Copy" uses it internally for performance.
+
+
+* Some readers that implement WriteTo:
+
+      bytes.Buffer
+
+      bytes.Reader
+
+      strings.Reader
+
+      os.File
+
+
+
+
+---------- (io.Writer) ----------
+
+* The "io.Writer" interface has only one method called "Writer" which
+  takes the source as a byte slice.
+
+      type Writer interface {
+        Write(p []byte) (n int, err error)
+      }
+
+
+
+
+* Implementing the io.Writer:
+
+      If written bytes are less than the provided bytes, you should return an
+      error.
+
+      provided byte slice should be the source of writing and should not be
+      modified.
+
+
+
+
+* Common implementations of the "io.Writer":
+
+      os.File:
+          For writing to files.
+
+
+      os.Stdout:
+          For writing to standard output (console)
+
+
+      http.ResponseWriter:
+          For writing the response body of http requests.
+
+
+      bytes.Buffer:
+          For writing to an in-memory byte buffer.
+
+
+
+
+Ex:
+
+    func writeString(w io.Writer, str string) (int, error) {
+      n, err := w.Write([]byte(str))
+      if err != nil {
+        return 0, err
+      }
+
+      return n, nil
+    }
+
+
+
+
+* Combine multiple writers to one writer:
+
+      w := io.MultiWriter(file1, file2)
+
+
+
+
+---------- (io.ReaderFrom) ----------
+
+* Types that want to optimize copying data from a reader implement this.
+
+      type ReaderFrom interface {
+        ReadFrom(r io.Reader) (n int64, err error)
+      }
+
+
+
+
+---------- (bytes.Buffer) ----------
+
+* In go, a "bytes.Buffer" implements both io.Reader and io.Writer
+
+
+* It grows automatically as you write. No need to pre-allocate a fixed size.
+
+
+* As a Reader:
+
+      var buff bytes.Buffer
+
+      buff.Read(<byteSlice>)
+
+      buff.ReadFrom(<io.Reader>): Read until EOF
+
+
+* As a writer:
+
+      var buff bytes.Buffer
+
+      buff.Write(<byteSlice>)
+
+
+* To show content:
+
+      buff.String():
+                Returns the contents of the unread portion of the buffer as a
+                string.
+
+
+
+
+---------- (io.Seeker) ----------
+
+Ex:
+
+    type Seeker interface {
+      Seek(offset int64, whence int) (int64, error)
+    }
+
+
+* Seek moves the internal cursor of a reader/writer. This is similar to moving
+  the cursor in a file to read/write at a specific location.
+
+
+* Params:
+
+      offset:
+          How far to move the cursor.
+
+      whence:
+          From where the offset should be applied.
+
+          Constants:
+
+              io.SeekStart
+              io.SeekCurrent
+              io.SeekEnd
+
+
+Ex:
+
+    func main() {
+      file, err := os.Create("sample.txt")
+      if err != nil {
+        log.Fatalln("Failed to open the file:", err)
+      }
+      defer file.Close()
+
+      file.Write([]byte("ABCDEFG"))
+
+      // Go back to 'C'
+      file.Seek(2, io.SeekStart)
+
+      // Read next 3 bytes
+      buff := make([]byte, 3)
+      file.Read(buff)
+      fmt.Println("Read:", string(buff)) // Read: CDE
+
+      // Overwrite at the same position
+      file.Seek(2, io.SeekStart)
+      file.Write([]byte("XYZ"))
+
+      file.Seek(0, io.SeekStart)
+      data, _ := os.ReadFile("sample.txt")
+      fmt.Println("Final:", string(data)) // Final: ABXYZFG
+    }
+
+
+
+
+---------- (Closers) ----------
+
+* Closers are Go interfaces from the io package that represent anything that can
+  be closed to release resources.
+
+
+* Required methods for Closer interfaces:
+
+      io.Closer         : Close()
+      io.ReadCloser     : Read() + Close()
+      io.WriteCloser    : Write() + Close()
+      io.ReadWriteCloser: Read() + Write() + Close()
+
+
+Ex:
+
+    func closeResource(c io.Closer) {
+      err := c.Close()
+      if err != nil {
+        fmt.Println("Failed to close resource:", err)
+      }
+    }
+
+
+
+
+---------- (io.Pipe) ----------
+
+* Creates an in-memory synchronous pipe: a connected io.Reader and io.Writer
+  pair. Whatever you write to the writer can be read from the Reader.
+
+      pr, pw := io.Pipe()
+
+          pr: *io.PipeReader (implements io.Reader)
+          pw: *io.PipeWriter (implements io.Writer)
+
+          They are connected internally. Data flows from writer -> Reader.
+
+
+* Key characteristics:
+
+      1. Synchronous:
+
+          A PipeWriter.Write() call blocks until the data is read.
+
+          A PipeReader.Read() call blocks until the data is written.
+
+          So both sides must run in different goroutines to avoid deadlock.
+
+
+      2. No buffering:
+
+          There is no internal buffer.. It only transfers data when both sides
+          are ready. Think of it like streaming data, not storing it.
+
+
+      3. Common for streaming between goroutines:
+
+          Useful for:
+
+              Streaming large data without allocating memory
+
+              Connecting encoders/decoders
+
+              Passing data to compressors, HTTP requests, etc
+
+
+* When to use io.Pipe():
+
+      You want to stream data between goroutines.
+
+      You don't want to store entire data in memory.
+
+      You need an io.Reader but your data is produced dynamically.
+
+      You need an io.Writer but the consumer expects an io.Reader.
+
+
+* Closing PipeWriter:
+
+      pw.Close():
+
+          Signals EOF to the reader.
+
+          The reader (pr.Read()) will return io.EOF once all written data is
+          consumed.
+
+
+      pw.CloseWithError(err):
+
+          Signals an error to the reader instead of EOF.
+
+          The reader's Read() returns (n, err) with your custom error.
+
+
+      Most common usage:
+          The writer finishes or fails -> tell the reader why
+
+
+* Closing PipeReader:
+
+      pr.Close():
+
+          Causes ongoing/next writes on pw.Write() to return ErrClosedPipe.
+
+          It means "The reader is gone. Stop writing".
+
+
+      pr.CloseWithError(err):
+
+          Writer (pw.Write()) immediately fails with your custom error instead
+          of ErrClosedPipe.
+
+
+      Used when:
+          Reader aborts early and wants to stop the writer.
+
+
+* Writer closes pw to signal EOF or error to reader.
+
+* Reader closes pr to signal cancellation or error to writer.
+
+
+Ex:
+
+    func pipeExample() {
+      pr, pw := io.Pipe()
+
+      go func() {
+        pw.Write([]byte("hello pipe"))
+        pw.Close()
+      }()
+
+      var buff bytes.Buffer
+      buff.ReadFrom(pr)
+
+      fmt.Println(buff.String()) // hello pipe
+    }
+
+    func main() {
+      pipeExample()
+    }
+
+
+Ex: Case 1:
+
+    Since no data has been written yet, Read will block and wait until:
+
+        1. pw.Write() writes some data
+
+        or
+
+        2. pw.Close() / pw.CloseWithError() is called. Then Read returns 0 with
+           error.
+
+
+            func pipeExample() {
+              pr, pw := io.Pipe()
+
+              go func() {
+                time.Sleep(time.Second * 5)
+                pw.Write([]byte("sample data"))
+              }()
+
+              buff := make([]byte, 512)
+
+              n, err := pr.Read(buff)
+              if err != nil {
+                log.Fatalln("Failed to read data:", err)
+              }
+
+              fmt.Println(string(buff[:n]))
+            }
+
+            func main() {
+              pipeExample()
+            }
+
+
+
+
+Ex: Case 2:
+
+    Write will also block until a Read is available to receive the data. This is
+    because io.Pipe has no buffer. It forces synchronous handoff.
+
+
+        func pipeExample() {
+          pr, pw := io.Pipe()
+
+          go func() {
+            pw.Write([]byte("sample data"))
+            fmt.Println("data is written")
+          }()
+
+          buff := make([]byte, 512)
+
+          time.Sleep(time.Second * 5)
+
+          n, err := pr.Read(buff)
+          if err != nil {
+            log.Fatalln("Failed to read data:", err)
+          }
+
+          fmt.Println(string(buff[:n]))
+        }
+
+        func main() {
+          pipeExample()
+        }
+
+
+
+
+---------- (io.Copy) ----------
+
+* It reads from a source (io.Reader) and writes to a destination (io.Writer)
+  until EOF, using an internal 32kb buffer.
+
+
+* Stops when:
+
+      1. src returns EOF, or
+
+      2. A read/write error occurs
+
+
+Ex 1:
+
+    func main() {
+      src, err := os.Open("src.txt")
+      if err != nil {
+        log.Fatalln("Failed to open the file:", err)
+      }
+      defer src.Close()
+
+      dst, err := os.Create("destination.txt")
+      if err != nil {
+        log.Fatalln("Failed to create the file:", err)
+      }
+      defer dst.Close()
+
+      n, err := io.Copy(dst, src)
+      if err != nil {
+        log.Fatalln("Failed to copy data:", err)
+      }
+
+      fmt.Println("Successfully copied", n, "bytes")
+    }
+
+
+Ex 2:
+
+    func main() {
+      pr, pw := io.Pipe()
+
+      go func() {
+        time.Sleep(time.Second * 5)
+
+        defer pw.Close()
+        pw.Write([]byte("sample data"))
+      }()
+
+      io.Copy(os.Stdout, pr)
+    }
+
+
+
+
+* io.CopyBuffer:
+
+      When you want to provide your own buffer instead of Go's default 32kb
+      buffer.
+
+          buff := make([]byte, 1024)
+          io.CopyBuffer(dst, src, buff)
+
+
+* io.CopyN:
+
+      Copy exactly N bytes.
+
+          io.CopyN(dst, src, 10) // copy only first 10 bytes
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- (Goroutines) --------------------------------------------------------
+
+* Goroutines are just functions that leave the main thread and run in the
+  background and come back to join the main thread once the functions are
+  finished/ready to return any value.
+
+
+* "main" function is also a goroutine. It is the main goroutine of a go program.
+
+
+* Goroutines are non-blocking.
+
+
+* Simplify concurrent programming.
+
+
+* Efficiently handle parallel tasks such as I/O operations, calculations, and
+  more.
+
+
+* Provide a way to perform tasks concurrently without manually managing threads.
+
+
+* Managed by the Go Runtime Scheduler. Uses M:N Scheduling Model.
+
+
+* Syntax:
+
+      go func (<args>) {
+        // body
+      } ()
+
+      or
+
+      go <functionName>(<args>)
+
+
+Ex:
+
+    func sayHello() {
+      time.Sleep(time.Second * 1)
+      fmt.Println("Hello")
+    }
+
+    func main() {
+      go sayHello()
+    }
+
+
+  * In this example we cannot see anything is printed to the console.
+
+  * The reason is we run the "sayHello" function as a goroutine. It waits 1
+    second before printing the "Hello". But main function ends before printing.
+    If the main function is ended, our program is also ended.
+
+
+
+
+---------- (Pass values to goroutines) ----------
+
+* If the value is an int, float, string, bool, array, struct, and if you use the
+  value directly inside a goroutine, a new copy won't be created.
+
+Ex:
+
+    func main() {
+      count := 1
+
+      go func() {
+        time.Sleep(2 * time.Second)
+
+        fmt.Println("Count:", count) // Count: 2
+      }()
+
+      count++
+
+      time.Sleep(3 * time.Second)
+    }
+
+
+
+
+* If pass as a parameter, a new copy will be created:
+
+Ex:
+
+    func main() {
+      count := 1
+
+      go func(count int) {
+        time.Sleep(2 * time.Second)
+
+        fmt.Println("Count:", count) // Count: 1
+      }(count)
+
+      count++
+
+      time.Sleep(3 * time.Second)
+    }
+
+
+
+
+* If the value is another data type, then a new copy won't be created even if
+  you pass it directly or as a parameter.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Channels ------------------------------------------------------------
+
+* Enable safe and efficient communication between concurrent goroutines. Helps
+  to synchronize and manage the flow of data in concurrent programs.
+
+
+* There are 2 types of channels:
+
+      1. Unbuffered channels
+      2. Buffered channels
+
+
+* Empty structs (struct{}{}) are often used in channels for signaling because
+  they are perfect for "event happened" notifications, not for passing data. An
+  empty struct has no fields, so it occupies 0 bytes in memory.
+
+      ch := make(chan struct{}) // Creation
+
+      ch <- struct{}{} // Send signal
+
+      <-ch // Access signal
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Unbuffered channels -------------------------------------------------
+
+* Don't have an associated storage.
+
+
+* Need an immediate receiver.
+
+
+* Creation:
+
+      channelName := make(chan <type>)
+
+
+* Send a value to an unbuffered channel:
+
+      channelName <- value
+
+      * Sending a value to an unbuffered channel is blocking by default.
+
+      * The sending goroutine pauses until another goroutine is ready to
+        receive.
+
+
+* Receive a value from an unbuffered channel:
+
+      value := <-channelName
+
+      * Receiving from an unbuffered channel is also blocking by default.
+
+      * The receiving goroutine waits until someone sends a value into the
+        channel.
+
+
+Ex 1: Waiting for the sender:
+
+    func main() {
+      numberChannel := make(chan int)
+
+      go func() {
+        time.Sleep(time.Second * 2)
+
+        numberChannel <- 10
+      }()
+
+      fmt.Println("Before receiver")
+      number := <-numberChannel
+      fmt.Println("After receiver")
+
+      fmt.Println(number)
+    }
+
+
+Ex 2: Waiting for the receiver:
+
+    func main() {
+      numberChannel := make(chan int)
+
+      go func() {
+        fmt.Println("Before sender")
+        numberChannel <- 10
+        fmt.Println("After sender")
+      }()
+
+      time.Sleep(time.Second * 2)
+
+      number := <-numberChannel
+
+      fmt.Println(number)
+
+      time.Sleep(time.Second * 1)
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Buffered channels ---------------------------------------------------
+
+* A channel with an associated storage.
+
+
+* Allows a channel to hold a limited number of values before blocking
+  the sender.
+
+
+* A buffered channel allows asynchronous communication. It allows senders to
+  continue working without blocking until the buffer is full.
+
+
+* A buffered channel will only block when the buffer is full.
+
+
+* Creation:
+
+      channelName := make(chan <type>, <capacity>)
+
+
+* Send a value to an buffered channel:
+
+      channelName <- value
+
+      * This is blocking only if the buffer is full.
+
+      Ex:
+
+          func main() {
+            numberChannel := make(chan int, 2)
+
+            numberChannel <- 10
+            numberChannel <- 20
+
+            go func() {
+              time.Sleep(time.Second * 2)
+
+              <-numberChannel
+            }()
+
+            fmt.Println("Blocking start")
+            numberChannel <- 30
+            fmt.Println("Blocking end")
+          }
+
+
+* Receive a value from a buffered channel:
+
+      value := <-channelName
+
+      * This is blocking only if the buffer is empty.
+
+      Ex:
+
+          func main() {
+            numberChannel := make(chan int, 2)
+
+            go func() {
+              time.Sleep(time.Second * 2)
+
+              numberChannel <- 10
+            }()
+
+            fmt.Println("Blocking start")
+            number := <-numberChannel
+            fmt.Println("Blocking end")
+
+            fmt.Println(number)
+          }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Channel synchronization ---------------------------------------------
+
+* Ensures that data is properly exchanged between Goroutines.
+
+
+* Coordinates the execution flow to avoid race conditions and ensure predictable
+  behavior.
+
+
+* Helps manage the lifecycle of Goroutines and the completion of tasks.
+
+
+Ex: A basic example:
+
+    func main() {
+      done := make(chan int)
+
+      go func() {
+        fmt.Println("Working...")
+        time.Sleep(time.Second * 2)
+
+        done <- 10
+      }()
+
+      <-done
+
+      fmt.Println("Finished")
+    }
+
+
+Ex: Listening to an unbuffered channel using a for loop:
+
+    func main() {
+      ch := make(chan int)
+
+      go func() {
+        for index := range 5 {
+          time.Sleep(time.Second)
+
+          ch <- index
+        }
+        close(ch)
+      }()
+
+      for value := range ch {
+        fmt.Println("Received value:", value)
+      }
+
+      fmt.Println("End of the program")
+    }
+
+    * At the end of the sending values, we have to close the channel to notify
+      the for loop:
+
+          close(ch)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Channel directions --------------------------------------------------
+
+* Improve code clarity and maintainability.
+
+
+* Prevent unintended operations on channels.
+
+
+* Enhance type safety by clearly defining the channel's purpose.
+
+
+
+
+---------- (Bidirectional channels) ----------
+
+* By default a channel is bidirectional.
+
+
+Ex:
+
+    channel := make(chan <type>)
+
+    Type: chan <type>
+
+
+* You can send and receive:
+
+      Send   : channel <- value
+      Receive: value := <-channel
+
+
+
+
+---------- (Write-only channels) ----------
+
+* Can only send. Cannot receive.
+
+
+Ex:
+
+    func producer(ch chan<- int) {
+      ch <- 10 // Allowed
+
+      <-ch // Compile-time error
+    }
+
+    Type: chan<- <type>
+
+
+
+
+---------- (Read-only channels) ----------
+
+* Can only receive. Cannot send.
+
+
+Ex:
+
+    func consumer(ch <-chan int) {
+      <-ch // Allowed
+
+      ch <- 10 // Compile-time error
+    }
+
+
+
+
+---------- (Conversions) ----------
+
+* You can restrict, but not widen, channel capabilities.
+
+
+Ex 1:
+
+    func main() {
+      var ch chan int
+
+      var sendOnly chan<- int = ch // Allowed
+      var receiveOnly <-chan int = ch // Allowed
+    }
+
+
+Ex 2:
+
+    func main() {
+      var ch chan<- int
+
+      var both chan int = ch // Compile-time error
+    }
+
+
+Ex 3: A typical real-world pattern:
+
+    func generate(nums ...int) <-chan int {
+      out := make(chan int)
+
+      go func() {
+        defer close(out)
+
+        for _, v := range nums {
+          time.Sleep(time.Second)
+
+          out <- v
+        }
+      }()
+
+      return out
+    }
+
+    func main() {
+      out := generate(10, 20, 30, 40, 50)
+
+      for v := range out {
+        fmt.Println(v)
+      }
+    }
+
+    * Caller can only receive, ensuring correct usage.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Multiplexing using Select -------------------------------------------
+
+* You can think of "select" as the channel version of "switch".
+
+
+* Allowed only inside a function.
+
+
+* What "select" does?
+
+      * Send or Receive on multiple channels.
+
+      * Proceed with whichever operation is ready first.
+
+      * Optionally handle timeout or non-blocking behavior.
+
+
+* Important rules:
+
+      * "select" works only with channels
+
+      * All channel operations must be send or receive
+
+      * Default is optional
+
+      * Closing a channel makes receive cases immediately ready
+
+
+* Basic syntax:
+
+    select {
+    case v := <-ch1:
+      // receive from channel-1
+
+    case ch2 <- x:
+      // send to channel-2
+
+    default:
+      // optional: runs if no case is ready
+    }
+
+
+
+
+* Blocking behavior:
+
+      * If no case is ready, "select" blocks.
+
+      * If multiple cases are ready, Go picks one randomly (fairness)
+
+
+
+
+* Non-blocking select (using default):
+
+      If you add the default case to the select, it never blocks.
+
+
+      * Non blocking receive operation:
+
+            func main() {
+              ch := make(chan int)
+
+              select {
+              case v := <-ch:
+                fmt.Println("Received:", v)
+
+              default:
+                fmt.Println("No message available")
+              }
+            }
+
+
+      * Non blocking send operation:
+
+            func main() {
+              ch := make(chan int)
+
+              select {
+              case ch <- 1:
+                fmt.Println("Message is sent")
+
+              default:
+                fmt.Println("Channel is not ready to receive")
+              }
+            }
+
+
+      * Non blocking operation in real-time systems:
+
+            func main() {
+              data := make(chan int)
+              quit := make(chan bool)
+
+              go func() {
+                for {
+                  select {
+                  case d := <-data:
+                    fmt.Println("Data received:", d)
+
+                  case <-quit:
+                    fmt.Println("Stopped")
+                    return
+
+                  default:
+                    fmt.Println("Waiting for data...")
+                    time.Sleep(500 * time.Millisecond)
+                  }
+                }
+              }()
+
+              for i := range 5 {
+                data <- i
+                time.Sleep(time.Second)
+              }
+              quit <- true
+            }
+
+
+
+
+* Timeout pattern:
+
+    func main() {
+      ch := make(chan int)
+
+      go func() {
+        time.Sleep(time.Second * 5)
+
+        ch <- 10
+      }()
+
+      select {
+      case v := <-ch:
+        fmt.Println("received:", v)
+
+      case <-time.After(time.Second * 2):
+        fmt.Println("timeout")
+      }
+    }
+
+    * If no value arrives within 2 seconds, timeout triggers.
+
+
+
+
+* Infinite loop with select (event loop):
+
+      for {
+        select {
+        case job := <-jobs:
+          process(job)
+
+        case <- time.After(time.Second * 2):
+          fmt.Println("timeout")
+        }
+      }
+
+
+
+
+---------- (Receiving on a closed channel in select) ----------
+
+* It is always recommended to close channels only from the sender side.
+
+
+* If a channel in a select is closed:
+
+      * Its receive case becomes always ready.
+
+      * Immediately returns the zero value of the channel type.
+
+      * ok == false
+
+
+* Ex:
+
+    func main() {
+      ch := make(chan int)
+
+      go func() {
+        time.Sleep(time.Second * 1)
+
+        close(ch)
+      }()
+
+      select {
+      case v, ok := <-ch:
+        if ok {
+          fmt.Println("received:", v)
+        } else {
+          fmt.Println("closed:", v) // closed: 0
+        }
+
+      case <-time.After(time.Second * 2):
+        fmt.Println("timeout")
+      }
+    }
+
+
+* Closed channel + select + for loop:
+
+      for {
+        select {
+        case v := <-ch:
+          fmt.Println(v)
+        }
+      }
+
+
+    * If ch is closed:
+
+          * select keeps choosing that case.
+
+          * You get infinite zero values.
+
+
+    * Correct version:
+
+          for {
+            select {
+            case v, ok := <-ch:
+              if !ok {
+                return
+              }
+              fmt.Println(v)
+            }
+          }
+
+
+
+
+---------- (Sending on a closed channel in select) ----------
+
+* Unlike receive, send on a closed channel always panics, even inside select.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Closing channels ----------------------------------------------------
+
+* We close channels to signal completion. It indicates that no more data will be
+  sent on the channel.
+
+
+* To close a channel we use close function:
+
+      close(ch)
+
+
+* After a channel is closed:
+
+      * No more values can be sent to that channel.
+
+      * No more values can be received to that channel if it is a unbuffered
+        channel.
+
+      * We can receive values from a closed channel if it is a buffered channel.
+        Because it may have some values stored in the buffer.
+
+
+* Best practices for closing channels:
+
+      1. Close channels only from the sender.
+
+      2. Avoid closing channels more than once.
+
+      3. Avoid closing channels from multiple goroutines.
+
+
+
+
+* Receiving from a closed channel:
+
+      func main() {
+        ch := make(chan int)
+
+        close(ch)
+
+        v, ok := <-ch
+
+        if !ok {
+          fmt.Println("Channel is closed")
+          return
+        }
+
+        fmt.Println("Received:", v)
+      }
+
+
+
+
+* Range over a closed channel:
+
+      func main() {
+        ch := make(chan int)
+
+        go func() {
+          for i := range 5 {
+            ch <- i
+
+            time.Sleep(time.Second)
+          }
+
+          close(ch)
+        }()
+
+        for v := range ch {
+          fmt.Println("Received:", v)
+        }
+      }
+
+
+
+
+* Common patterns for closing channels:
+
+      1. Pipeline Pattern
+      2. Worker Pool Pattern
+
+
+      * Worker pool pattern will be discussed later.
+
+
+      * Pipeline pattern:
+
+            func producer(ch chan<- int) {
+              for i := range 5 {
+                ch <- i
+              }
+
+              close(ch)
+            }
+
+            func filter(in <-chan int, out chan<- int) {
+              for v := range in {
+                if v%2 == 0 {
+                  out <- v
+                }
+              }
+
+              close(out)
+            }
+
+            func main() {
+              ch1 := make(chan int)
+              ch2 := make(chan int)
+
+              go producer(ch1)
+              go filter(ch1, ch2)
+
+              for v := range ch2 {
+                fmt.Println("Received:", v)
+              }
+            }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Channels Short Note -------------------------------------------------
+
+* The zero value of a channel is: nil
+
+
+* Create a channel:
+
+      ch := make(chan <type>) // Unbuffered
+
+      ch := make(chan <type>, <size>) // Buffered
+
+
+* To send data to a channel always use:
+
+      ch <- value
+
+
+* To receive data from a channel always use:
+
+      v, ok := <-ch
+
+
+* We only create bidirectional channels, then pass them to goroutines as
+  read-only or write-only to enforce correct usage and avoid bugs.
+
+      Read only channel : var ch <-chan <type>
+
+      Write only channel: var ch chan<- <type>
+
+
+* Always close the channel from the sender side.
+
+
+* To close a channel always use:
+
+      close(<bidirectional_channel>) or close(<send_only_channel>)
+
+
+
+
+---------- (Unbuffered channels) ----------
+
+* Creation:
+
+      ch := make(chan <type>)
+
+
+* Sending data to a channel is blocking until receiver is ready:
+
+      ch <- value
+
+
+* Receiving data from a channel is blocking until sender sends:
+
+      v, ok := <-ch
+
+
+* Sending data to a closed channel causes a runtime panic.
+
+
+* Receiving data from a closed channel:
+
+      v, ok := <-ch
+
+      v -----> Zero value of the type
+      ok ----> false
+
+
+* To receive values continuously until the channel is closed:
+
+      for v := range ch {
+        // body
+      }
+
+      * For loop breaks automatically when ok is false.
+        (closed channel)
+
+
+
+
+---------- (Buffered channels) ----------
+
+* Creation:
+
+      ch := make(chan <type>, <size>)
+
+
+* Sending data to a channel is blocking only if the buffer is full:
+
+      ch <- value
+
+
+* Receiving data from a channel is blocking only if the buffer is empty:
+
+      v, ok := <-ch
+
+
+* Sending data to a closed channel causes a runtime panic.
+
+
+* Receiving data from a closed channel:
+
+      * Channel is closed, but buffer contains some values:
+
+          v, ok := <-ch
+
+          v -----> value
+          ok ----> true
+
+
+      * Channel is closed and buffer is empty:
+
+          v, ok := <-ch
+
+          v -----> zero value of the type
+          ok ----> false
+
+
+* To receive values continuously until the channel is closed and buffer is empty:
+
+      for v := range ch {
+        fmt.Println(v)
+      }
+
+      * For loop breaks automatically when ok is false.
+        (closed channel + empty buffer)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Context -------------------------------------------------------------
+
+* The context package is used to carry request-scoped data, deadlines, timeouts,
+  and cancellation signals across API boundaries and between goroutines.
+
+
+* It is a core package and is heavily used in servers, APIs, databases, and
+  concurrent programs.
+
+
+* A context can carry:
+
+      1. Cancellation signal
+      2. Deadline / Timeout
+      3. Key-value data (request-scoped)
+
+
+
+
+* Why context exists:
+
+      1. Handle requests (HTTP, gRPC, DB queries).
+      2. Spawn multiple goroutines per request.
+      3. Need to cancel work when a request is no longer needed.
+      4. Need to enforce timeouts.
+      5. Need to pass metadata (request ID, auth info)
+
+      * Without context, this becomes messy and unsafe.
+
+
+
+
+* Common use cases:
+
+      1. Cancel goroutines:
+
+          If a client disconnects, stop all work related to that request.
+
+
+      2. Timeouts:
+
+          Automatically stop operations if they take too long.
+
+
+      3. Propagate request data:
+
+          Pass request IDs, user info, tracing data safely.
+
+
+
+
+* Creating base contexts:
+
+      1. context.Background():
+
+          * Root context (main, servers)
+
+          * Child contexts:
+
+                1. WithCancel
+                2. WithTimeout
+                3. WithDeadline
+                4. WithValue
+
+
+      2. context.TODO():
+
+          * Placeholder when unsure.
+
+          * Not special internally. It behaves the same as Background().
+
+          * Its value is semantic, not technical.
+
+
+
+
+---------- (context.Context interface) ----------
+
+type Context interface {
+  Deadline() (deadline time.Time, ok bool)
+  Done() <-chan struct{}
+  Err() error
+  Value(key any) any
+}
+
+
+
+
+* ctx.Deadline():
+
+      d, ok := ctx.Deadline():
+
+          d  : The exact time when the context will be canceled.
+          ok : true if a deadline exists, false if not.
+
+
+          A context has a deadline if it was created using:
+
+              context.WithDeadline
+              context.WithTimeout
+
+
+
+
+* ctx.Done():
+
+      <-ctx.Done()
+
+          It returns a read-only channel and we use it to listen to the
+          calcellation singal.
+
+
+          Mostly used with "select".
+
+
+          Done() is triggered when:
+
+              1. cancel() is called (from context.WithCancel)
+
+                    func main() {
+                      bgCtx := context.Background()
+
+                      ctx, cancel := context.WithCancel(bgCtx)
+
+                      go func() {
+                        time.Sleep(5 * time.Second)
+                        cancel()
+                      }()
+
+                      <-ctx.Done()
+
+                      println("End")
+                    }
+
+
+              2. The parent context is canceled:
+
+                    func main() {
+                      bgCtx := context.Background()
+
+                      parentCtx, parentCancel := context.WithCancel(bgCtx)
+
+                      ctx, _ := context.WithCancel(parentCtx)
+
+                      go func() {
+                        time.Sleep(5 * time.Second)
+                        parentCancel()
+                      }()
+
+                      <-ctx.Done()
+
+                      println("End")
+                    }
+
+
+              3. The deadline expires:
+
+                    context.WithDeadline
+                    content.WithTimeout
+
+
+
+
+* ctx.Err():
+
+      err := ctx.Err()
+
+          * Tells you why a context was canceled or expired.
+
+
+          * Returns:
+
+                nil                      : If context still active
+
+                context.Canceled         : If Context was canceled manually
+
+                context.DeadlineExceeded : If context deadline exceeded
+
+
+          Ex:
+              func main() {
+                ctx, cancel := context.WithCancel(context.Background())
+
+                go func() {
+                  time.Sleep(5 * time.Second)
+
+                  cancel()
+                }()
+
+                for {
+                  select {
+                  case <-ctx.Done():
+                    fmt.Println("Stopped | Error:", ctx.Err())
+                    return
+
+                  default:
+                    fmt.Println("Working... | Error:", ctx.Err())
+                  }
+
+                  time.Sleep(time.Second)
+                }
+              }
+
+
+
+
+* ctx.Value(<key>):
+
+      * v, ok := ctx.Value(<key>).(<type>)
+
+
+      * Returns the value associated with that key, or nil if not found.
+
+
+      Ex:
+
+          type userIDKeyType string
+
+          func main() {
+            var userIDKey userIDKeyType = "userId"
+            ctx := context.WithValue(context.Background(), userIDKey, 1)
+
+            userID, ok := ctx.Value(userIDKey).(int)
+            if ok {
+              fmt.Println(userID)
+            }
+          }
+
+
+
+
+---------- (Create child contexts) ----------
+
+* context.WithCancel:
+
+      ctx, cancel := context.WithCancel(<parent_context>)
+
+          ctx   : Derived context (child context).
+          cancel: Function you call to cancel the context.
+
+
+      * Create a context that can be manually canceled.
+
+
+      * When cancel() is called:
+
+            * ctx.Done() is triggered.
+            * ctx.Err() returns context.Canceled.
+            * All go routines waiting on ctx.Done() are notified.
+            * Cancellation propagates downward to child contexts.
+
+
+      Ex:
+
+          func main() {
+            ctx, cancel := context.WithCancel(context.Background())
+
+            go func() {
+              <-ctx.Done()
+              fmt.Println("Canceled:", ctx.Err())
+            }()
+
+            time.Sleep(5 * time.Second)
+            cancel()
+
+            time.Sleep(time.Second)
+          }
+
+
+
+
+* context.WithCancelCause:
+
+      ctx, cancel := context.WithCancelCause(<parent_context>)
+
+
+      To cancel with a reason.
+
+          * Access the cause     : context.Cause(<context>)
+          * To cancel the context: cancel(<custom_error>)
+
+
+      Ex:
+
+          func main() {
+            ctx, cancel := context.WithCancelCause(context.Background())
+
+            go func() {
+              <-ctx.Done()
+
+              fmt.Println("Canceled:", context.Cause(ctx))
+            }()
+
+            time.Sleep(5 * time.Second)
+            cancel(errors.New("connetion lost"))
+
+            time.Sleep(time.Second)
+          }
+
+
+
+
+* context.WithDeadline:
+
+      * ctx, cancel := context.WithDeadline(<parent_context>, <time>)
+
+
+      * Automatically cancels itself at a specific time or can be cancelled
+        manually by calling cancel().
+
+
+      * Propagates cancellation to all child goroutines using this context.
+
+
+      Ex:
+
+          func main() {
+            ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(5*time.Second))
+
+            go func() {
+              time.Sleep(10 * time.Second)
+
+              cancel()
+            }()
+
+            <-ctx.Done()
+            fmt.Println(ctx.Err())
+          }
+
+
+
+
+* context.WithDeadlineCause:
+
+      * ctx, cancel := context.WithDeadlineCause(<parent_context>, <time>, <custom_error>)
+
+
+      * Used to cancel with cause.
+
+
+      * You get the custom error only if the deadline is exceeded, but not with
+        cancel().
+
+
+      * If the deadline is already in the past, the context is canceled
+        immediately.
+
+
+      Ex:
+
+          func main() {
+            ctx, cancel := context.WithDeadlineCause(context.Background(), time.Now().Add(5*time.Second), errors.New("test error"))
+
+            go func() {
+              time.Sleep(10 * time.Second)
+
+              cancel()
+            }()
+
+            <-ctx.Done()
+            fmt.Println(context.Cause(ctx))
+          }
+
+
+
+
+* context.WithTimeout:
+
+      * ctx, cancel := context.WithTimeout(<parent_context>, <duration>)
+
+
+      * Automatically cancels itself after a fixed duration or can be cancelled
+        manually by calling cancel().
+
+
+      Ex:
+
+          func main() {
+            ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+            go func() {
+              time.Sleep(2 * time.Second)
+
+              cancel()
+            }()
+
+            <-ctx.Done()
+            fmt.Println(ctx.Err())
+          }
+
+
+
+
+* context.WithTimeoutCause:
+
+      * ctx, cancel := context.WithTimeoutCause(<parent_context>, <duration>, <custom_error>)
+
+
+      * To cancel with a cause.
+
+
+      Ex:
+
+          func main() {
+            ctx, cancel := context.WithTimeoutCause(context.Background(), 5*time.Second, errors.New("test error"))
+
+            go func() {
+              time.Sleep(6 * time.Second)
+
+              cancel()
+            }()
+
+            <-ctx.Done()
+            fmt.Println(context.Cause(ctx))
+          }
+
+
+
+
+* context.WithValue:
+
+      * ctx := context.WithValue(<parent_context>, <key>, <value>)
+
+
+      * Used to attach request-scoped data to a context so that it can be passed
+        across API boundaries and goroutines.
+
+
+      Ex:
+
+          type userIDKeyType string
+
+          func main() {
+            var userIDKey userIDKeyType = "userID"
+            ctx := context.WithValue(context.Background(), userIDKey, 1)
+
+            v, ok := ctx.Value(userIDKey).(int)
+            if ok {
+              fmt.Println(v)
+            }
+          }
+
+
+
+
+* context.WithoutCancel:
+
+      * Returns a context that ignores cancelation from parent.
+
+
+      * Not using context.WithoutCancel:
+
+            type userIDKeyType string
+
+            func main() {
+              parent, parentCancel := context.WithCancel(context.Background())
+
+              var userIDKey userIDKeyType = "userID"
+              child := context.WithValue(parent, userIDKey, 1)
+
+              go func() {
+                <-parent.Done()
+                fmt.Println("Parent is cancelled")
+              }()
+
+              go func() {
+                <-child.Done()
+                fmt.Println("Child is cancelled")
+              }()
+
+              time.Sleep(2 * time.Second)
+              parentCancel()
+
+              time.Sleep(2 * time.Second)
+
+              fmt.Println("End")
+            }
+
+
+
+
+      * Using context.WithoutCancel:
+
+            func main() {
+              parent, parentCancel := context.WithCancel(context.Background())
+
+              child := context.WithoutCancel(parent)
+
+              go func() {
+                <-parent.Done()
+                fmt.Println("Parent is cancelled")
+              }()
+
+              go func() {
+                <-child.Done()
+                fmt.Println("Child is cancelled")
+              }()
+
+              time.Sleep(2 * time.Second)
+              parentCancel()
+
+              time.Sleep(2 * time.Second)
+
+              fmt.Println("End")
+            }
+
+
+
+
+* context.AfterFunc:
+
+      * stop := context.AfterFunc(<context>, <callback>)
+
+
+      * It schedules a function to run when the context's deadline expires, not when
+        it is manually canceled.
+
+
+      * Only make sense when used with:
+
+            context.WithDeadline
+            context.WithTimeout
+
+
+      * The returned stop function can also prevent execution if called before the
+        deadline.
+
+
+      Ex:
+
+          func test() {
+            fmt.Println("Function is executed")
+          }
+
+          func main() {
+            ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+            stop := context.AfterFunc(ctx, test)
+
+            go func() {
+              time.Sleep(6 * time.Second)
+
+              stop()
+            }()
+
+            <-ctx.Done()
+            fmt.Println("End")
+          }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Timers --------------------------------------------------------------
+
+---------- (time.NewTimer) ----------
+
+* Creation:
+
+      timer := time.NewTimer(<duration>)
+
+
+
+
+* timer.C:
+
+      * It is a receive only unbuffered channel:
+
+            <-timer.C
+
+
+      * It sends exactly one value (triggered time) after the specified duration
+        and stays active (blocking) forever.
+
+
+
+
+* Stop a timer:
+
+      * stopped := timer.Stop():
+
+            If stopped == true:
+
+                <-timer.C is not accessed yet.
+
+
+            If stopped == false:
+
+                <-timer.C is already accessed.
+
+
+      * <-timer.C is always active (blocking) forever even after timer.Stop().
+
+
+
+
+* Reset a timer:
+
+      * ok := timer.Reset(<new_duration>)
+
+      * It always resets the timer.
+
+            ok == true:
+
+                <-timer.C is not accessed yet.
+
+
+            ok == false:
+
+                1. <-timer.C is already accessed, or
+                2. timer.Stop() is already executed
+
+
+
+
+Ex: Scheduling a delayed operation:
+
+    func main() {
+      var wg sync.WaitGroup
+
+      timer := time.NewTimer(2 * time.Second)
+
+      wg.Go(func() {
+        <-timer.C
+
+        fmt.Println("Delayed operation executed")
+      })
+
+      fmt.Println("Waiting...")
+
+      wg.Wait()
+    }
+
+
+
+
+---------- (time.AfterFunc) ----------
+
+* Returns a timer.
+
+
+* Can use to execute a callback after the specified duration.
+
+
+* Stop:
+
+      stopped := timer.Stop()
+
+          stopped == true:
+
+              Function is not triggered yet.
+
+
+          stopped == false:
+
+              Function is already triggered.
+
+
+* Reset:
+
+      * It always resets the timer.
+
+      * ok := timer.Reset(<new_duration>)
+
+            ok == true:
+
+                Function is not triggered yet.
+
+
+            ok == false:
+
+                1. Function is already triggered, or
+                2. timer.Stop() is already executed
+
+
+
+
+Ex:
+
+    func callback() {
+      fmt.Println("Function is executed")
+    }
+
+    func main() {
+      timer := time.AfterFunc(5*time.Second, callback)
+
+      time.Sleep(2 * time.Second)
+
+      stopped := timer.Stop()
+      fmt.Println("Stopped:", stopped) // true
+
+      value := timer.Reset(time.Second)
+      fmt.Println(value) // false
+
+      time.Sleep(2 * time.Second)
+      fmt.Println("End")
+    }
+
+
+
+
+---------- (time.After) ----------
+
+* Returns a read-only channel.
+
+
+* The channel receives current time after the duration.
+
+
+* Cannot stop or reset it.
+
+
+Ex:
+
+    func main() {
+      ch := make(chan int)
+
+      go func() {
+        time.Sleep(3 * time.Second)
+
+        ch <- 1
+      }()
+
+      select {
+      case v := <-ch:
+        fmt.Println(v)
+
+      case <-time.After(2 * time.Second):
+        fmt.Println("Timeout")
+      }
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Tickers -------------------------------------------------------------
+
+* Used to execute something repeatedly at a fixed time interval.
+
+
+* It sends the current time on the channel "C" every N duration until you stop
+  it.
+
+
+* Does not stop automarically. You must stop it manually.
+
+      * ticker.Stop()
+
+            * No more values are received from ticker.C
+
+            * Channel is active (blocking) forever
+
+            * No return values.
+
+
+* Can reset:
+
+      * ticker.Reset(<new_duration>)
+
+      * It always resets the ticker.
+
+      * No return values.
+
+
+Ex:
+
+    func main() {
+      ticker := time.NewTicker(1 * time.Second)
+
+      for t := range ticker.C {
+        fmt.Println(t)
+      }
+    }
+
+
+* Combining tickers with timers:
+
+      func main() {
+        ticker := time.NewTicker(time.Second)
+        defer ticker.Stop()
+
+        stop := time.After(5 * time.Second)
+
+        for {
+          select {
+          case tick := <-ticker.C:
+            fmt.Println(tick)
+
+          case <-stop:
+            fmt.Println("Stopping ticker...")
+            return
+          }
+        }
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Worker Pool ---------------------------------------------------------
+
+* A worker pool is a design pattern used to manage a group of workers (goroutines).
+
+
+* In a worker pool pattern:
+
+      * Workers control concurrency.
+      * Buffer size controls pressure.
+
+
+* Most common default:
+
+      Buffer size == numWorkers
+
+
+Ex 1:
+
+    type Job struct {
+      ID int
+
+      // Place fields that are needed to carry job data
+    }
+
+    func worker(id int, jobs <-chan Job, results chan<- string) {
+      for job := range jobs {
+        // Simulated work
+        time.Sleep(time.Second)
+        data := fmt.Sprintf("Worker %d processed job %d", id, job.ID)
+
+        // Send calculated results to the channel
+        results <- data
+      }
+    }
+
+    func main() {
+      const numWorkers = 3
+      const numJobs = 10
+
+      jobs := make(chan Job, numJobs)
+      results := make(chan string, numJobs)
+
+      // Create workers
+      for id := range numWorkers {
+        go worker(id, jobs, results)
+      }
+
+      // Send values to the jobs channel (In real world we do not limit jobs)
+      for id := range numJobs {
+        job := Job{
+          ID: id,
+        }
+
+        jobs <- job
+      }
+      close(jobs)
+
+      // Access results
+      for range numJobs {
+        result := <-results
+
+        fmt.Println(result)
+      }
+    }
+
+
+
+
+Ex 2:
+
+    type TicketRequest struct {
+      UserID     int
+      NumTickets int
+      Cost       int
+    }
+
+    func ticketProcessor(requests <-chan TicketRequest, results chan<- int) {
+      for req := range requests {
+        fmt.Printf("Processing %d ticket(s) of user %d with total cost %d\n", req.NumTickets, req.UserID, req.Cost)
+
+        // Simulate processing time
+        time.Sleep(time.Second)
+
+        results <- req.UserID
+
+      }
+    }
+
+    func main() {
+      const numTicketProcessors = 3 // workers
+      const numRequests = 5
+
+      requests := make(chan TicketRequest, numRequests)
+      results := make(chan int, numRequests)
+
+      // Start workers
+      for range numTicketProcessors {
+        go ticketProcessor(requests, results)
+      }
+
+      // Send ticket requests
+      const ticketPrice = 4
+      for i := range numRequests {
+        userID := i + 1
+        numTickets := (i + 1) * 2
+        cost := numTickets * ticketPrice
+
+        requests <- TicketRequest{UserID: userID, NumTickets: numTickets, Cost: cost}
+      }
+      close(requests)
+
+      for range numRequests {
+        fmt.Printf("Ticket for userID %d is processed successfully!\n", <-results)
+      }
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Wait Groups ---------------------------------------------------------
+
+* A wait group is a synchronization primitive that lets one goroutine "wait" for
+  a group of other goroutines to finish.
+
+
+* Think of it as:
+
+      Run these goroutines in parallel, and don't continue until all of them are
+      done.
+
+
+* Creation:
+
+      var wg sync.WaitGroup
+
+
+* Methods:
+
+      wg.Add(n)    : Increase counter by n.
+
+      wg.Done()    : Decrease counter by 1. ( wg.Done() == wg.Add(-1) )
+
+      wg.Wait()    : Block until counter = 0.
+
+      wg.Go(<func>): It calls Add(1), launches the goroutine, and ensures Done()
+                     runs when the function returns.
+
+
+
+
+* Without wait group:
+
+      func worker() {
+        fmt.Println("Worker function is executed")
+      }
+
+      func main() {
+        go worker()
+      }
+
+      * main() exits -> program ends -> goroutine may never run.
+
+
+
+
+* Solution:
+
+      func worker(id int, wg *sync.WaitGroup) {
+        defer wg.Done()
+
+        fmt.Printf("Worker %d is executed\n", id)
+      }
+
+      func main() {
+        const numWorkers = 3
+
+        var wg sync.WaitGroup
+
+        wg.Add(numWorkers)
+        for id := range numWorkers {
+          go worker(id, &wg)
+        }
+
+        wg.Wait()
+      }
+
+
+      or, with wg.Go
+
+
+      func worker(id int) {
+        fmt.Printf("Worker %d is executed\n", id)
+      }
+
+      func main() {
+        const numWorkers = 3
+
+        var wg sync.WaitGroup
+
+        for id := range numWorkers {
+          wg.Go(func() {
+            worker(id)
+          })
+        }
+
+        wg.Wait()
+      }
+
+
+
+
+* With channels:
+
+      func worker(id int, results chan<- int) {
+        fmt.Printf("Worker %d is starting\n", id)
+
+        time.Sleep(time.Second)
+
+        results <- id * 2
+
+        fmt.Printf("Worker %d is finished\n", id)
+      }
+
+      func main() {
+        const numWorkers = 3
+
+        var wg sync.WaitGroup
+
+        results := make(chan int, numWorkers)
+
+        for id := range numWorkers {
+          wg.Go(func() {
+            worker(id, results)
+          })
+        }
+
+        go func(wg *sync.WaitGroup) {
+          wg.Wait()
+
+          close(results)
+        }(&wg)
+
+        for result := range results {
+          fmt.Println("Result:", result)
+        }
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Mutual Exclusion (Mutexes) ------------------------------------------
+
+* A mutex is a synchronization primitive used to protect shared data from being
+  accessed by multiple goroutines at the same time.
+
+
+* If two goroutines read/write the same variable at the same time, you get a
+  data race.
+
+
+* Often used in structs.
+
+
+Ex:
+
+    type Counter struct {
+      Mu    sync.Mutex
+      Value int
+    }
+
+    func (c *Counter) increment() {
+      c.Mu.Lock()
+      defer c.Mu.Unlock()
+
+      c.Value++
+    }
+
+    func main() {
+      var wg sync.WaitGroup
+      counter := &Counter{}
+
+      numGoroutines := 10
+
+      for range numGoroutines {
+        wg.Go(func() {
+          for range 1000 {
+            counter.increment() // (correct)
+
+            // counter.Value++ (Wrong)
+          }
+        })
+      }
+
+      wg.Wait()
+
+      fmt.Println("Count:", counter.Value)
+    }
+
+
+
+
+* mu.TryLock():
+
+      * mu.TryLock() == true means:
+
+            * No other goroutine was holding the mutex.
+
+            * You successfully acquired the lock.
+
+            * Only your goroutine can access the protected data.
+
+
+      * Once you hold the lock, others will block or fail mu.TryLock() until you
+        call mu.Unlock().
+
+
+      * Practical usage:
+
+            if mu.TryLock() {
+              defer mu.Unlock()
+
+              // safe access
+            }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Atomic Counters -----------------------------------------------------
+
+* Atomic counters are variables whose read-modify-write operations happen
+  atomically, meaning no other goroutine can observe or interfere with the
+  operation halfway through.
+
+
+* Operations:
+
+      Add : Add a given value
+
+
+      CompareAndSwap :
+
+          Compare the stored value with the given value. If both are equal, then
+          store the new value and returns the old value.
+
+
+      Load : Get the stored value
+
+
+      Store : To store a new value
+
+
+      Swap : To store a new value and returns the old value
+
+
+
+
+Ex:
+
+    func main() {
+      var counter atomic.Int64
+
+      counter.Store(10)
+      counter.CompareAndSwap(10, 20) // 20
+
+      fmt.Println(counter.Load())
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Rate Limiting -------------------------------------------------------
+
+---------- (Token Bucket Algorithm) ----------
+
+* How it works:
+
+      * A bucket (channel) holds tokens.
+      * Tokens are added at a fixed rate (tokens per second).
+      * Each request consumes tokens.
+      * If enough tokens exist --> request is allowed.
+      * If no tokens --> request is rejected.
+
+
+* Basic implementation:
+
+      type TokenBucket struct {
+        tokens     chan struct{}
+        refillRate time.Duration // duration to add 1 token
+      }
+
+      func (tb *TokenBucket) refill() {
+        ticker := time.NewTicker(tb.refillRate)
+        defer ticker.Stop()
+
+        for range ticker.C {
+          select {
+          case tb.tokens <- struct{}{}:
+
+          default:
+          }
+        }
+      }
+
+      func (tb *TokenBucket) Allow() bool {
+        select {
+        case <-tb.tokens:
+          return true
+
+        default:
+          return false
+        }
+      }
+
+      func NewTokenBucket(capacity int, refillRate time.Duration) *TokenBucket {
+        tb := &TokenBucket{
+          tokens:     make(chan struct{}, capacity),
+          refillRate: refillRate,
+        }
+
+        for range capacity {
+          tb.tokens <- struct{}{}
+        }
+
+        go tb.refill()
+
+        return tb
+      }
+
+      func main() {
+        rateLimiter := NewTokenBucket(5, 200*time.Millisecond)
+
+        for range 100 {
+          if rateLimiter.Allow() {
+            fmt.Println("Allowed")
+          } else {
+            fmt.Println("Denied")
+          }
+
+          time.Sleep(30 * time.Millisecond)
+        }
+      }
+
+
+
+
+* Weaknesses:
+
+      * Complexity in distributed systems.
+      * Not ideal for precise rate limiting.
+
+
+
+
+---------- (Fixed Window Counter) ----------
+
+* How it works:
+
+      * Start a time window
+      * Count incoming requests
+      * Check against the limit
+      * Reset the counter
+
+
+* Basic implementation:
+
+      type FixedWindowCounter struct {
+        mu        sync.Mutex
+        count     int
+        limit     int
+        window    time.Duration
+        resetAt   time.Time
+      }
+
+      func (fwc *FixedWindowCounter) Allow() bool {
+        fwc.mu.Lock()
+        defer fwc.mu.Unlock()
+
+        now := time.Now()
+        if now.After(fwc.resetAt) {
+          fwc.resetAt = now.Add(fwc.window)
+          fwc.count = 0
+        }
+
+        if fwc.count < fwc.limit { // Not <=
+          fwc.count++
+          return true
+        }
+
+        return false
+      }
+
+      func NewFixedWindowCounter(limit int, window time.Duration) *FixedWindowCounter {
+        return &FixedWindowCounter{
+          limit:  limit,
+          window: window,
+        }
+      }
+
+      func main() {
+        fwc := NewFixedWindowCounter(5, time.Second)
+
+        for range 100 {
+          if fwc.Allow() {
+            fmt.Println("Allowed")
+          } else {
+            fmt.Println("Denied")
+          }
+
+          time.Sleep(30 * time.Millisecond)
+        }
+      }
+
+
+* Weaknesses:
+
+      * Burst problem at window edges:
+
+            A client can send 5 requests at the end of one window and 5 more at
+            the start of the next, effectively making 10 requests in a short
+            time.
+
+      * Not smooth:
+
+            Rate limiting is "chunky" per window.
+
+
+
+
+---------- (Leaky Bucket Algorithm) ----------
+
+* How it works:
+
+      * Incoming requests = water poured into the bucket:
+
+            * Each request is one unit of water.
+            * When a request arrives, it is added to the bucket.
+
+
+      * Constant leak rate:
+
+            * This never changes, no matter how many requests arrive.
+
+
+      * Bucket capacity limit:
+
+            * The bucket can only hold up to N units.
+
+            * If a new request arrives when the bucket is full, the request is
+              rejected (dropped).
+
+
+* Basic implementation:
+
+      type LeakyBucket struct {
+        mu        sync.Mutex
+        capacity  int     // Max water level
+        level     float64 // Current water level
+        leakRate  float64 // Units per second
+        lastCheck time.Time
+      }
+
+      func (lb *LeakyBucket) Allow() bool {
+        lb.mu.Lock()
+        defer lb.mu.Unlock()
+
+        now := time.Now()
+        elapsedDuration := now.Sub(lb.lastCheck).Seconds()
+        lb.lastCheck = now
+
+        // Leak water
+        lb.level -= elapsedDuration * lb.leakRate
+        if lb.level < 0 {
+          lb.level = 0
+        }
+
+        // Try to add one request
+        if lb.level+1 > float64(lb.capacity) {
+          return false
+        }
+
+        lb.level++
+        return true
+      }
+
+      func NewLeakyBucket(capacity int, leakRate float64) *LeakyBucket {
+        return &LeakyBucket{
+          capacity:  capacity,
+          leakRate:  leakRate,
+          lastCheck: time.Now(),
+          // level: 0 (Initially the water level is 0)
+        }
+      }
+
+      func main() {
+        rateLimiter := NewLeakyBucket(5, 5)
+
+        for range 100 {
+          if rateLimiter.Allow() {
+            fmt.Println("Allowed")
+          } else {
+            fmt.Println("Denied")
+          }
+
+          time.Sleep(30 * time.Millisecond)
+        }
+      }
+
+
+* Weaknesses:
+
+      * No burst tolerance.
+      * Unnecessary request drops.
+      * Fixed output rate only.
+      * Not fair for mixed traffic.
+      * Hign latency under load.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Sorting -------------------------------------------------------------
+
+* Sort an integer slice:
+
+      numbers := []int{5, 4, 3, 1, 2, 4}
+      sort.Ints(numbers)
+
+
+* Sort a string slice:
+
+      stringSlice := []string{"john", "anthony", "steve", "victor", "walter"}
+      sort.Strings(stringSlice)
+
+
+
+
+---------- (sort.Interface) ----------
+
+type Interface interface {
+  Len() int
+  Less(i, j int) bool
+  Swap (i, j int)
+}
+
+
+1. Len() int:
+
+    Returns the number of elements.
+
+
+2. Less(i, j int) bool:
+
+    Defines ordering logic.
+
+        * Return true if element at index i should come before element at
+          index j.
+
+        * This is where you decide ascending, descending, custom rules, etc.
+
+
+3. Swap(i, j int):
+
+    Swaps elements at positions i and j.
+
+        * Sorting algorithm rearranges elements using this.
+
+
+
+
+Ex (Method 1):
+
+    type Person struct {
+      Name string
+      Age  int
+    }
+
+    type ByAge []Person
+
+    func (a ByAge) Len() int {
+      return len(a)
+    }
+
+    func (a ByAge) Less(i, j int) bool {
+      return a[i].Age < a[j].Age
+    }
+
+    func (a ByAge) Swap(i, j int) {
+      a[i], a[j] = a[j], a[i]
+    }
+
+    func main() {
+      people := []Person{
+        {Name: "Alice", Age: 30},
+        {Name: "Bob", Age: 25},
+        {Name: "Anna", Age: 35},
+      }
+
+      sort.Sort(ByAge(people))
+      fmt.Println(people)
+    }
+
+
+
+
+Ex (Method 2: Recommended):
+
+    type Person struct {
+      Name string
+      Age  int
+    }
+
+    type By func(p1, p2 *Person) bool
+
+    func (by *By) Sort(people []Person) {
+      ps := PersonSorter{
+        people: people,
+        by:     *by,
+      }
+
+      sort.Sort(&ps)
+    }
+
+    type PersonSorter struct {
+      people []Person
+      by     By
+    }
+
+    func (ps *PersonSorter) Len() int {
+      return len(ps.people)
+    }
+
+    func (ps *PersonSorter) Less(i, j int) bool {
+      return ps.by(&ps.people[i], &ps.people[j])
+    }
+
+    func (ps *PersonSorter) Swap(i, j int) {
+      ps.people[i], ps.people[j] = ps.people[j], ps.people[i]
+    }
+
+    func main() {
+      people := []Person{
+        {Name: "Alice", Age: 30},
+        {Name: "Bob", Age: 25},
+        {Name: "Anna", Age: 35},
+      }
+
+      age := func(p1, p2 *Person) bool {
+        return p1.Age < p2.Age
+      }
+
+      byAge := By(age)
+      (&byAge).Sort(people)
+
+      fmt.Println(people)
+    }
+
+
+
+
+---------- (sort.Slice) ----------
+
+* It is a short form of above operation.
+
+
+Ex:
+
+    func main() {
+      people := []string{"Anna", "John", "Bob", "Alice"}
+
+      sort.Slice(people, func(i, j int) bool {
+        return people[i] < people[j]
+      })
+
+      fmt.Println(people)
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Modules -------------------------------------------------------------
+
+---------- (CLI Tools) ----------
+
+* Install                 : go install <tool-name>
+
+* Remove                  : Delete the binary from $GOPATH/bin folder
+
+* See all installed tools : See the binaries at $GOPATH/bin folder
+
+
+
+
+---------- (Modules) ----------
+
+* A Module is a folder with go.mod file. It can contain packages.
+
+
+
+
+* A package is a folder with .go files sharing the same package name.
+
+
+
+
+* Initialize the current folder as a go module:
+
+      go mod init <module_url>
+
+      * In this case a new file called go.mod will be created.
+
+
+
+
+* Run a module:
+
+      go run .
+
+
+
+
+* Install an external module:
+
+      go get <module_url>
+
+
+
+
+* Remove a external module:
+
+      Step 1 : Remove any imports of the module from your code.
+
+      Step 2 : go mod tidy
+
+
+
+
+* Verify all external modules:
+
+      go mod verify
+
+
+
+
+* Packages:
+
+      * Inside a go module, every folder is a package.
+
+      * Every .go file in a package should contain "package <package_name>".
+
+      * In to every package is a standalone package. There is no such a thing
+        called parent-child relation between packages.
+
+
+
+
+* import a package:
+
+      import <module_name>/<package_path_from_root>
+
+
+      Ex:
+
+          import (
+            "github.com/codermadushan/modules/inventory"
+          )
+
+
+      * To access items in imported package:
+
+            <last_segment_name_of_import>.<item>
+
+
+
+
+* "internal" package:
+
+      Internal content is accessible only inside the parent folder of internal
+      folder and all subfolders of the parent folder of the internal folder, but
+      nowhere else.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Testing  ------------------------------------------------------------
+
+* To create tests for a go file, create a new go file in same package called:
+
+      <original_file_name>_test.go
+
+
+* There are 2 ways to specify package in that go test file:
+
+      1. package <pkg>:
+
+          * Can access all items in current package including private items.
+
+
+      2. package <pkg>_test:
+
+          * Consider as a seperate package.
+          * To use items in current package, we must import it.
+          * Only public items are allowed.
+
+
+* All test functions must:
+
+      * Start with Test.
+      * Contain "t *testing.T" parameter.
+
+
+      * Otherwise those functions are ignored.
+
+
+      Ex:
+
+          package sample
+
+          import (
+            "testing"
+          )
+
+          func TestAdd(t *testing.T) {
+            expected := 30
+            result := Add(10, 20) // Function to test from same package
+
+            if result != expected {
+              t.Error("Expected:", expected, ", got:", result)
+            }
+          }
+
+
+* Test against multiple inputs (Table Driven Test):
+
+      Ex:
+
+          package sample
+
+          import (
+            "testing"
+          )
+
+          func TestAddTableDriven(t *testing.T) {
+            test := []struct{ a, b, expected int }{{1, 2, 3}, {10, 20, 30}, {100, 200, 300}}
+
+            for _, test := range test {
+              result := Add(test.a, test.b)  // Function to test from same package
+              if result != test.expected {
+                t.Error("Expected:", test.expected, ", got:", result)
+              }
+            }
+          }
+
+
+* To get better test failed outputs use subtests:
+
+      Ex:
+
+          package sample
+
+          import (
+            "fmt"
+            "testing"
+          )
+
+          func TestAddTableDriven(t *testing.T) {
+            test := []struct{ a, b, expected int }{{1, 2, 3}, {10, 20, 30}, {100, 200, 400}}
+
+            for _, test := range test {
+              t.Run(fmt.Sprintf("Add(%d,%d)", test.a, test.b), func(t *testing.T) {
+                result := Add(test.a, test.b)
+
+                if result != test.expected {
+                  t.Errorf("Expected: %d, Got: %d", test.expected, result)
+                }
+              })
+            }
+          }
+
+
+* To run all tests in a module:
+
+      go test ./...
+
+
+* To run tests in a specific package(folder):
+
+      go test ./<pkg>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Benchmarking --------------------------------------------------------
+
+* To check information about a function like how long does it take to excecute.
+
+
+* We define benchmarks same as test.
+
+
+* In a benchmark:
+
+      * Function name should start with "Benchmark".
+      * Should contain a parameter "b testing.B".
+
+
+      Ex:
+
+          func BenchmarkAdd(b *testing.B) {
+            b.ResetTimer()
+
+            for b.Loop() {
+              Add(10, 20)
+            }
+          }
+
+          * We use b.ResetTimer() to reset the time before the loop to make the
+            result more accurate.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Executing processes -------------------------------------------------
+
+* We use "exec" package.
+
+
+* Execute a command and get the output:
+
+      func main() {
+        cmd := exec.Command("echo", "Hello World")
+
+        output, err := cmd.Output()
+        if err != nil {
+          fmt.Println(err)
+          return
+        }
+
+        fmt.Println("Output:", string(output))
+      }
+
+
+* Execute a command with inputs:
+
+      func main() {
+        cmd := exec.Command("grep", "foo")
+        cmd.Stdin = strings.NewReader("foo\nbar\nbuz\nfooo")
+
+        output, err := cmd.Output()
+        if err != nil {
+          fmt.Println(err)
+          return
+        }
+
+        fmt.Println("Output:", string(output))
+      }
+
+
+* Wait and Start:
+
+      func main() {
+        cmd := exec.Command("sleep", "5")
+
+        err := cmd.Start() // Execute the command without getting the output
+        if err != nil {
+          fmt.Println("Error starting")
+          return
+        }
+
+        err = cmd.Wait() // Wait until the process is finished
+        if err != nil {
+          fmt.Println("Error waiting")
+          return
+        }
+
+        fmt.Println("end")
+      }
+
+
+* To kill a process in the middle of the process:
+
+      cmd.Process.Kill()
+
+
+* io.Pipe() with exec:
+
+      func main() {
+        pr, pw := io.Pipe()
+        cmd := exec.Command("grep", "foo")
+
+        cmd.Stdin = pr
+        go func() {
+          defer pw.Close()
+
+          pw.Write([]byte("Hello World\nfood"))
+        }()
+
+        output, err := cmd.Output()
+        if err != nil {
+          fmt.Println("Error output:", err)
+          return
+        }
+
+        fmt.Println("output:", string(output))
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Signals -------------------------------------------------------------
+
+* Signals are buffered channels with type os.Signal.
+
+      sigs := make(chan os.Signal, 1)
+
+
+* To send an os signal:
+
+      kill -s <signal_name> <pid>
+
+      Ex: kill -s SIGINT <pid>
+
+
+Ex:
+
+    func main() {
+      pid := os.Getpid() // To get the process id
+      fmt.Println("pid:", pid)
+
+      sigs := make(chan os.Signal, 1)
+
+      // Listening and notify the channel on interrupt or terminate signals
+      signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+      go func() {
+        sig := <-sigs
+        fmt.Println("Received signal:", sig)
+        fmt.Println("Graceful exit")
+        os.Exit(0)
+      }()
+
+      for {
+        fmt.Println("Working...")
+        time.Sleep(time.Second)
+      }
+    }
+
+
+    * This program is exit gracefully if we kill it with SIGTERM or SIGINT
+      signals.
+
+    * If we send an another signal, program is terminated. But it is not a
+      graceful termination.
+
+
+* Handle each signal seperately:
+
+      func main() {
+        pid := os.Getpid()
+        fmt.Println("pid:", pid)
+
+        sigs := make(chan os.Signal, 1)
+
+        // Listening and notify the channel on interrupt or terminate signals
+        signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+        go func() {
+          sig := <-sigs
+
+          switch sig {
+          case syscall.SIGINT:
+            fmt.Println("SIGINT")
+          case syscall.SIGTERM:
+            fmt.Println("SIGTERM")
+          }
+
+          fmt.Println("Graceful exit")
+          os.Exit(0)
+        }()
+
+        for {
+          fmt.Println("Working...")
+          time.Sleep(time.Second)
+        }
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Reflection ----------------------------------------------------------
+
+* Reflection allows a program to inspect and manipulate variables, types, and
+  values at runtime, even when their type is not known at compile time.
+
+
+* The reflection features are provided by the package: reflect
+
+
+Ex:
+    func main() {
+      var x any = 10
+      v := reflect.ValueOf(x)
+
+      fmt.Println("Value   :", v)          // 10
+      fmt.Println("Type    :", v.Type())   // int
+      fmt.Println("Kind    :", v.Kind())   // int
+      fmt.Println("Is Zero :", v.IsZero()) // false
+    }
+
+    * v.IsZero() checks that is this the zero value of that type.
+
+
+* Type vs Kind:
+
+      func main() {
+        type MyInt int
+
+        a := 10
+        var b MyInt = 20
+
+        v1 := reflect.ValueOf(a)
+        v2 := reflect.ValueOf(b)
+
+        fmt.Println("Value:", v1.Type()) // int
+        fmt.Println("Kind :", v1.Kind()) // int
+
+        fmt.Println("Value:", v2.Type()) // main.MyInt
+        fmt.Println("Kind :", v2.Kind()) // int
+      }
+
+
+* Check the type of a value is int or not:
+
+      func main() {
+        type MyInt int
+
+        var a MyInt = 20
+        var b any = a
+
+        v := reflect.ValueOf(b)
+
+        isInt := v.Kind() == reflect.Int
+        fmt.Println(isInt)
+      }
+
+
+
+
+---------- (Update values) ----------
+
+* To modify a value, we have to provide it as a pointer.
+
+      func main() {
+        x := 10
+        v := reflect.ValueOf(&x).Elem()
+
+        v.SetInt(20)
+
+        fmt.Println(v) // 20
+      }
+
+
+      * Elem() : Get the underlying element.
+
+
+
+
+---------- (Reflect With Structs) ----------
+
+* To update Struct fields with reflects, the fields must be public.
+
+      func main() {
+        p := Person{Name: "Alice", age: 30}
+
+        v1 := reflect.ValueOf(p)
+
+        fmt.Println("Number of fields:", v1.NumField())
+        fmt.Println("Value of first field:", v1.Field(0))
+
+        v2 := reflect.ValueOf(&p).Elem()
+        nameField := v2.FieldByName("Name")
+        if nameField.CanSet() {
+          nameField.SetString("John")
+        } else {
+          fmt.Println("Cannot set value")
+        }
+
+        fmt.Println(v2)
+      }
+
+
+* With methods:
+
+      func main() {
+        p := Person{}
+
+        v := reflect.ValueOf(p)
+        fmt.Println(v) // {}
+
+        fmt.Println("Number of methods:", v.NumMethod()) // Number of methods: 1
+
+        // Access methods by indexes
+        method1 := v.Method(0)
+
+        // Access methods by names
+        method2 := v.MethodByName("GetName")
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Concurrency vs Parallelism ------------------------------------------
+
+* Concurrency:
+
+      The ability of a system to handle multiple tasks simultaneously. It
+      involves managing multiple tasks that are in progress at the same time but
+      not necessarily executed at the same instant.
+
+
+* Parallelism:
+
+      The simultaneously execution of multiple tasks, typically using multiple
+      processors or cores, to improve performance by running operations at the
+      same time.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Race Condition ------------------------------------------------------
+
+Ex:
+    func main() {
+      count := 0
+      var wg sync.WaitGroup
+
+      for range 10 {
+        wg.Go(func() {
+          for range 1000 {
+            count++
+          }
+        })
+      }
+
+      wg.Wait()
+
+      fmt.Println(count)
+    }
+
+
+* To detect race condition, we can run programs with -race flag:
+
+      go run -race main.go
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- RWMutex -------------------------------------------------------------
+
+* Read Write Mutex (sync.RWMutex)
+
+
+* Read:
+
+      Read Lock   : RLock()
+      Read Unlock : RUnlock()
+
+      * Multiple readers are allowed simultaneously.
+      * No writers are allowed while reading.
+
+
+* Write:
+
+      Write Lock   : Lock()
+      Write Unlock : Unlock()
+
+      * Only one writer is allowed.
+      * No readers are allowed while writing.
+
+
+Ex:
+    var (
+      rwmu  sync.RWMutex
+      count int = 0
+    )
+
+    func readCounter() {
+      rwmu.RLock()
+      defer rwmu.RUnlock()
+
+      fmt.Println("Read Counter:", count)
+    }
+
+    func writeCounter(value int) {
+      rwmu.Lock()
+      defer rwmu.Unlock()
+
+      count = value
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- sync.NewCond --------------------------------------------------------
+
+* sync.NewCond creates a condition variable. A condition variable lets goroutines
+  wait until some condition becomes true, while coordinating with a mutex.
+
+
+* Type of a condition variable    : *sync.Cond (Always use as a pointer)
+
+* Create a new condition variable : sync.NewCond(<sync.Locker>)
+
+* sync.Locker is an interface:
+
+      type Locker interface {
+        Lock()
+        Unlock()
+      }
+
+* We can provide both sync.Mutex and sync.RWMutex for sync.NewCond, but for
+  RWMutex, only writer lock ( Lock() ) and writer unlock ( Unlock() ) are allowed.
+
+
+* cond.Wait():
+
+      * Blocking.
+
+      * Always use inside a Lock() with a for loop.
+
+      * When it is called:
+
+            1. Unlock mutex
+            2. Waiting for the signal/broadcase
+
+      * When a signal happens:
+
+            1. Lock the mutex again
+            2. execute the code further.
+
+
+* cond.Signal():
+
+      * Non-blocking.
+
+      * Wakes up only one waiting goroutine.
+
+      * Always recommended to use inside a lock.
+
+
+* cond.Broadcast():
+
+      * Non-blocking.
+
+      * Wakes up all waiting goroutine.
+
+      * But the lock is acquired only one goroutine at a time.
+
+      * Always recommended to use inside a lock.
+
+
+Ex:
+
+    const bufferSize = 5
+
+    type Buffer struct {
+      Items []int
+      mu    sync.Mutex
+      cond  *sync.Cond
+    }
+
+    func (b *Buffer) produce(item int) {
+      b.mu.Lock()
+      defer b.mu.Unlock()
+
+      for len(b.Items) == bufferSize {
+        b.cond.Wait() // wait until consumer consume
+      }
+
+      b.Items = append(b.Items, item)
+      fmt.Println("Produced:", item)
+      b.cond.Signal() // Signal to a waiting goroutine in the consumer
+    }
+
+    func (b *Buffer) consume() int {
+      b.mu.Lock()
+      defer b.mu.Unlock()
+
+      for len(b.Items) == 0 {
+        b.cond.Wait() // waiting until producer produce
+      }
+
+      item := b.Items[0]
+      b.Items = b.Items[1:]
+      fmt.Println("Consumed:", item)
+      b.cond.Signal() // Signal to a waiting goroutine in the producer
+
+      return item
+    }
+
+    func NewBuffer(size int) *Buffer {
+      b := &Buffer{
+        Items: make([]int, 0, size),
+      }
+      b.cond = sync.NewCond(&b.mu)
+      return b
+    }
+
+    func producer(b *Buffer) {
+      for i := range 10 {
+        b.produce(i + 100)
+        time.Sleep(100 * time.Millisecond)
+      }
+    }
+
+    func consumer(b *Buffer) {
+      for range 10 {
+        b.consume()
+        time.Sleep(200 * time.Millisecond)
+      }
+    }
+
+    func main() {
+      buffer := NewBuffer(bufferSize)
+      var wg sync.WaitGroup
+
+      wg.Go(func() {
+        producer(buffer)
+      })
+
+      wg.Go(func() {
+        consumer(buffer)
+      })
+
+      wg.Wait()
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- sync.Once -----------------------------------------------------------
+
+* Ensures a piece of code runs only once, no matter how many goroutines try to
+  execute it.
+
+
+Ex:
+
+    var once sync.Once
+
+    func initialize() {
+      fmt.Println("Initialization")
+    }
+
+    func main() {
+      var wg sync.WaitGroup
+
+      for i := range 5 {
+        wg.Go(func() {
+          fmt.Println("Goroutine #", i)
+          once.Do(initialize)
+        })
+      }
+
+      wg.Wait()
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- sync.Pool -----------------------------------------------------------
+
+* Its main purpose is to reuse objects to reduce GC overhead and improve
+  performance in high-throughput applications.
+
+
+* Think of it as a "bucket" where you can get an object if available, or put it
+  back for reuse later.
+
+
+* We use Get() method to get an object from the pool in LIFO order. (like a stack)
+
+
+* We use Put() method to push objects to the pool.
+
+
+Ex:
+
+    type Person struct {
+      Name string
+      Age  int
+    }
+
+    func main() {
+      pool := sync.Pool{
+        New: func() any { // Calls when you do Get() and the pool has no objects to return, otherwise panic
+          fmt.Println("Creating a new Person")
+          return &Person{}
+        },
+      }
+
+      // Get an object from the pool
+      person1 := pool.Get().(*Person)
+      person1.Name = "John"
+      person1.Age = 30
+
+      fmt.Println(person1)
+
+      pool.Put(person1)
+
+      person2 := pool.Get()
+      fmt.Println(person2)
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- For Select Statement ------------------------------------------------
+
+* This is a widely used pattern in go.
+
+
+Ex:
+    func main() {
+      ticker := time.NewTicker(time.Second)
+      quit := make(chan struct{})
+
+      go func() {
+        time.Sleep(5 * time.Second)
+        close(quit)
+      }()
+
+      for {
+        select {
+        case <-quit:
+          fmt.Println("Quitting...")
+          return
+        case t := <-ticker.C:
+          fmt.Println(t)
+        }
+      }
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- How Internet Works --------------------------------------------------
+
+* Internet:
+
+      A global network of inter-connected computers that communicate using
+      standardized protocols.
+
+
+
+
+* A web request's journey:
+
+      1. Entering a URL.
+
+
+      2. DNS Lookup, DNS Server Interaction.
+
+
+      3. Establishing a TCP connection.
+
+            * Browser sends a TCP SYN (synchronize) packet to the server.
+
+            * Server responds with a SYN-ACK (synchronize-acknowledge) packet.
+
+            * Browser sends an ACK (acknowledge) packet, completing the
+              three-way handshake.
+
+
+      4. Sending an HTTP request.
+
+
+      5. Server Processing and Response.
+
+
+      6. Rendering the web page.
+
+
+
+
+* Network layers involved:
+
+      1. Application layer:
+
+            * Protocols       : HTTP, HTTPS, DNS
+
+            * Responsible for : High-level APIs, resource sharing, and remote
+              file access.
+
+
+      2. Transport layer:
+
+            * Protocols       : TCP, UDP
+
+            * Responsible for : End-to-end communication, error checking, and
+              data flow control.
+
+
+      3. Internet Layer:
+
+            * Protocols       : IP
+            * Responsible for : Addressing, routing, and packet forwarding.
+
+
+      4. Link layer:
+
+            * Protocols       : Ethernet, Wi-Fi
+            * Responsible for : Physical addressing and media access control.
+
+
+
+
+* URL vs URI:
+
+      * URI : Uniform Resource Identifier.
+      * URL : Uniform Resource Locator.
+      * URN : Uniform Resource Name.
+
+
+      * Components of a URL:
+
+            * Schema
+            * Host
+            * Port
+            * Path
+            * Query
+            * Fragment
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Pointer Structs -----------------------------------------------------
+
+* In go, we usually define structs as pointer to avoid unnecessary coping.
+
+      Ex:
+
+          1. client := &http.Client{...}
+
+          2. cookie := &http.Cookie{...}
+
+          ...
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Create A HTTP Client In GO ------------------------------------------
+
+* Basic:
+
+      func main() {
+        client := &http.Client{}
+
+        resp, err := client.Get("https://jsonplaceholder.typicode.com/posts/1")
+        if err != nil {
+          fmt.Println("Error making GET request:", err)
+          return
+        }
+        defer resp.Body.Close()
+
+        body, err := io.ReadAll(resp.Body)
+        if err != nil {
+          fmt.Println("Error reading response body:", err)
+          return
+        }
+
+        fmt.Println(string(body))
+      }
+
+
+* To add details to the request:
+
+      func main() {
+        req, err := http.NewRequest("GET", "https://jsonplaceholder.typicode.com/posts/1", nil)
+        if err != nil {
+          fmt.Println("Error creating request:", err)
+          return
+        }
+
+        // req.Header.Set("Content-Type", "application/json")
+
+        client := &http.Client{}
+
+        resp, err := client.Do(req)
+        if err != nil {
+          fmt.Println("Error sending request:", err)
+          return
+        }
+        defer resp.Body.Close()
+
+        body, err := io.ReadAll(resp.Body)
+        if err != nil {
+          fmt.Println("Error reading response body:", err)
+          return
+        }
+
+        fmt.Println(string(body))
+      }
+
+
+* We must define the client as a pointer to share the same connection pool and
+  avoid copying the client struct.
+
+
+* We must close the resp.Body at the end to release the network connection so it
+  can be reused or closed.
+
+
+* We read the resp.Body as a byte slice.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Create A HTTP Server In GO ------------------------------------------
+
+* Basic:
+
+      func main() {
+        http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+          // 1. Headers
+          w.Header().Set("Content-Type", "application/json")
+
+          // 2. Cookies
+          http.SetCookie(w, &http.Cookie{
+            Name:  "session_id",
+            Value: "abc123",
+            Path:  "/",
+          })
+
+          // 3. StatusCode
+          w.WriteHeader(http.StatusOK)
+
+          // 4. Body
+          fmt.Fprintf(w, "Hello") // string
+          json.NewEncoder(w).Encode(<struct_object>) // json
+        })
+
+        const port int = 3000
+
+        fmt.Println("Server is listening on port:", port)
+        err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+        if err != nil {
+          log.Fatalln("Error starting server", err)
+        }
+      }
+
+
+
+
+* Custom server:
+
+      func main() {
+        // Add http.HandleFuncs here
+
+        const port int = 3000
+        const cert string = "localhost.pem"
+        const key string = "localhost-key.pem"
+
+        tlsConfig := &tls.Config{
+          MinVersion: tls.VersionTLS12,
+        }
+
+        server := &http.Server{
+          Addr:      fmt.Sprintf(":%d", port),
+          Handler:   nil,
+          TLSConfig: tlsConfig,
+        }
+
+        fmt.Println("Server running on port:", port)
+        err := server.ListenAndServeTLS(cert, key)
+        if err != nil {
+          log.Fatalln("Error starting server:", err)
+        }
+      }
+
+
+
+
+* We can specify the serverAddress in both following ways:
+
+      const serverAddress string = "127.0.0.1:3000"
+
+      or,
+
+      const port string = ":3000"
+
+
+* Response content order:
+
+      1. Headers
+      2. Cookies
+      3. StatusCode (Default w.WriteHeader(http.StatusOK))
+      4. Body
+
+      * Response is sent to the client when the handler function returns or ends
+
+
+* When we pass nill as the second argument to the "http.ListenAndServe", Go uses
+  the default router which is where "http.Handle" and "http.HandleFunc" register
+  routes.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Ports ---------------------------------------------------------------
+
+* A computer has 65,535 ports.
+
+      * Well-known ports        : 0 - 1023
+
+      * Registered ports        : 1024 - 49151
+
+      * Dynamic or private ports: 49152 - 65535
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Server-Sent Events (SSE) --------------------------------------------
+
+* SSE is a server-to-client stream of events over HTTP.
+
+
+* Server (Go):
+
+      func main() {
+        http.HandleFunc("/stream", func(w http.ResponseWriter, r *http.Request) {
+          // Set Headers
+          w.Header().Set("Content-Type", "text/event-stream") // required
+          w.Header().Set("Cache-Control", "no-cache")         // not required, but recommended
+          w.Header().Set("Connection", "keep-alive")          // not required, but recommended
+          w.Header().Set("Access-Control-Allow-Origin", "*")  // Needed if client is cross-origin
+
+          // Ensure we can flush
+          flusher, ok := w.(http.Flusher)
+          if !ok {
+            http.Error(w, "Streaming unsupported", http.StatusInternalServerError)
+            return
+          }
+
+          ticker := time.NewTicker(2 * time.Second)
+          defer ticker.Stop()
+
+          id := 1
+          for {
+            select {
+            case <-r.Context().Done():
+              fmt.Println("Client disconnected")
+              return
+
+            case <-ticker.C:
+              _, err := fmt.Fprintf(w, "Hello %d from server", id)
+              if err != nil {
+                fmt.Println("Write error:", err)
+                return
+              }
+              id++
+
+              flusher.Flush()
+            }
+          }
+        })
+
+        const port = 3000
+        fmt.Println("Server is running on port:", port)
+        err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+        if err != nil {
+          log.Fatalln("Error starting server:", err)
+        }
+      }
+
+
+
+
+* Client (Curl):
+
+      curl -N http://localhost:3000/stream
+
+      -N : No buffer
+
+
+
+
+* Client (Dart):
+
+      import 'dart:convert';
+
+      import 'package:http/http.dart' as http;
+
+      void main() async {
+        final client = http.Client();
+        final req = http.Request("GET", Uri.parse("http://localhost:3000/stream"));
+
+        final resp = await client.send(req);
+        resp.stream.transform(utf8.decoder).listen((event) {
+          print(event);
+        });
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- SSL/TLS Certificates ------------------------------------------------
+
+* SSL certificates are called SSL/TLS because TLS replaced SSL, but the old name
+  "SSL certificate" remained in common use.
+
+      SSL: Secure Sockets Layer
+      TLS: Transport Layer Security
+
+
+
+
+* How TLS encryption works:
+
+      1. Client connect to server.
+      2. Server sends its certificate with the public key.
+      3. Client generates a random session key (symmetric key).
+      4. Client encrypts the session key with server's public key and send it.
+      5. Server decrypts with its private key. Both now have the same session key.
+      6. All further communication is encrypted with the session key (fast symmetric encryption).
+
+
+
+
+* Generate the TLS certificate and the private key for local development:
+
+      * Install the tool:
+
+            mkcert (sudo pacman -S mkcert --needed)
+
+
+      * Run following command onece to install the local CA:
+
+            mkcert -install
+
+            CA: Certificate Authority
+
+
+      * To generate certificates for your domain:
+
+            mkcert <file_name> (Ex: mkcert localhost)
+
+            It creates 2 files:
+
+                1. localhost-key.pem (Private key)
+                2. localhost.pem (Certificate)
+
+
+      * For Postman:
+
+            * Goto settings --> App settings --> Certificates
+
+            * Toggle on CA certificates button and enter the following command:
+
+                  mkcert -CAROOT
+
+            * That command shows a location. In that location there is a file
+              called "rootCA.pem". Add that file to the CA certificates PEM file
+
+            * Then add Client certificates.
+
+
+
+
+* To implement a HTTPS server in Go:
+
+      const port int = 3000
+      const cert string = "localhost.pem"
+      const key string = "localhost-key.pem"
+
+      fmt.Println("Server running on port:", port)
+      err := http.ListenAndServeTLS(fmt.Sprintf(":%d", port), cert, key, nil)
+      if err != nil {
+        log.Fatalln("Error starting server:", err)
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Serialization & Deserialization -------------------------------------
+
+* Serialization: Convert a Go struct into a JSON format string.
+
+
+* Deserialization: Convert a JSON format string into a Go struct.
+
+
+* Convert a struct to a JSON string:
+
+      type Person struct {
+        Name string `json:"name"`
+        Age  int    `json:"age"`
+      }
+
+      func main() {
+        person := Person{
+          Name: "John Cena",
+          Age:  30,
+        }
+
+        data, err := json.Marshal(person)
+        if err != nil {
+          fmt.Println("Error:", err)
+          return
+
+        }
+
+        fmt.Println(string(data))
+      }
+
+
+
+
+* Convert a JSON string to a struct:
+
+      type Person struct {
+        Name string `json:"name"`
+        Age  int    `json:"age"`
+      }
+
+      func main() {
+        data := `{"name":"John Cena","age":30}`
+        var person Person
+        err := json.Unmarshal([]byte(data), &person)
+        if err != nil {
+          fmt.Println("Error:", err)
+          return
+        }
+
+        fmt.Println(person.Name)
+        fmt.Println(person.Age)
+      }
+
+
+
+
+* Convert a struct to a JSON string and write to a writer:
+
+      type Person struct {
+        Name string `json:"name"`
+        Age  int    `json:"age"`
+      }
+
+      func main() {
+        person := Person{
+          Name: "John Cena",
+          Age:  30,
+        }
+
+        err := json.NewEncoder(os.Stdout).Encode(person)
+        if err != nil {
+          fmt.Println("Error encoding:", err)
+          return
+        }
+      }
+
+
+
+
+* Read a JSON string from a Reader and convert to a struct:
+
+      type Person struct {
+        Name string `json:"name"`
+        Age  int    `json:"age"`
+      }
+
+      func main() {
+        r := strings.NewReader(`{"name":"John Cena","age":30}`)
+
+        var person Person
+        err := json.NewDecoder(r).Decode(&person)
+        if err != nil {
+          fmt.Println("Error decoding:", err)
+          return
+        }
+
+        fmt.Println(person)
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- API Project Folder Structure ----------------------------------------
+
+/project-root
+    /cmd (This folder contains the main entry point of your application. Typically one per binary)
+        /api
+            server.go (Entry point)
+            .env
+
+
+    /internal (This folder contains the private application code, including your API handlers, models, repos, etc)
+        /api
+            /handlers (Use plural)
+            /middlewares (Use plural)
+            /routers
+
+
+        /models (Use plural)
+
+
+        /repositories
+            /mongodb
+                mongoconnect.go
+
+
+            /sqlconnect
+                sqlconfig.go
+
+
+    /pkg
+        /utils (Use plural)
+            error_handling.go
+            jwt_processing.go
+
+
+    /proto (For gRPC APIs)
+
+
+    go.mod
+
+
+    go.sum
+
+
+
+
+* Sample handler:
+
+      * ./internal/api/handlers/students.go
+
+      func GetStudents(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprint(w, "Hello From GetStudents")
+      }
+
+
+
+
+* Sample router:
+
+      * ./internal/api/routers/students.go
+
+      func StudentsRouter(mux *http.ServeMux) {
+        mux.HandleFunc("GET /students", handlers.GetStudents)
+      }
+
+
+      * ./internal/api/routers/router.go
+
+      func Router() *http.ServeMux {
+        mux := http.NewServeMux()
+
+        StudentsRouter(mux)
+
+        return mux
+      }
+
+
+
+
+* In server.go:
+
+      router := routers.Router()
+
+      server := &http.Server{
+        Addr:      fmt.Sprintf(":%d", port),
+        TLSConfig: tlsConfig,
+        Handler:   router,
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Access Request Body From Server -------------------------------------
+
+* URL-Encoded form data:
+
+      * Content-Type: application/x-www-form-urlencoded
+
+
+      http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        switch r.Method {
+        case http.MethodPost:
+          err := r.ParseForm()
+          if err != nil {
+            http.Error(w, "Error parsing form:", http.StatusBadRequest)
+            return
+          }
+
+          resp := make(map[string]any)
+          for key, value := range r.Form {
+            resp[key] = value[0]
+          }
+
+          fmt.Println(resp)
+
+        default:
+          http.Error(w, "Route not found", http.StatusNotFound)
+        }
+      })
+
+
+
+
+* Raw-JSON:
+
+      * Content-Type: application/json
+
+
+      http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        switch r.Method {
+        case http.MethodPost:
+          var user User
+          err := json.NewDecoder(r.Body).Decode(&user)
+          if err != nil {
+            http.Error(w, "Error reading body:", http.StatusBadRequest)
+            return
+          }
+          defer r.Body.Close()
+
+          fmt.Println(user)
+
+        default:
+          http.Error(w, "Route not found", http.StatusNotFound)
+        }
+      })
+
+
+      * Read a json object to a struct:
+
+            var user models.User
+
+            err := json.NewDecoder(r.Body).Decode(&user)
+            r.Body.Close()
+
+
+      * Read a list of json objects to a slice of structs:
+
+            var users []models.User
+
+            err := json.NewDecoder(r.Body).Decode(&users)
+            r.Body.Close()
+
+
+      * Zeroth values will be assigned to the non-provided fields.
+
+
+      * Additional fields will be ignored.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Access URL Data From Server -----------------------------------------
+
+* Query params:
+
+      params := r.URL.Query()
+
+
+      name := params.Get("name")
+
+          * If multiple values are provided for same key, only the first value
+            is considered.
+
+          * If not available, returns an empty string.
+
+
+      names := params["name"]
+
+          * Access all values of the same key.
+
+          * If not available, an empty string slice will be returned.
+
+
+
+
+* Path Params:
+
+      mux.HandleFunc("GET /teachers/{id}", ...)
+
+
+      id := r.PathValue("id")
+
+
+      * If not available, returns an empty string.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- (Sending the response to the clients) -------------------------------
+
+* Always set Content-Type header when sending the response to the client.
+
+      * w.Header().Set("Content-Type", "application/json")
+
+      * default: Content-Type: text/plain; charset=utf-8
+
+
+
+
+* To send the response body as plain text:
+
+      w.Write(<byte_slice>) or,
+      fmt.Fprint(w, <string>)
+
+
+
+
+* To send the response body as json:
+
+      json.NewEncoder(w).Encode(<struct>) or,
+      json.NewEncoder(w).Encode(<slice_of_structs>)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Multiplexer (mux) ---------------------------------------------------
+
+* Create a new multiplexer:
+
+      mux := http.NewServeMux()
+
+
+* Now provide it to the custom server:
+
+      server := &http.Server{
+        ...
+        Handler:   mux,
+        ...
+      }
+
+
+* Now use mux to define handlers:
+
+      mux.handleFunc(...)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Middlewares ---------------------------------------------------------
+
+* We use middlewares for various purposes like:
+
+      * Logging
+      * Authentication & Authorization
+      * Data validation
+      * Error handling
+      ...
+
+
+
+
+* Basic middleware structure:
+
+      func SecurityHeaders(next http.Handler) http.Handler {
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+          // Runs before handler
+
+          next.ServeHTTP(w, r)
+
+          // Runs after handler
+
+        })
+      }
+
+
+      * http.Handler interface:
+
+            type Handler interface {
+                ServeHTTP(ResponseWriter, *Request)
+            }
+
+
+
+
+* To initialize a middleware in the server:
+
+      server := &http.Server{
+        ...
+        Handler:   <middleware>(mux),
+        ...
+      }
+
+
+
+
+* Example SecurityHeaders middleware:
+
+      func SecurityHeaders(next http.Handler) http.Handler {
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+          w.Header().Set("X-DNS-Prefetch-Control", "off")
+          w.Header().Set("X-Frame-Options", "DENY")
+          w.Header().Set("X-XSS-Protection", "1;mode=block")
+          w.Header().Set("X-Content-Type-Options", "nosniff")
+          w.Header().Set("Strict-Transport-Security", "max-age=63072000;includeSubDomains;preload")
+          w.Header().Set("Content-Security-Policy", "default-src 'self'")
+          w.Header().Set("Referrer-Policy", "no-referrer")
+          w.Header().Set("X-Powered-By", "Express")
+
+          next.ServeHTTP(w, r)
+        })
+      }
+
+
+      * All headers must be set before the response is written:
+
+            The means before,
+
+                1. w.WriteHeader(...) or,
+
+                2. w.Write(...) or,
+                3. fmt.Fprint(...)
+
+
+
+
+* Example Cors middleware:
+
+      var allowedOrigins = []string{
+        "https://my-origin-url.com",
+        "https://127.0.0.1:3000",
+      }
+
+      func isAllowedOrigin(origin string) bool {
+        return slices.Contains(allowedOrigins, origin)
+      }
+
+      func Cors(next http.Handler) http.Handler {
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+          origin := r.Header.Get("Origin")
+          fmt.Println("Origin:", origin)
+          if !isAllowedOrigin(origin) {
+            http.Error(w, "Not allowed by CORS", http.StatusForbidden)
+            return
+          }
+          w.Header().Set("Access-Control-Allow-Origin", origin)
+
+          w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+          w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE")
+          w.Header().Set("Access-Control-Allow-Credentials", "true")
+          w.Header().Set("Access-Control-Expose-Headers", "Authorization")
+          w.Header().Set("Access-Control-Max-Age", "3600")
+
+          if r.Method == http.MethodOptions {
+            return
+          }
+
+          next.ServeHTTP(w, r)
+        })
+      }
+
+
+
+
+* Example ResponseTime middleware:
+
+      type responseWriter struct {
+        http.ResponseWriter
+        statusCode int
+      }
+
+      func (rw *responseWriter) WriteHeader(statusCode int) {
+        rw.statusCode = statusCode
+        rw.ResponseWriter.WriteHeader(statusCode)
+      }
+
+      func ResponseTime(next http.Handler) http.Handler {
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+          fmt.Println("Request is received to ResponseTime middleware")
+
+          startAt := time.Now()
+
+          // Custom response writer to catch the status code
+          wrappedWriter := &responseWriter{
+            ResponseWriter: w,
+            statusCode:     http.StatusOK,
+          }
+
+          next.ServeHTTP(wrappedWriter, r)
+
+          duration := time.Since(startAt)
+          fmt.Printf("Method: %s | URL: %s | Status: %d | Duration: %v\n", r.Method, r.URL, wrappedWriter.statusCode, duration)
+
+          fmt.Println("Request is sent from ResponseTime middleware")
+        })
+      }
+
+
+
+
+* Example Compression middleware:
+
+      * To compress the response body.
+
+
+      * gzWriter := gzip.NewWriter(w)
+        defer gzWriter.Close()
+
+        gsWriter.Write(b):
+
+            Think of this like, Take "b" and compress it using gzip, then write
+            it to the "w".
+
+
+      type gzipResponseWriter struct {
+        http.ResponseWriter
+        gzw *gzip.Writer
+      }
+
+      func (g *gzipResponseWriter) Write(b []byte) (int, error) {
+        return g.gzw.Write(b)
+      }
+
+      func Compression(next http.Handler) http.Handler {
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+          if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+            next.ServeHTTP(w, r)
+            return
+          }
+
+          w.Header().Set("Content-Encoding", "gzip") // required
+
+          gzw := gzip.NewWriter(w)
+          defer gzw.Close()
+
+          w = &gzipResponseWriter{
+            ResponseWriter: w,
+            gzw:            gzw,
+          }
+
+          next.ServeHTTP(w, r)
+        })
+      }
+
+
+
+
+* Example RateLimiter middleware:
+
+      type rateLimiter struct {
+        mu            sync.Mutex
+        visitors      map[string]int
+        limit         int
+        resetDuration time.Duration
+      }
+
+      func (rl *rateLimiter) reset() {
+        for {
+          time.Sleep(rl.resetDuration)
+
+          rl.mu.Lock()
+          rl.visitors = make(map[string]int)
+          rl.mu.Unlock()
+        }
+      }
+
+      func (rl *rateLimiter) Middleware(next http.Handler) http.Handler {
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+          visitorIP := r.RemoteAddr
+
+          rl.mu.Lock()
+          rl.visitors[visitorIP]++
+          visitorCount := rl.visitors[visitorIP]
+          rl.mu.Unlock()
+
+          if visitorCount > rl.limit {
+            http.Error(w, "Too many requests", http.StatusTooManyRequests)
+            return
+          }
+
+          next.ServeHTTP(w, r)
+        })
+      }
+
+      func NewRateLimiter(limit int, resetDuration time.Duration) *rateLimiter {
+        rl := &rateLimiter{
+          visitors:      make(map[string]int),
+          limit:         limit,
+          resetDuration: resetDuration,
+        }
+
+        go rl.reset()
+
+        return rl
+      }
+
+
+
+
+* General order of middlewares:
+
+      1. Cors
+      2. RateLimiter
+      3. ResponseTime
+      4. SecurityHeaders
+      5. Compression
+      6. HPP
+
+
+
+
+* Efficient middleware chaining:
+
+      type middleware func(http.Handler) http.Handler
+
+      func applyMiddlewares(handler http.Handler, middlewares ...middleware) http.Handler {
+        for _, middleware := range middlewares {
+          handler = middleware(handler)
+        }
+
+        return handler
+      }
+
+
+      * Usage: applyMiddlewares(mux, m4, m3, m2, m1)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Make A File Downloadable --------------------------------------------
+
+mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
+  filePath := "large-file.zip"
+
+  w.Header().Set("Content-Disposition", fmt.Sprintf("attachment;filename=%s", filePath))
+  w.Header().Set("Content-Type", "application/octet-stream")
+
+  http.ServeFile(w, r, filePath)
+})
+
+
+* Streams file in chunks. Does not load entire file into RAM.
+
+* Handles range requests. Important for resume downloads.
+
+* Optimized internally.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- pgxpool -------------------------------------------------------------
+
+* Installation:
+
+      go get github.com/jackc/pgx/v5/pgxpool
+
+
+
+
+* Creation:
+
+      (internal/db/pool.go)
+
+      var (
+        pool *pgxpool.Pool
+        once sync.Once
+      )
+
+      func newPool(ctx context.Context, databaseURL string) (*pgxpool.Pool, error) {
+        config, err := pgxpool.ParseConfig(databaseURL)
+        if err != nil {
+          return nil, err
+        }
+
+        config.MaxConns = 25
+        config.MinConns = 5
+        config.MaxConnLifetime = time.Hour
+        config.MaxConnIdleTime = 30 * time.Minute
+
+        return pgxpool.NewWithConfig(ctx, config)
+      }
+
+      func Initialize() {
+        once.Do(func() {
+          ctx := context.Background()
+          databaseURL := os.Getenv("DATABASE_URL")
+
+          p, err := newPool(ctx, databaseURL)
+          if err != nil {
+            log.Fatalln("Failed to connect to the database:", err)
+          }
+
+          err = p.Ping(ctx)
+          if err != nil {
+            log.Fatalln("Failed to ping database:", err)
+          }
+
+          pool = p
+          log.Println("Successfully connected to the database")
+        })
+      }
+
+      func Get() *pgxpool.Pool {
+        if pool == nil {
+          log.Fatalln("Database pool is not initialized")
+        }
+        return pool
+      }
+
+      func Close() {
+        if pool != nil {
+          pool.Close()
+        }
+      }
+
+
+      * In server.go file:
+
+            db.Initialize()
+            defer db.Close()
+
+
+
+
+* pool.Close():
+
+      * Gracefully shuts down the connection pool and releases all database
+        connections back to the server.
+
+
+      * After calling Close(), the pool cannot be used again.
+
+
+
+
+* pool.Exec(...):
+
+      * To execute SQL without returning rows.
+
+            Used for: INSERT, UPDATE, DELETE, CREATE, ETC
+
+
+      sql := `
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL
+      )
+      `
+
+      res, err := pool.Exec(context.Background(), sql)
+      if err != nil {
+        http.Error(w, fmt.Sprint(err), http.StatusInternalServerError)
+        return
+      }
+
+      fmt.Fprintf(w, "%d", res.RowsAffected()) // 0
+
+
+
+
+* pool.QueryRow(...):
+
+      * Use when you expect exactly one row (or at most one).
+
+
+      var name string
+      var age int
+
+      err := pool.QueryRow(context.Background(), "SELECT name, age FROM users WHERE id=$1", 42).Scan(&name, &age)
+      if err == pgx.ErrNoRows {
+        http.Error(w, "Data not found", http.StatusNotFound)
+        return
+      } else if err != nil {
+        http.Error(w, "Failed to get data", http.StatusInternalServerError)
+        return
+      }
+
+      fmt.Println(name, age)
+
+
+
+
+* pool.Query(...):
+
+      * Use when you expect multiple rows in the result.
+
+
+      * Never returns pgx.ErrNoRows.
+
+
+      students := make([]Student, 0)
+
+      rows, err := pool.Query(context.Background(), "SELECT id,name,age FROM students WHERE age > $1", 50)
+      if err != nil {
+        http.Error(w, "Failed to fetch data", http.StatusInternalServerError)
+        return
+      }
+      defer rows.Close()
+
+      for rows.Next() {
+        var s Student
+        err := rows.Scan(&s.ID, &s.Name, &s.Age)
+        if err != nil {
+          http.Error(w, "Failed to assign data", http.StatusInternalServerError)
+          return
+        }
+
+        students = append(students, s)
+      }
+
+      if rows.Err() != nil {
+        http.Error(w, "Failed to fetch data", http.StatusInternalServerError)
+        return
+      }
+
+      json.NewEncoder(w).Encode(students)
+
+
+      * pgx.Rows is streamed. Rows are fetched lazily as you call rows.Next().
+
+      * Each call to rows.Next() may fetch more rows from the server.
+
+      * If the connection drops, the server closes the connection, or there's a
+        network glitch, rows.Next() will notice it.
+
+      * That's why rows.Err() can return an error after some rows have already
+        been processed.
+
+
+
+
+* pool.Acquire(...):
+
+      * To manually get a connection from the pool.
+
+
+      conn, err := pool.Acquire(ctx)
+      defer conn.Release()
+
+
+      * We can use "pool.AcquireFunc" to auto-manage acquire + release.
+
+
+
+
+* pool.Begin(...):
+
+      * pool.Begin(ctx)    --> starts a transaction
+      * pool.Commit(ctx)   --> save changes
+      * pool.Rollback(ctx) --> undo changes (ignored if already committed)
+
+
+      func transfer(ctx context.Context, pool *pgxpool.Pool, from, to, amount int) error {
+        tx, err := pool.Begin(ctx)
+        if err != nil {
+            return err
+        }
+        defer tx.Rollback(ctx)
+
+        _, err = tx.Exec(ctx,
+            "UPDATE accounts SET balance = balance - $1 WHERE id = $2",
+            amount, from,
+        )
+        if err != nil {
+            return err
+        }
+
+        _, err = tx.Exec(ctx,
+            "UPDATE accounts SET balance = balance + $1 WHERE id = $2",
+            amount, to,
+        )
+        if err != nil {
+            return err
+        }
+
+        return tx.Commit(ctx)
+      }
+
+
+      * Use one context per transaction, Don't mix contexts inside it.
+
+
+      * Let's say:
+
+            1. Transaction started
+            2. First query executed
+            3. Internet drops / app crashes
+            4. Commit() never happens
+
+
+      * What PostgreSQL does:
+
+            * PostgreSQL sees client connection disappeared before commit.
+            * It will automarically abort the transaction.
+            * Changes are not permanent until Commit.
+            * They live in a temporary state (WAL + MVCC system).
+            * If session ends unexpectedly --> discard changes.
+
+
+      * We can use pool.BeginTx(...) to start a transaction with custom options.
+
+
+
+
+* pool.CopyFrom(...):
+
+      * Instead of running many INSERT statements (which are slow for large datasets),
+        CopyFrom streams rows directly into PostgreSQL in one operation. It’s much
+        faster for inserting thousands or millions of rows.
+
+
+      * It targets only one table at a time.
+
+
+      people := [][]any{
+        {"Anna", 42},
+        {"John", 50},
+      }
+
+      // CopyFromRows
+      numRows, err = pool.CopyFrom(
+        context.Background(),
+        pgx.Identifier{"students"},
+        []string{"name", "age"},
+        pgx.CopyFromRows(people),
+      )
+      if err != nil {
+        http.Error(w, "Failed to insert data", http.StatusInternalServerError)
+        return
+      }
+
+
+      * CopyFromSlice:
+
+            numRows, err := pool.CopyFrom(
+              context.Background(),
+              pgx.Identifier{"teachers"},
+              []string{"first_name", "last_name", "email", "class", "subject"},
+              pgx.CopyFromSlice(len(teachers), func(i int) ([]any, error) {
+                t := teachers[i]
+                return []any{t.FirstName, t.LastName, t.Email, t.Class, t.Subject}, nil
+              }),
+            )
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Build SQL Queries Bases On Query Params -----------------------------
+
+* Filtering:
+
+      var sql strings.Builder
+      sql.WriteString(`SELECT id, name, email FROM users WHERE 1=1`)
+
+      var args []string
+
+      // key: query param name | value: database table field name
+      fields := map[string]string{
+        "id":    "id",
+        "name":  "name",
+        "email": "email",
+      }
+      q := r.URL.Query()
+      position := 1
+      for queryParam, dbField := range fields {
+        value := q.Get(queryParam)
+        if value != "" {
+          sql.WriteString(` AND ` + dbField + ` = $` + strconv.Itoa(position))
+          args = append(args, value)
+          position++
+        }
+      }
+
+      // Use: sql.String() and args...
+
+
+
+
+* Sorting:
+
+      func isValidSortOrder(order string) bool {
+        return order == "asc" || order == "desc"
+      }
+
+      func isValidSortField(field string) bool {
+        validFields := map[string]bool{
+          "id":   true,
+          "name": true,
+        }
+
+        return validFields[field]
+      }
+
+      func GetStudents(w http.ResponseWriter, r *http.Request) {
+        var sql strings.Builder
+        sql.WriteString(`SELECT id, name, email FROM users WHERE 1=1`)
+
+        value := r.URL.Query().Get("sort")
+        if value != "" {
+          fieldOrderPairs := strings.SplitSeq(value, ",")
+          var items []string
+
+          for fieldOrderPair := range fieldOrderPairs {
+            s := strings.Split(fieldOrderPair, ":")
+            field := s[0]
+            order := s[1]
+
+            items = append(items, field+" "+strings.ToUpper(order))
+          }
+
+          sql.WriteString(" ORDER BY " + strings.Join(items, ", "))
+        }
+
+        fmt.Println(sql.String())
+      }
+
+--------------------------------------------------------------------------------

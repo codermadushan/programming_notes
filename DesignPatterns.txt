@@ -1,0 +1,543 @@
+---------- SOLID Design principles ---------------------------------------------
+
+* S : Single Responsibility Principle (SRP) / Seperation of Concerns (SOC)
+
+* O : Open Closed Principle (OCP)
+
+* L : Liskov Substitution Principle (LSP)
+
+* I : Interface Segregation Principle (ISP)
+
+* D : Dependency Inversion Principle (DIP)
+
+
+
+
+Software entity:
+
+    * a class
+    * a method
+    * a module
+    ...
+
+
+
+
+---------- (Single Responsibility Principle) ----------
+
+* There should never be more than one reason for a software entity to change.
+
+
+Ex:
+
+final class Journal {
+  final List<String> _entries = [];
+
+  void addEntry(String text) {
+    _entries.add(text);
+  }
+
+  void removeEntry(int index) {
+    _entries.removeAt(index);
+  }
+
+  void showEntries() {
+    int index = 1;
+
+    _entries.forEach((entry) {
+      print('$index: $entry');
+      index++;
+    });
+  }
+
+  void safeToFile(String fileName) {
+    //
+  }
+
+  void loadFromFile(String fileName) {
+    //
+  }
+}
+
+
+* In this example we have broke the SRP.
+
+* Because Journal class now has 2 responsibilities.
+    1. Store and manipulate entries.
+    2. File IO operations.
+
+* To fix it we can move file IO operations to Seperate class. That class is
+  responsible for all file IO operations.
+
+
+Ex:
+
+final class Journal {
+  final List<String> _entries = [];
+
+  void addEntry(String text) {
+    _entries.add(text);
+  }
+
+  void removeEntry(int index) {
+    _entries.removeAt(index);
+  }
+
+  void showEntries() {
+    int index = 1;
+
+    _entries.forEach((entry) {
+      print('$index: $entry');
+      index++;
+    });
+  }
+}
+
+final class PersistenceManager {
+  static void safeToFile(String fileName) {
+    //
+  }
+
+  static void loadFromFile(String fileName) {
+    //
+  }
+}
+
+
+
+
+---------- (Open Closed Principle) ----------
+
+* Software entities should be open for extension (extend existing behavior),
+  but closed for modification (existing code remains unchanged).
+
+* After you written and tested a particular class, you should not modify it.
+  Instead you can extend it.
+
+
+Ex:
+
+enum Color { red, green, blue }
+
+enum Size { small, medium, large }
+
+final class Product {
+  final String name;
+  final Color color;
+  final Size size;
+
+  const Product({required this.name, required this.color, required this.size});
+}
+
+final class ProductFilter {
+  List<Product> filterByColor({
+    required List<Product> products,
+    required Color color,
+  }) {
+    return products.where((product) => product.color == color).toList();
+  }
+}
+
+
+* In this example we can use ProductFilter class to filter products.
+
+* By using filterByColor method in ProductFilter class, we can filter products
+  by their colors.
+
+* But if you want to filter products by their sizes, then you have to add
+  another method called "filterBySize" to ProductFilter class. That means we
+  have to modify the ProductFilter class. It is a violation of OCP.
+
+* To fix it, we can use following tecnique:
+
+
+Ex:
+
+enum Color { red, green, blue }
+
+enum Size { small, medium, large }
+
+final class Product {
+  final String name;
+  final Color color;
+  final Size size;
+
+  const Product({required this.name, required this.color, required this.size});
+}
+
+abstract interface class Specification {
+  bool isSatisfied(Product product);
+}
+
+abstract interface class Filter {
+  List<Product> filter({
+    required List<Product> products,
+    required Specification specification,
+  });
+}
+
+final class ColorSpecification implements Specification {
+  final Color _color;
+
+  const ColorSpecification(Color color) : _color = color;
+
+  @override
+  bool isSatisfied(Product product) {
+    return product.color == _color;
+  }
+}
+
+final class SizeSpecification implements Specification {
+  final Size _size;
+
+  const SizeSpecification(Size size) : _size = size;
+
+  @override
+  bool isSatisfied(Product product) {
+    return product.size == _size;
+  }
+}
+
+final class AndSpecification implements Specification {
+  final List<Specification> _specifications;
+
+  const AndSpecification(List<Specification> specifications)
+    : _specifications = specifications;
+
+  @override
+  bool isSatisfied(Product product) {
+    for (final specification in _specifications) {
+      if (!specification.isSatisfied(product)) return false;
+    }
+
+    return true;
+  }
+}
+
+final class ProductFilter implements Filter {
+  @override
+  List<Product> filter({
+    required List<Product> products,
+    required Specification specification,
+  }) {
+    return products.where((product) {
+      return specification.isSatisfied(product);
+    }).toList();
+  }
+}
+
+void main() {
+  const p1 = Product(name: 'Apple', color: Color.green, size: Size.small);
+  const p2 = Product(name: 'Shirt', color: Color.blue, size: Size.medium);
+  const p3 = Product(name: 'Hat', color: Color.red, size: Size.small);
+  const p4 = Product(name: 'Car', color: Color.red, size: Size.large);
+
+  const products = [p1, p2, p3, p4];
+
+  final productFilter = ProductFilter();
+
+  final filtered = productFilter.filter(
+    products: products,
+    specification: AndSpecification([
+      ColorSpecification(Color.red),
+      SizeSpecification(Size.large),
+    ]),
+  );
+
+  filtered.forEach((product) {
+    print(product.name);
+  });
+}
+
+
+* In above example, no need to modify existing class anymore. We can create
+  specification classes for each requirement.
+
+
+
+
+---------- (Liskov Substitution Principle) ----------
+
+* We should be substitute parent class objects with child class objects & This
+  should not alter behavior/characteristics of program.
+
+
+Ex:
+
+class Rectangle {
+  int _width;
+  int _height;
+
+  Rectangle({required int width, required int height})
+    : _width = width,
+      _height = height;
+
+  int get width => _width;
+
+  void set width(int width) {
+    _width = width;
+  }
+
+  int get height => _height;
+
+  void set height(int height) {
+    _height = height;
+  }
+
+  int calculateArea() {
+    return _width * _height;
+  }
+}
+
+class Square extends Rectangle {
+  Square(int side) : super(width: side, height: side);
+
+  void set _side(int side) {
+    super.width = side;
+    super.height = side;
+  }
+
+  @override
+  void set width(int width) {
+    _side = width;
+  }
+
+  @override
+  void set height(int height) {
+    _side = height;
+  }
+}
+
+void useRectangle(Rectangle rectangle) {
+  const newWidth = 30;
+  const newHeight = 20;
+
+  rectangle.width = newWidth;
+  rectangle.height = newHeight;
+
+  print('Area expected  : ${newWidth * newHeight}');
+  print('Area calculated: ${rectangle.calculateArea()}');
+}
+
+void main() {
+  final r = Rectangle(width: 16, height: 9);
+  useRectangle(r);
+
+  final s = Square(16);
+  useRectangle(s);
+}
+
+
+* Now we violate the LSP in above example.
+
+
+* The reason is,
+    "useRectangle" method expect Rectangle argument.
+
+    That means we should be able to pass a Rectangle object or a object of a
+    child class of Rectangle class.
+
+    When we provide a Rectangle object to the useRectangle function, it works
+    as expected.
+
+    But if we provide a Square (a child class of Rectangle class) object to
+    useRectangle method, It doesn't work as expected.
+
+    In this case we cannot substitute parent class objects with child class
+    objects. That means we have violated the LSP.
+
+
+
+
+---------- (Interface Segregation Principle) ----------
+
+* Clients should not be forced to depend upon interfaces that they do not use.
+
+
+* In other words, we should avoid interface pollution.
+
+
+* Signs of interface pollution:
+
+    classes have empty method implementations.
+
+    Method implementations throw UnsupportedOperationException (or similar).
+
+    Method implementations return null or default/dummy values.
+
+
+Ex:
+
+abstract interface class Machine {
+  void print(String document);
+
+  void fax(String document);
+
+  void scan(String document);
+}
+
+class OldPrinter implements Machine {
+  @override
+  void fax(String document) {}
+
+  @override
+  void print(String document) {
+    print('Old Printer is printing documents');
+  }
+
+  @override
+  void scan(String document) {}
+}
+
+
+* In this example if we implements the OldPrinter class from Machine interface
+  we have to provide implementations for all of the following methods in
+  OldPrinter class.
+
+      1. print
+      2. fax
+      3. scan
+
+
+* But OldPrinters do not support fax and scan feature. Therefore we have to
+  keep the method body of fax and scan methods empty.
+
+
+* This is a interface pollution.
+
+
+* We can fix it as follows,
+
+Ex:
+
+abstract interface class Printer {
+  void print(String document);
+}
+
+abstract interface class Scanner {
+  void scan(String document);
+}
+
+abstract interface class Faxer {
+  void fax(String document);
+}
+
+class OldPrinter implements Printer {
+  @override
+  void print(String document) {
+    print('Old printer is printing...');
+  }
+}
+
+class NewPrinter implements Printer, Scanner, Faxer {
+  @override
+  void fax(String document) {
+    print('New printer is faxing...');
+  }
+
+  @override
+  void print(String document) {
+    print('New printer is printing...');
+  }
+
+  @override
+  void scan(String document) {
+    print('New printer is scanning...');
+  }
+}
+
+
+
+
+---------- (Dependency Inversion Principle) ----------
+
+1. High level modules should not depend upon low level modules. Both should
+   depend upon abstractions.
+
+
+2. Abstractions should not depend upon details. Details should depend upon
+   abstractions.
+
+
+Ex:
+
+* In clean architecture, AuthRemoteRepository is not depend on
+  AuthRemoteDataSource implementation. Instead it depend on AuthDataSource
+  interface.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Creational design patterns ------------------------------------------
+
+* Creational design patterns deal with the process of creation of objects of
+  classes.
+
+
+
+
+---------- (Builder) ----------
+
+* What are the problems builder design pattern solves?
+
+    - Useful if the class constructor requires a lot of informations.
+
+    - We can make all class instances are immutable.
+
+    - Useful when objects need other objects or parts to construct them.
+
+
+* What is a Builder?
+
+    - If we have a complex process to construct an object involving multiple
+      steps, then builder design pattern can help us.
+
+    - In builder we remove the logic related to object construction from
+      "client" code & abstract it into seperate class.
+
+
+* There are 4 different roles in builder design pattern.
+
+  class Builder:
+
+    1. Product
+        * Final complex object that we want to create.
+
+
+    2. Builder
+        build(): void
+        getProduct(): Product
+
+        * Provides interface for creating parts of the product.
+
+
+    3. ConcreteBuilder
+        build(): void
+        getProduct(): Product
+
+        * Construct parts and assembles final product.
+        * Keep track of product it creates.
+
+
+    3. Director
+
+        * Uses builder to construct objects.
+        * Knows the steps and their requence to build product.
+
+
+* Steps:
+
+    1. Identify the parts of the product & provide methods to create those parts.
+
+    2. It should provides a method to build the product/object.
+
+    3. It must provide a method to get fully built object out. Optionally builder
+       can keep reference to an product it has built so the same can be returned
+       again in future.
+
+    4. The Director can be a seperate class or client can play the role of
+       director (rarely implemented as a seperate class).
+
+--------------------------------------------------------------------------------

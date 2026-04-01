@@ -1,0 +1,1052 @@
+---------- Typescript + Express initial setup ----------------------------------
+
+1. npm init -y
+
+2. npm i dotenv
+
+3. npm i -D typescript tsx @types/node
+
+4. npx tsc --init
+
+5. Set rootDir & outDir in tsconfig.json file
+
+6. Add "dev" script to package.json file:
+
+  Ex:
+      {
+        "scripts": {
+          "dev": "tsx watch src/index.ts"
+        }
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Postman -------------------------------------------------------------
+
+* Save token in environment:
+
+    pm.environment.set("TOKEN", pm.response.json().token)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Define and re-use userRoles -----------------------------------------
+
+* Define as a constant (immutable) in src/utils/constants.ts file:
+
+    export const userRoles = ["admin", "user"] as const;
+
+
+
+
+* Convert it to a type:
+
+    export type UserRole = (typeof userRoles)[number];
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Express Request & Response ------------------------------------------
+
+* Response<ResBody, LocalsBody>
+
+    ResBody:
+        To set Response body type. res content should match to this type.
+
+    LocalsBody:
+        To access locals via res.
+            Ex: res.locals
+
+
+
+
+* Request<ParamsBody, ResBody, ReqBody, QueryBody, LocalsBody>
+
+    1. ParamsBody: Route parameters type (req.params)
+
+    2. ResBody: Response type (for documentation purpose)
+
+    3. ReqBody: Request body type (req.body)
+
+    4. QueryBody: Request query parameters type (req.query)
+
+    5. LocalsBody: Request local variables type (req.res?.locals) (use res.locals instead)
+
+
+
+
+* res.locals == req.res?.locals
+
+
+* Usage in projects:
+
+    1. Define res-body.ts in src/types folder.
+
+        export type ResBody = {
+          success: boolean;
+          message: string;
+        };
+
+
+    2. Now in each handler add more if you want.
+
+        ResBody & OtherType
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Create a express handler --------------------------------------------
+
+type RegisterResBody = {
+  name: string;
+  email: string;
+};
+
+type RegisterInputs = {
+  name: string;
+  email: string;
+};
+
+const RegisterInputsSchema = z.object({
+  name: z
+    .string({ error: "Name is required" })
+    .min(3, { error: "Name must be minimum 3 characters" })
+    .max(20, { error: "Name must be maximum 20 characters" }),
+
+  email: z.email({ error: "Please enter a valid email" }),
+});
+
+export const register = (
+  req: Request,
+  res: Response<ResBody & RegisterResBody>
+) => {
+  let rawInputs = {
+    name: req.body.name?.trim(),
+    email: req.body.email?.trim(),
+  };
+  const result = RegisterInputsSchema.safeParse(rawInputs);
+  if (!result.success) {
+    throw new AppError(400, result.error.issues[0]?.message);
+  }
+  const inputs: RegisterInputs = rawInputs;
+
+  res.status(201).json({
+    success: true,
+    message: "Register success",
+    name: inputs.name,
+    email: inputs.email,
+  });
+};
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Linux screen command ------------------------------------------------
+
+* To run a task in background
+
+
+* To see all sockets:
+    screen -ls
+
+
+* Create a socket and enter to it:
+    screen -S <socket_name>
+
+
+* Exit from current socket:
+    press and hold "ctrl + a" together
+    then press "d"
+
+
+* Enter to a socket:
+    screen -r <socket_id>
+
+
+* Remove a socket:
+    screen -XS <socket_id> quit
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- AppError ------------------------------------------------------------
+
+class AppError extends Error {
+  public readonly statusCode: number;
+  public readonly isOperational: boolean;
+
+  constructor(statusCode: number, message?: string, isOperational = true) {
+    super(message);
+
+    this.statusCode = statusCode;
+    this.isOperational = isOperational;
+
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+export default AppError;
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Catch undefined routes ----------------------------------------------
+
+app.use(/(.*)/, (req, res, next) => {
+  return next(
+    new AppError(`Cannot find ${req.originalUrl} endpoint on this server`, 404)
+  );
+});
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Global error handler ------------------------------------------------
+
+app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
+  res.status(error instanceof AppError ? error.statusCode : 500).json({
+    success: false,
+    message:
+      error instanceof Error
+        ? error.message || "Something went wrong!"
+        : "Something went wrong!",
+  });
+});
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Zod schemas ---------------------------------------------------------
+
+export const SignUpSchema = z.object(
+  {
+    name: z
+      .string({ message: "Name is required" })
+      .min(1, { message: "Name is required" })
+      .min(3, { message: "Name should be at least 3 characters" }),
+    email: z
+      .string({ message: "Email is required" })
+      .min(1, { message: "Email is required" })
+      .email({ message: "Please enter a valid email address" }),
+    password: z
+      .string({ message: "Password is required" })
+      .min(1, { message: "Password is required" })
+      .min(8, { message: "Password should be at least 8 characters" }),
+  },
+  { message: "Request body is required" }
+);
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Drizzle ORM ---------------------------------------------------------
+
+* Installation:
+    npm i drizzle-orm postgres
+    npm i -D drizzle-kit
+
+
+* Add scripts:
+
+    "scripts": {
+      "db:generate": "npx drizzle-kit generate",
+      "db:migrate": "npx drizzle-kit migrate",
+      "db:studio": "npx drizzle-kit studio"
+    }
+
+
+* Connection string:
+    DATABASE_URL=postgres://postgres:<password>@localhost:5432/<database>
+
+
+* Folder structure:
+
+/src
+    /db
+        index.ts
+
+        /schemas
+
+drizzle.config.ts
+
+
+
+
+---------- (drizzle.config.ts - root level) ----------
+
+import { defineConfig } from "drizzle-kit";
+
+export default defineConfig({
+  dialect: "postgresql",
+  schema: "./src/db/schemas",
+  out: "./src/db/drizzle",
+  dbCredentials: {
+    url: process.env.DATABASE_URL!,
+  },
+});
+
+
+
+
+---------- (src/db/index.ts) ----------
+
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+
+import schema from "./schemas";
+
+const queryClient = postgres(process.env.DATABASE_URL!);
+const db = drizzle({ client: queryClient, schema });
+
+export default db;
+
+
+
+
+---------- (src/db/schemas/index.ts) ----------
+
+import * as posts from "./posts";
+import * as users from "./users";
+
+const schema = {
+  ...users,
+  ...posts,
+};
+
+export default schema;
+
+
+
+
+---------- (src/db/schemas/users.ts) ----------
+
+import { relations } from "drizzle-orm";
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+
+import { posts } from "./posts";
+
+export const users = pgTable("users", {
+  id: uuid().defaultRandom().primaryKey(),
+  name: text().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+
+export const usersRelations = relations(users, ({ many }) => ({
+  posts: many(posts),
+}));
+
+
+
+
+---------- (src/db/schemas/posts.ts) ----------
+
+import { relations } from "drizzle-orm";
+import { pgTable, serial, text, timestamp, uuid } from "drizzle-orm/pg-core";
+
+import { users } from "./users";
+
+export const posts = pgTable("posts", {
+  id: serial().primaryKey(),
+  title: text().notNull(),
+  authorId: uuid("author_id")
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()), // New value if the row is updated
+});
+
+export type Post = typeof posts.$inferSelect;
+export type NewPost = typeof posts.$inferInsert;
+
+export const postsRelations = relations(posts, ({ one }) => ({
+  author: one(users, {
+    fields: [posts.authorId],
+    references: [users.id],
+  }),
+}));
+
+
+
+
+---------- (Read data) ----------
+
+* Find first record
+    await db.query.users.findFirst();
+
+
+* Find all records
+    await db.query.users.findMany();
+
+
+* Complex queries
+
+    await db.query.users.findMany({
+      columns: { <-------------------- To select only specific columns
+        id: true,
+        name: true,
+        email: true
+      },
+
+      where: and( <-------------------- To filter data
+        eq(users.status, 'active'),
+        gt(users.age, 18)
+      ),
+
+      with: { <-------------------- To get data with relations
+        profile: {
+          columns: {
+            bio: true
+          }
+        }
+      },
+
+      orderBy: [asc(users.name)], <-------------------- To sort data
+
+      limit: 10, <-------------------- To limit number of retrieved rows
+
+      offset: 0 <-------------------- To skip given number of rows
+    });
+
+
+
+
+---------- (Insert data) ----------
+
+* Single record
+
+    await db.insert(users).values({
+      name: 'John',
+      email: 'john@example.com'
+    });
+
+
+* Multiple records
+
+    await db.insert(users).values([
+      { name: 'John', email: 'john@example.com' },
+      { name: 'Jane', email: 'jane@example.com' }
+    ]);
+
+
+* With returning
+
+    await db.insert(users).values({...}).returning();
+
+
+
+
+---------- (Update data) ----------
+
+* Basic update
+
+    await db.update(users).set({ name: 'Updated Name' }).where(eq(users.id, 1));
+
+
+* With returning
+
+    await db.update(users).set({...}).where(eq(users.id, 1)).returning();
+
+
+
+
+---------- (Delete data) ----------
+
+* Basic delete
+
+    await db.delete(users).where(eq(users.id, 1));
+
+
+* With returning
+
+    await db.delete(users).where(eq(users.id, 1)).returning();
+
+
+
+
+---------- (Transactions) ----------
+
+* Transactions group multiple operations into a single logical unit where All
+  operations succeed together, OR All operations fail together.
+
+
+Ex:
+    await db.transaction(async (tx) => {
+      await tx.insert(likes).values({
+        postId: 1,
+        userId: 123
+      });
+
+      await tx.update(posts)
+        .set({
+          likesCount: sql`${posts.likesCount} + 1`
+        })
+        .where(eq(posts.id, 1));
+    });
+
+
+* If you want to perform multiple operations that should success or fail
+  together, then you should use Transactions.
+
+    Ex:
+      Update likes count of a post in posts table, when add a new like to the
+      likes table.
+
+
+
+
+---------- Relations ----------
+
+* We define relations inside schemas using re method.
+
+  Ex:
+    ownerId: uuid()
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" })
+
+
+
+
+---------- (One-to-One relations) ----------
+
+* A user has one passport. A passport is belongs to only one user.
+
+* Should define relations in both schemas. But specifing "fields" and
+  "references" fields in only one schema is enough.
+
+
+Ex:
+
+(users.ts):
+
+export const users = pgTable("users", {
+  id: uuid().defaultRandom().primaryKey(),
+  name: text().notNull(),
+});
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+
+export const usersRelations = relations(users, ({ one }) => ({
+  passport: one(passports),
+}));
+
+
+
+
+(passports.ts):
+
+export const passports = pgTable("passports", {
+  id: uuid().defaultRandom().primaryKey(),
+  country: text().notNull(),
+  issuedAt: timestamp("issued_at").defaultNow().notNull(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id),
+});
+
+export type Passport = typeof passports.$inferSelect;
+export type NewPassport = typeof passports.$inferInsert;
+
+export const passportsRelations = relations(passports, ({ one }) => ({
+  user: one(users, {
+    fields: [passports.userId],
+    references: [users.id],
+  }),
+}));
+
+
+
+
+---------- (Composite keys) ----------
+
+* If you cannot uniquely identify a row in a table using only one property
+  (normal primary key), then you can combine multiple column names (composite key)
+  for uniquely identify a row if possible.
+
+
+Example for composite keys:
+
+* In this situation 2 persons should not have same first name and last name.
+
+
+(cars.ts):
+
+export const persons = pgTable(
+  "persons",
+  {
+    firstName: text().notNull(),
+    lastName: text().notNull(),
+    age: integer().notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.firstName, table.lastName] })]
+);
+
+export const personsRelations = relations(persons, ({ one }) => ({
+  car: one(cars),
+}));
+
+
+
+
+(cars.ts):
+
+export const cars = pgTable(
+  "cars",
+  {
+    id: text().primaryKey(),
+    brand: text().notNull(),
+    ownerFirstName: text().notNull(),
+    ownerLastName: text().notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.ownerFirstName, table.ownerLastName],
+      foreignColumns: [persons.firstName, persons.lastName],
+    }),
+  ]
+);
+
+export const carsRelations = relations(cars, ({ one }) => ({
+  owner: one(persons, {
+    fields: [cars.ownerFirstName, cars.ownerLastName],
+    references: [persons.firstName, persons.lastName],
+  }),
+}));
+
+
+
+
+* Specifying the primary key:
+
+    1. In your table, if you can uniquely identify each row using a column
+       name (normal primary key), then mark it as the primary key as follows:
+
+          id: text().primaryKey()
+
+          * must use references() to specify foreign key. Otherwise you will get
+            an error.
+
+
+    2. In your table, if you have to use multiple column names to uniquely
+       identify each row (composite key), then mark them as the primary key as
+       follows as the 3rd argument of the pgTable:
+
+          (table) => [primaryKey({ columns: [table.firstName, table.lastName] })]
+
+          * Must use foreignKey() to specify foreign key. Otherwise you will get
+            an error.
+
+
+* Specifying the foreign key:
+
+    1. If the primary key of other table is a normal primary key:
+
+        userId: uuid("user_id").notNull().references(() => users.id)
+
+
+    2. If the primary key of other table is a composite key, specify it as
+       follows as the 3rd argument of the pgTable:
+
+        (table) => [
+          foreignKey({
+            columns: [table.ownerFirstName, table.ownerLastName],
+            foreignColumns: [persons.firstName, persons.lastName],
+          }),
+        ]
+
+
+
+
+---------- (One-to-Many relations) ----------
+
+* A user has multiple post. A post has only one owner (user).
+
+* Should define relations in both schemas. But specifing "fields" and
+  "references" fields in only one() relation side is enough.
+
+
+Ex:
+
+(users.ts):
+
+export const users = pgTable("users", {
+  id: uuid().defaultRandom().primaryKey(),
+  name: text().notNull(),
+});
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+
+export const usersRelations = relations(users, ({ many }) => ({
+  posts: many(posts),
+}));
+
+
+
+
+(posts.ts):
+
+export const posts = pgTable("posts", {
+  id: uuid().defaultRandom().primaryKey(),
+  title: text().notNull(),
+  ownerId: uuid()
+    .notNull()
+    .references(() => users.id),
+});
+
+export type Post = typeof posts.$inferSelect;
+export type NewPost = typeof posts.$inferInsert;
+
+export const postsRelations = relations(posts, ({ one }) => ({
+  owner: one(users, {
+    fields: [posts.ownerId],
+    references: [users.id],
+  }),
+}));
+
+
+
+
+---------- (Many-to-Many relations) ----------
+
+* Actually there is no such a thing called many-to-many relationships.
+
+
+* To achieve this requirement we devide the many-to-may relationship to 2
+  one-to-many relationships using third middle table.
+
+
+Ex:
+
+(students.ts):
+
+    export const students = pgTable("students", {
+      id: integer().primaryKey(),
+      name: text().notNull(),
+    });
+
+    export type Student = typeof students.$inferSelect;
+    export type NewStudent = typeof students.$inferInsert;
+
+    export const studentsRelations = relations(students, ({ many }) => ({
+      coursesStudents: many(coursesStudents),
+    }));
+
+
+
+
+(courses.ts):
+
+    export const courses = pgTable("courses", {
+      id: integer().primaryKey(),
+      code: text().notNull(),
+    });
+
+    export type Course = typeof courses.$inferSelect;
+    export type NewCourse = typeof courses.$inferInsert;
+
+    export const coursesRelations = relations(courses, ({ many }) => ({
+      coursesStudents: many(coursesStudents),
+    }));
+
+
+
+
+(courses-students.ts):
+
+    export const coursesStudents = pgTable(
+      "courses_students",
+      {
+        studentID: integer("student_id")
+          .notNull()
+          .references(() => students.id),
+        courseID: integer("course_id")
+          .notNull()
+          .references(() => courses.id),
+      },
+      (table) => [primaryKey({ columns: [table.studentID, table.courseID] })]
+    );
+
+    export const coursesStudentsRelations = relations(
+      coursesStudents,
+      ({ one }) => ({
+        student: one(students, {
+          fields: [coursesStudents.studentID],
+          references: [students.id],
+        }),
+
+        course: one(courses, {
+          fields: [coursesStudents.courseID],
+          references: [courses.id],
+        }),
+      })
+    );
+
+
+
+
+* Data enter process to tables:
+
+    1. Create some courses:
+
+        await db.insert(courses).values([
+          { id: 2, code: "DB01" },
+          { id: 5, code: "PH01" },
+          { id: 7, code: "WEB01" },
+          { id: 8, code: "WEB02" },
+        ]);
+
+
+    2. Enter data to students and coursesStudents tables at once using
+       transactions. For this you need to get course ids as list arguments from
+       client.
+
+        const data = [
+          { id: 1, name: "John", courseIDs: [2, 5] },
+          { id: 2, name: "Anna", courseIDs: [5, 7] },
+          { id: 3, name: "Mark", courseIDs: [8] },
+          { id: 4, name: "Sarah", courseIDs: [2, 5, 8] },
+        ];
+
+        data.forEach(async (student) => {
+          await db.transaction(async (tx) => {
+            await tx.insert(students).values({ id: student.id, name: student.name });
+            student.courseIDs.forEach(async (id) => {
+              await tx
+                .insert(coursesStudents)
+                .values({ studentID: student.id, courseID: id });
+            });
+          });
+        });
+
+
+* Data read process:
+
+    1. Read students with courses:
+
+        const data = await db.query.students.findFirst({
+          with: {
+            coursesStudents: {
+              with: {
+                course: true,
+              },
+            },
+          },
+        });
+
+
+    2. Read courses with students:
+
+        const data = await db.query.courses.findFirst({
+          with: {
+            coursesStudents: {
+              with: {
+                student: true,
+              },
+            },
+          },
+        });
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Store timestamps in database and manipulation -----------------------
+
+---------- (Store in database) ----------
+
+1. Set database timezone to UTC
+    ALTER DATABASE <database> SET TIMEZONE='UTC';
+
+    Note:
+        No need if you use timestamp with timezone
+            timestamp("created_at", { withTimezone: true })
+
+
+1. Get timestamp string in ISO format from client
+
+    Ex: 2025-06-14T17:59:06.067Z
+
+
+2. In server catch it as follows
+
+    Ex: new Date(<iso_timestamp_string>)
+
+
+3. Now you can send this date object directly to database using drizzle
+
+
+
+
+---------- (Retrieved from database) ----------
+
+1. When you retrieve data from database using drizzle they come as Date objects
+
+2. You can send them directly as Date objects. Serialization will be performed
+   automatically
+
+3. In client convert ISO string to local datetime
+
+
+
+
+---------- (Set current time to given date) ----------
+
+const isoString = "2025-09-23T21:30:00.000Z";
+
+const now = new Date();
+
+let date = new Date(isoString);
+date = new Date(
+  date.setHours(
+    now.getHours(),
+    now.getMinutes() + 5,
+    now.getSeconds(),
+    now.getMilliseconds()
+  )
+);
+
+
+
+
+---------- (Calculate start and end of a given date) ----------
+
+const date = new Date();
+
+const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+
+
+
+
+---------- (Add given time duration to a Date object) ----------
+
+1. To a given date object:
+    new Date(<date>.getTime() + 5 * 60 * 1000) // in milliseconds
+
+
+1. To current dateTime:
+    new Date(Date.now() + 5 * 60 * 1000) // in milliseconds
+
+
+
+
+---------- (Compare 2 Date objects) ----------
+
+For:    >    >=    <    <=    can compare directly.
+
+For equality:    date1.getTime() === date2.getTime()
+
+
+
+
+---------- (date-fns package) ----------
+
+* To work with dates with immutability
+
+
+1. Add or subtract given duration:
+
+    sub(date, { hours: 3 })
+    add(date, { hours: 3 })
+
+
+
+
+2. Calculate start and end of a given date
+
+    Start:
+        set(date, {
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+          milliseconds: 0,
+        })
+
+
+    End:
+        set(date, {
+          hours: 23,
+          minutes: 59,
+          seconds: 59,
+          milliseconds: 999,
+        })
+
+
+
+3. Check a given date is today or not:
+
+    isToday(date)
+
+
+
+
+4. Check the first date is before second date or not:
+
+    isBefore(date1, date2)
+
+
+
+
+---------- (Notes) ----------
+
+1. Typescript Date objects always contains time internally in UTC format
+regardless server timezone
+
+2. (new Date()).getTime() is same as Date.now()
+
+3. Date() (not new Date()) returns local time, local date, local timezone as a
+readable string
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- JWT -----------------------------------------------------------------
+
+* Installation: npm i jsonwebtoken
+
+* Import      : import jwt from 'jsonwebtoken';
+
+
+// Create JWT
+const token = jwt.sign({ userId: 123 }, secret, { expiresIn: '2h' });
+
+
+// Verify JWT
+const decoded = jwt.verify(token, secret) as { userId: number };
+
+--------------------------------------------------------------------------------

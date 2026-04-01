@@ -1,0 +1,4666 @@
+---------- Configurations ------------------------------------------------------
+
+Change flutter java version:
+  flutter config --jdk-dir="C:\Program Files\Java\jdk-17"
+
+
+Removed linter rules in flutter_lints: ^5.0.0:
+	prefer_const_constructors: true
+	prefer_const_declarations: true
+	prefer_const_literals_to_create_immutables: true
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Export app ----------------------------------------------------------
+
+apk:
+  flutter build apk --release --obfuscate --shrink --split-debug-info=./build/debug-symbols --dart-define-from-file=env.json --split-per-abi
+
+
+appbundle:
+  flutter build appbundle --release --obfuscate --shrink --split-debug-info=./build/debug-symbols --dart-define-from-file=env.json --split-per-abi
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- PlayStore release ---------------------------------------------------
+
+1. Change app Name & app Icons for android and ios
+
+2. Make the decision of: Locking Orientation
+
+3. Add the splash screen
+
+4. Add about page with licenses and donation details
+
+5. Add internet permission: (As a direct child of <manifest></manifest> in AndroidManifest.xml)
+	<uses-permission android:name="android.permission.INTERNET"/>
+
+6. Change SDK versions (android\app\build.gradle)
+	* minSdkVersion (Minimum android version that support)
+	* targetSdkVersion (Latest stable android version)
+	* compileSdkVersion (Same as targetSdkVersion)
+	* versionCode (Release number / Integer: 1)
+	* versionName (App version / String: "1.0.0")
+
+7. Change app version (pubspec.yaml)
+
+8. Signing the app (Use the flutter official guide)
+	* Create the upload-keystore.jks file and put it in "android\app" folder
+	* Create "key.properties" file in "android" folder and reference the upload-keystore.jks file
+	* Configure signing in "android\app\build.gradle"
+
+9. Clean all previous builds
+	* Command: flutter clean
+
+10. Building the app for release
+	* Command: flutter build appbundle --dart-define-from-file=env.json --obfuscate --split-debug-info=C:\Users\Madushan\Downloads
+
+11. Create symbols.zip file
+	* Go to "build\app\intermediates\merged_native_libs\release\mergeReleaseNativeLibs\out\lib"
+	* Zip all folders in this location as "symbols.zip"
+
+12. Create a feature graphic (For play store)
+
+13. Create a video (For play store)
+
+14. Create some screenshots of the app (For play store)
+
+15. Ready a short and full Description of the app (For play store)
+
+16. Ready Privacy policy link.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Add a splash screen -------------------------------------------------
+
+* Place logo & branding images at ./assets/images/logo.png
+
+
+* Register logo image directory under "assets" in pubspec.yaml
+
+
+* Add following package to dev_dependencies:
+
+      flutter_native_splash
+
+
+* Copy paste this snippet below dev_dependencies and edit it:
+
+flutter_native_splash:
+  android: true
+  ios: true
+
+  color: "#03fc28" # background color
+
+  image: assets/images/logo.png # app icon path
+
+  branding: assets/images/facebook.png # app name image path
+  branding_bottom_padding: 40
+
+  android_12:
+    image: assets/images/logo.png
+    icon_background_color: "#ffffff" # app icon background color, default color is background color
+
+    branding: assets/images/facebook.png
+
+
+
+
+* Generate splash screen:
+
+      dart run flutter_native_splash:create
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Core function typedefs ----------------------------------------------
+
+* void Function()         : VoidCallback
+* Future<void> Function() : AsyncCallback
+
+
+* void Function(T)         : ValueSetter<T>  or  ValueChanged<T>
+* Future<void> Function(T) : AsyncValueSetter<T>
+
+
+* T Function()         : ValueGetter<T>
+* Future<T> Function() : AsyncValueGetter<T>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- flutter_bloc --------------------------------------------------------
+
+* To handle streams we can use:
+
+      emit.forEach()
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Texts ---------------------------------------------------------------
+
+---------- (style_res.dart) ----------
+
+const _defaultTextColor = ColorRes.foreground;
+
+sealed class StyleRes {
+  static const h1 = TextStyle(
+    fontSize: 30,
+    letterSpacing: -0.025 * 30,
+    height: 1.25,
+    fontWeight: FontWeight.w800,
+    color: _defaultTextColor,
+  );
+
+  static const h2 = TextStyle(
+    fontSize: 24,
+    letterSpacing: -0.025 * 24,
+    height: 1.25,
+    fontWeight: FontWeight.w700,
+    color: _defaultTextColor,
+  );
+
+  static const h3 = TextStyle(
+    fontSize: 20,
+    letterSpacing: 0,
+    height: 1.375,
+    fontWeight: FontWeight.w600,
+    color: _defaultTextColor,
+  );
+
+  static const h4 = TextStyle(
+    fontSize: 18,
+    letterSpacing: 0,
+    height: 1.375,
+    fontWeight: FontWeight.w600,
+    color: _defaultTextColor,
+  );
+
+  static const h5 = TextStyle(
+    fontSize: 16,
+    letterSpacing: 0,
+    height: 1.5,
+    fontWeight: FontWeight.w500,
+    color: _defaultTextColor,
+  );
+
+  static const h6 = TextStyle(
+    fontSize: 14,
+    letterSpacing: 0.025 * 14,
+    height: 1.5,
+    fontWeight: FontWeight.w500,
+    color: _defaultTextColor,
+  );
+
+  static const body = TextStyle(fontSize: 14, color: _defaultTextColor);
+}
+
+
+
+
+---------- (app_texts.dart) ----------
+
+class AppTextH1 extends StatelessWidget {
+  final String _text;
+  final TextAlign? _textAlign;
+  final Color? _color;
+
+  const AppTextH1(String text, {super.key, TextAlign? textAlign, Color? color})
+    : _text = text,
+      _textAlign = textAlign,
+      _color = color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _text,
+      textAlign: _textAlign,
+      style: StyleRes.h1.copyWith(color: _color),
+    );
+  }
+}
+
+class AppTextH2 extends StatelessWidget {
+  final String _text;
+  final TextAlign? _textAlign;
+  final Color? _color;
+
+  const AppTextH2(String text, {super.key, TextAlign? textAlign, Color? color})
+    : _text = text,
+      _textAlign = textAlign,
+      _color = color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _text,
+      textAlign: _textAlign,
+      style: StyleRes.h2.copyWith(color: _color),
+    );
+  }
+}
+
+class AppTextH3 extends StatelessWidget {
+  final String _text;
+  final TextAlign? _textAlign;
+  final Color? _color;
+
+  const AppTextH3(String text, {super.key, TextAlign? textAlign, Color? color})
+    : _text = text,
+      _textAlign = textAlign,
+      _color = color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _text,
+      textAlign: _textAlign,
+      style: StyleRes.h3.copyWith(color: _color),
+    );
+  }
+}
+
+class AppTextH4 extends StatelessWidget {
+  final String _text;
+  final TextAlign? _textAlign;
+  final Color? _color;
+
+  const AppTextH4(String text, {super.key, TextAlign? textAlign, Color? color})
+    : _text = text,
+      _textAlign = textAlign,
+      _color = color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _text,
+      textAlign: _textAlign,
+      style: StyleRes.h4.copyWith(color: _color),
+    );
+  }
+}
+
+class AppTextH5 extends StatelessWidget {
+  final String _text;
+  final TextAlign? _textAlign;
+  final Color? _color;
+
+  const AppTextH5(String text, {super.key, TextAlign? textAlign, Color? color})
+    : _text = text,
+      _textAlign = textAlign,
+      _color = color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _text,
+      textAlign: _textAlign,
+      style: StyleRes.h5.copyWith(color: _color),
+    );
+  }
+}
+
+class AppTextH6 extends StatelessWidget {
+  final String _text;
+  final TextAlign? _textAlign;
+  final Color? _color;
+
+  const AppTextH6(String text, {super.key, TextAlign? textAlign, Color? color})
+    : _text = text,
+      _textAlign = textAlign,
+      _color = color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _text,
+      textAlign: _textAlign,
+      style: StyleRes.h6.copyWith(color: _color),
+    );
+  }
+}
+
+class AppTextBody extends StatelessWidget {
+  final String _text;
+  final TextAlign? _textAlign;
+  final Color? _color;
+
+  const AppTextBody(
+    String text, {
+    super.key,
+    TextAlign? textAlign,
+    Color? color,
+  }) : _text = text,
+       _textAlign = textAlign,
+       _color = color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _text,
+      textAlign: _textAlign,
+      style: StyleRes.body.copyWith(color: _color),
+    );
+  }
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- IconButton ----------------------------------------------------------
+
+* Always wrap IconButton with SizedBox.square with size 40 to solve the confusion
+  of padding.
+
+    Ex:
+      SizedBox.square(
+        dimension: 40,
+        child: IconButton(
+          style: IconButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.black,
+          ),
+          onPressed: () {},
+          icon: const Icon(Icons.arrow_back),
+        ),
+      )
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- InkWell widget ------------------------------------------------------
+
+Ex:
+
+Container(
+  decoration: BoxDecoration(
+    color: ColorRes.card,
+    borderRadius: BorderRadius.circular(SizeRes.borderRadius),
+    border: Border.all(color: ColorRes.border),
+  ),
+  child: Material(
+    color: Colors.transparent,
+
+    child: InkWell(
+      onTap: () {
+        //
+      },
+      borderRadius: BorderRadius.circular(SizeRes.borderRadius),
+      splashColor: ColorRes.accent,
+      highlightColor: ColorRes.accent,
+
+      child: Padding(
+        padding: const EdgeInsets.all(SizeRes.pagePadding),
+        child: <widget>,
+      ),
+    ),
+  ),
+)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- DashLine to place inside Stack --------------------------------------
+
+Ex:
+
+class DashLine extends StatelessWidget {
+  final double _dashHeight; // required
+  final double _dashWidth;
+  final Color _dashColor;
+  final double _paddingHorizontal;
+
+  const DashLine({
+    super.key,
+    required Color dashColor,
+    required double dashHeight,
+    double dashWidth = 6.0,
+
+    double paddingHorizontal = 0,
+  }) : _dashColor = dashColor,
+       _dashWidth = dashWidth,
+       _dashHeight = dashHeight,
+
+       _paddingHorizontal = paddingHorizontal;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: _paddingHorizontal),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+            children: List.generate(
+              (constraints.maxWidth - _dashWidth) ~/ (2 * _dashWidth),
+              (index) {
+                return ColoredBox(
+                  color: _dashColor,
+                  child: SizedBox(width: _dashWidth, height: _dashHeight),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+
+Note:
+
+    * "dashHeight" should be a required parameter. Because when you position this
+      inside stack you need to access to dashHeight.
+
+    * If you use it inside a Stack widget, then wrap it with Sizedbox and give a
+      fixed width. Otherwise you will get an error.
+
+    * If you want to use it inside a Row, then wrap it with Expanded widget.
+
+    * Main Structure:
+
+        Padding
+          LayoutBuilder
+            Row
+              ColoredBox
+                Sizedbox
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Pass data from one page to another ----------------------------------
+
+* Suppose we push PageB on PageA, and PageC on PageB
+
+
+
+
+* When to use cubits:
+    1. For a list always use a cubit.
+    2. To pass data from PageA to PageC (If it is not used in PageB)
+
+    Note:
+        * If all pages in same feature, then define the cubit in the feature.
+
+        * If data need to be used between pages in multiple features, then
+          define the cubit in "lib/core/cubits".
+
+
+
+
+* Otherwise use,
+    ModalRoute.settingsOf(context)!.arguments inside "didChangeDependencies" method.
+
+
+* Never use,
+    ModalRoute.of(context)!.settings.arguments. Because it rebuilds whole page.
+
+
+Ex:
+    late final UserData _userData;
+
+    @override
+    void didChangeDependencies() {
+      super.didChangeDependencies();
+
+      _userData = ModalRoute.settingsOf(context)!.arguments as UserData;
+    }
+
+
+
+
+Note:
+    * If both pages in same feature, then define models in
+      presentation/models folder.
+
+    * If data need to be used between pages in multiple features, then
+      define the models in "lib/core/models".
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- "late" keyword ------------------------------------------------------
+
+* We use late keyword for lazy initialization in dart.
+
+
+
+
+---------- (Lazy initialization to a variable) ----------
+
+* In dart if you create a non-nullable variable outside of a function or method,
+  you must provide a value for that variable.
+
+      String name; ❌
+
+      String name = 'Madushan'; ✔️
+
+
+* But using "late" keyword we can create a non-nullable variable outside of a
+  method without initializing a value. But we must provide a value to it before
+  access. Otherwise it will throw an exception.
+
+      late String name; ✔️
+
+
+* We can define a non-nullable variable with "late final" keywords. In this case
+  the variable can be assigned only once.
+
+    late final String name;
+
+    void main() {
+      name = 'Madushan'; ✔️
+      print(name);
+
+      name = 'Madushan'; ❌
+    }
+
+
+* We must use "late" before "final".
+
+    late final ✔️
+
+    final late ❌
+
+
+
+
+---------- (Lazy initialization to a function) ----------
+
+* When we get a value from a function we can use late keyword. In this case
+  the function is executed only when we access the returned value.
+
+
+Ex:
+
+String provideName() {
+  print('"provideName" executed');
+
+  return 'Madushan';
+}
+
+void main() {
+  print('Start');
+
+  late String name = provideName();
+
+  print('End');
+
+  print(name);
+}
+
+
+* Result:
+
+    Start
+    End
+    "provideName" executed
+    Madushan
+
+
+* Even if we access the returned value multiple times, function is called only
+  once and returned value is stored in the late viriable and it is reused.
+
+
+
+
+---------- (Lazy initialization inside a class)  ----------
+
+* In dart you cannot use a instance variable to initialize another instance
+  variable.
+
+Ex:
+
+class Person {
+  final String firstName;
+  final String lastName;
+  final String fullName = '$firstName $lastName'; ❌
+
+  Person({required this.firstName, required this.lastName});
+}
+
+
+* But you can do it using "late" keyword.
+
+Ex:
+
+class Person {
+  final String firstName;
+  final String lastName;
+  late final String fullName = '$firstName $lastName'; ✔️
+
+  Person({required this.firstName, required this.lastName});
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Mixins --------------------------------------------------------------
+
+* Mixins are seperate entities that can bring functionalities to existing
+  classes and enums.
+
+
+* Mixins are used to share behavior, not enforce structure. Therefore in general
+  following entities inside a mixin.
+
+      1. Concrete methods.
+
+      2. Abstract instance variables (getters and setters) or abstract getters
+         if we need to use it inside a concrete method of current mixin or
+         inside a mixin which is built on current mixin.
+
+
+* If you build a new mixin on another mixin (using "on" keyword), we can access
+  abstract instance variable in parent mixin in child mixin.
+
+      The reason is:
+
+          1. You must provide implementation for abstract instance variable
+             (or getter and setter) in mixed class (using "with" keyword) and
+             all concrete methods in all mixins available as instance methods
+             in mixed class.
+
+          2. If you want to build a mixin on another mixin and mix it with a
+             class you have to mix the class with both child and parent mixin.
+
+
+Ex:
+
+mixin HasSpeed {
+  int get speed;
+}
+
+mixin CanJump on HasSpeed {
+  void jump() {
+    print('$runtimeType is jumping at the speed of: $speed');
+  }
+}
+
+mixin CanWalk on HasSpeed {
+  void walk() {
+    print('$runtimeType is walking at the speed of: $speed');
+  }
+}
+
+class Person with HasSpeed, CanJump, CanWalk {
+  final int _speed;
+
+  const Person(int speed) : _speed = speed;
+
+  @override
+  int get speed => _speed;
+}
+
+void main() {
+  final p1 = Person(10);
+  final p2 = Person(5);
+
+  p1.jump();
+  p1.walk();
+
+  p2.jump();
+  p2.walk();
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Enums ---------------------------------------------------------------
+
+* Ex: enum AnimalType { dog, cat }
+
+* Provide values to enums
+
+    * Hint: Use an extension and switch case statement.
+
+    enum AnimalType { dog, cat }
+
+    extension on AnimalType {
+      String get toName {
+        switch (this) {
+          case AnimalType.dog:
+            return 'Banti';
+          case AnimalType.cat:
+            return 'Kirii';
+        }
+      }
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Prebuild widgets ----------------------------------------------------
+
+---------- TypeWriter ----------
+
+import 'package:flutter/material.dart';
+
+class TypeWriter extends StatelessWidget {
+  static const _defaultCharDurationMs = 100;
+  static const _defaultCursorChar = '_';
+
+  final String _text;
+  final String _cursorCharacter;
+  final int _durationMs;
+  final TextStyle? _textStyle;
+  final Curve? _curve;
+
+  const TypeWriter({
+    super.key,
+    required String text,
+    String cursorCharacter = _defaultCursorChar,
+    int? durationMs,
+    TextStyle? textStyle,
+    Curve? curve,
+  })  : _text = text,
+        _cursorCharacter = cursorCharacter,
+        _durationMs = durationMs ?? text.length * _defaultCharDurationMs,
+        _textStyle = textStyle,
+        _curve = curve;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder(
+      tween: IntTween(begin: 0, end: _text.length),
+      duration: Duration(milliseconds: _durationMs),
+      curve: _curve ?? Curves.linear,
+      builder: (context, value, child) {
+        final current = _text.substring(0, value);
+        final isCompleted = _text.length == value;
+        return Text(
+          isCompleted ? current : '$current$_cursorCharacter',
+          style: _textStyle,
+        );
+      },
+    );
+  }
+}
+
+
+
+
+---------- (Loading card) ----------
+
+* Main container padding: px-8 py-4
+
+* Structure
+
+    Container
+        LoadingIndicator (size-6)
+
+        gap: gap-y-6
+
+        Title (h4)
+
+        gap: gap-y-2
+
+        Description (body text)
+
+
+Container(
+  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+  decoration: BoxDecoration(
+    color: Theme.of(context).colorScheme.primaryContainer,
+    borderRadius: BorderRadius.circular(8),
+  ),
+  child: const Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      SizedBox.square(
+        dimension: 24,
+        child: CircularProgressIndicator(strokeWidth: 3),
+      ),
+
+      SizedBox(height: 24),
+
+      Text(
+        'Posts Loading',
+        style: TextStyle(
+          fontSize: 18,
+          height: 1.375,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+
+      SizedBox(height: 8),
+
+      Text('This may take a few seconds'),
+    ],
+  ),
+)
+
+
+
+
+---------- (Skeleton) ----------
+
+class Skeleton extends StatefulWidget {
+  final Color _color;
+  final double _borderRadius;
+  final double? _width;
+  final double? _height;
+
+  const Skeleton({
+    super.key,
+    Color color = Colors.grey,
+    double borderRadius = 10.4,
+    double? width,
+    double? height,
+  }) : _color = color,
+       _borderRadius = borderRadius,
+       _width = width,
+       _height = height;
+
+  @override
+  State<Skeleton> createState() => _SkeletonState();
+}
+
+class _SkeletonState extends State<Skeleton> {
+  late Color _begin;
+  late Color _end;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _begin = widget._color;
+    _end = widget._color.withAlpha(128);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder(
+      duration: const Duration(seconds: 1),
+      tween: ColorTween(begin: _begin, end: _end),
+
+      onEnd: () {
+        setState(() {
+          final temp = _begin;
+          _begin = _end;
+          _end = temp;
+        });
+      },
+
+      builder: (context, value, child) {
+        return Container(
+          width: widget._width,
+          height: widget._height,
+
+          decoration: BoxDecoration(
+            color: value,
+            borderRadius: BorderRadius.circular(widget._borderRadius),
+          ),
+        );
+      },
+    );
+  }
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Helper functions ----------------------------------------------------
+
+---------- (TextField validator) ----------
+
+String? emailValidator(String? email) {
+  if (email == null || email.trim().isEmpty) {
+    return StringRes.emptyEmail;
+  } else if (!EmailValidator.validate(email.trim())) {
+    return StringRes.invalidEmail;
+  } else {
+    return null;
+  }
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Store colors in database --------------------------------------------
+
+---------- (Store in database) ----------
+
+1. Convert color to int and then to string
+  * min length of colorString: 1 ('0')
+  * max length of colorString: 10 ('4294967295')
+
+    final colorString = '${color.toARGB32()}';
+
+2. Drizzle schema field
+  color: varchar('color', { length: 10 }).notNull(),
+
+
+
+
+---------- (Retrieve from database) ----------
+
+Convert string value to color
+  final color = Color(int.parse(colorString));
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- covariant keyword ---------------------------------------------------
+
+* Used to loosen type safety in method parameters so that a subclass can override
+  a method and accept a more specific type than the superclass.
+
+
+* Normally, Dart requires that overridden methods must accept the same or more
+  general parameter types. But in some cases, you want a subclass to accept a
+  more specific type.
+
+
+Ex:
+
+    class Animal {}
+
+    class Dog extends Animal {}
+
+    class AnimalHandler {
+      void handle(Animal animal) {
+        //
+      }
+    }
+
+    class DogHandler extends AnimalHandler {
+      @override
+      void handle(Dog dog) { // error
+        //
+      }
+    }
+
+
+    * In above example when we override the handle method of AnimalHandler class
+      in DogHandler with a Dog parameter type, we get an error. Because you
+      break the normal type rules.
+
+
+    * We can fix this as follows using "covariant" keyword.
+
+          class Animal {}
+
+          class Dog extends Animal {}
+
+          class AnimalHandler {
+            void handle(covariant Animal animal) {
+              //
+            }
+          }
+
+          class DogHandler extends AnimalHandler {
+            @override
+            void handle(Dog dog) {
+              //
+            }
+          }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- (Transform) ---------------------------------------------------------
+
+Transform(
+  alignment: Alignment.center,
+  transform: Matrix4.identity()..rotateZ(pi / 2),
+  child: <Widget>,
+)
+
+
+* Properties:
+
+      * alignment:
+          * The pivot point of the transform.
+
+          * For custom pivot points, use "origin" property instead of alignment.
+              origin: const Offset(X, Y),
+
+
+      * transform:
+          * To specify which kind of transform you want.
+
+          * Matrix4.identity() is something like no transform.
+
+
+* Always remember that when you rotate a widget, the canvas is also rotated
+  with the widget. That means the positions and the directions of the X, Y
+  axis are changed.
+
+
+* To translate a widget along the Z axis, we have to use the package called
+  "vector_math" as follows.
+
+      1. import 'package:vector_math/vector_math_64.dart' show Vector3;
+
+      2. Matrix4.identity()..translate(Vector3(X, Y, Z))
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Clip widgets --------------------------------------------------------
+
+---------- (Path object) ----------
+
+* Create path object (It is mutable):
+    final path = Path();
+
+
+* We use path to mark the path of the area which we want to keep.
+
+
+* Methods:
+
+      * path.moveTo(X, Y):
+            Starting point.
+            Default: path.moveTo(0, 0) -> top-left corner
+
+
+      * path.lineTo(X, Y):
+            Draws a straight line to this point
+
+
+      * path.arcToPoint(
+          offset,
+          radius: ,
+          clockwise: ,
+        ):
+            To draw an arc
+
+
+      * Finally draw a straight line from last end point to start point using:
+            path.close();
+
+
+
+
+---------- (CustomClipper) ----------
+
+class <ClassName> extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    //
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
+    //
+  }
+}
+
+
+* We mostly use CustomClipper class with "Path" object. But we can use "Rect" or
+  "RRect" objects if we need.
+
+
+* "getClip" method provides the size of the widget which we are going to clip
+  automatically using on of following widget,
+
+    * ClipPath
+    * ClipRect
+    * ClipRRect
+    * ClipOval
+
+  and we need to return a suitable object in this method which is compatible with
+  CustomClipper generic type.
+
+
+* The "shouldReclip" method tells Flutter whether it needs to recalculate the
+  clipping path when the clipper changes.
+    * If your widget is static, return false.
+    * If the widget size can be changed, return true.
+
+
+* To apply custom clipper to the widget use one of following class and provide
+  CustomClipper object to them using clipper property.
+    * ClipPath
+    * ClipRect
+    * ClipRRect
+    * ClipOval
+
+
+Ex: Creating a circle using 2 squares in different colors,
+
+    class _CircleClipper extends CustomClipper<Path> {
+      @override
+      Path getClip(Size size) {
+        final radius = Radius.circular(size.height / 2);
+
+        return Path()
+          ..moveTo(size.width / 2, 0)
+          ..arcToPoint(Offset(size.width / 2, size.height), radius: radius)
+          ..arcToPoint(Offset(size.width / 2, 0), radius: radius);
+      }
+
+      @override
+      bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
+    }
+
+    class Circle extends StatelessWidget {
+      const Circle({super.key});
+
+      @override
+      Widget build(BuildContext context) {
+        const size = 200.0;
+
+        return ClipPath(
+          clipper: _CircleClipper(),
+          child: Row(
+            mainAxisSize: .min,
+            children: [
+              Container(width: size, height: size, color: Colors.blue),
+
+              Container(width: size, height: size, color: Colors.yellow),
+            ],
+          ),
+        );
+      }
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- (CustomPainter) ----------------------------------------------------
+
+* To draw any kind of shape on a canvas.
+
+
+Ex:
+
+final class Polygon extends CustomPainter {
+  final int _sides;
+
+  const Polygon(int sides) : _sides = sides;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.blue
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 3;
+
+    final center = Offset(size.width / 2, size.height / 2);
+
+    final radius = size.width / 2;
+
+    final angle = 2 * pi / _sides;
+    final angles = List.generate(_sides, (index) => index * angle);
+
+    final path = Path();
+    path.moveTo(center.dx + radius * cos(0), center.dy + radius * sin(0));
+    for (final angle in angles) {
+      if (angle == 0) continue;
+      final x = center.dx + (radius * cos(angle));
+      final y = center.dy + (radius * sin(angle));
+      path.lineTo(x, y);
+    }
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return oldDelegate is Polygon && oldDelegate._sides != _sides;
+  }
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Animations ----------------------------------------------------------
+
+---------- (Flutter canvas X, Y directions) ----------
+
+* X=0, Y=0 position: top left corner
+
+* X : from left to right (+)
+* Y : from top to bottom (+)
+* Z : into the screen (+)
+
+
+
+
+---------- (Measure angles) ----------
+
+* Consider a horizontal line in canvas:
+
+      If the angle is + : clockwise
+      If the angle is - : counter clockwise
+
+
+
+
+---------- (sin / cos / tan) ----------
+
+import 'dart:math';
+
+final s = sin(radians);
+final c = cos(radians);
+final t = tan(radians);
+
+
+
+
+* When we know,
+    1. The cordinates of the circle's center.
+    2. The radius of the circle.
+    3. The angle of the line from the circle's center to a point on circle's
+       circumference.
+
+        We can calculate the cordinates of the point as follows,
+
+            x = center.x + radius * cos(radians);
+            y = center.y + radius * sin(radians);
+
+
+
+
+---------- (AnimationController) ----------
+
+* Moves from double lowerBound to double upperBound in given duration.
+
+
+* Constructor properties:
+
+      vsync:
+
+          * A TikerProvider to prevent unnecessary animation work
+          * Usually mix the widget with SingleTickerProviderStateMixin or
+            TickerProviderStateMixin and provide "this" to the vsync.
+
+
+      value:
+
+          * To set the initial value of the controller
+          * Default: lowerBound
+
+
+      lowerBound:
+
+          * Minimum value the controller can reach
+          * Default: 0.0
+
+
+      upperBound:
+
+          * Maximum value the controller can reach
+          * Default: 1.0
+
+
+      duration:
+
+          * Duration for forward animation
+          * Default: null
+          * If not provided, you must set it manually before calling forward.
+            Otherwise An error is thrown.
+
+
+      reverseDuration:
+
+          * Duration for reverse
+          * Default: uses "duration"
+
+
+      animationBehavior:
+
+          * You almost never need to change this.
+          * Controls the controller's behavior in low-power mode
+          * Two possible values:
+
+                1. AnimationBehavior.preserve (default):
+
+                      Animation plays normally even when "reduce motion" is ON
+
+
+                2. AnimationBehavior.normal:
+
+                      Linearizes animation. (removes curves, shortcuts long animations)
+
+
+      debugLabel:
+
+          * Label used in Flutter DevTools/debugging.
+          * Helps you identify controllers.
+          * Does not effect performance or behavior.
+
+
+
+
+* Does not run automatically.
+
+
+* "lowerBound" <= "upperBound"
+
+
+* Cannot provide curves directly.
+
+
+* To control the animation we always use AnimationController even there is an
+  Animation instance,
+
+
+* Methods:
+
+      _animationController.forward():
+
+          * Runs the animation forward.
+          * _animationController.value is always linear.
+          * Can await until animation completes.
+          * Properties:
+
+                from:
+                    * Jump to a specific start value before running.
+                    * Default: lowerBound.
+
+
+      _animationController.reverse():
+
+          * Runs the animation backward.
+          * _animationController.value is always linear.
+          * Can await until animation completes.
+          * Properties:
+
+                from:
+                    * Jump to a specific start value before running.
+                    * Default: upperBound.
+
+
+      _animationController.repeat():
+
+          * Loops the animation continuously from lowerBound to upperBound.
+            After completed, then start again in lowerBound.
+
+          * _animationController.value is always linear.
+
+          * Properties:
+
+                * min:
+                      Start value of the repeating range.
+                      min >= lowerBound
+                      Default: lowerBound
+
+                * max:
+                      End value of the repeating range.
+                      max <= upperBound
+                      Default: upperBound
+
+                * reverse:
+                      Default: false
+
+                      If true animation runs from lowerBound to upperBound and
+                      then upperBound to lowerBound. Then continue the process
+                      again and again.
+
+                * period:
+                      Default: _animationController's duration/reverseDuration.
+
+                      Replace the _animationController's duration for that
+                      specific repeating cycle.
+
+                * count:
+                      Default: repeats indefinitely.
+
+                      Specify how many times the animation should repeat.
+
+
+      _animationController.animateTo(<target>):
+
+          * Animates from current value -> target.
+          * Forward if target > current value.
+          * Backward if target < current value.
+
+          * _animationController.value is not linear if you don't use,
+                curve: Curves.linear
+
+          * Target must be within controller's bounds.
+          * It supports curves.
+          * Properties:
+
+                * target:
+                      Target value to animate from current value.
+
+                * duration:
+                      Duration for the animation.
+                      Default: Controller's default duration.
+
+                * curve:
+                      To specify the curve.
+                      Default: Curves.linear
+
+
+      _animationController.animateBack(<target>):
+
+          * Simillar to animateTo, but always backward.
+
+
+      _animationController.reset():
+
+          * Sets the controller's value back to lowerBound.
+
+
+      _animationController.stop():
+
+          * To stop the animation immediately.
+          * Properties:
+
+                * canceled: (default: true)
+
+                      true:
+                          Animation is interrupted.
+                          No status change happens.
+
+                      false:
+                          Treat stop as natural finish.
+
+                          If the controller was moving forward: trigger
+                          AnimationStatus.completed
+
+                          If the controller was moving backward: trigger
+                          AnimationStatus.dismissed
+
+
+      _animationController.dispose():
+
+          * Release resources when the controller is no longer needed.
+
+
+
+
+* Properties:
+
+      _animationController.isAnimating:
+          Animation is running forward or backward.
+
+      _animationController.isCompleted:
+          Animation is stopped at the end.
+
+      _animationController.isDismissed:
+          Animation is stopped at the beginning.
+
+      _animationController.isForwardOrCompleted:
+          Animation is running forward or stopped at the end.
+
+      _animationController.value:
+          Directly access the controller's current value.
+
+      _animationController.value = x:
+          Directly set the controller's value.
+
+
+
+
+* If you use forward method, first time animation will be executed. But then if
+  you hot reload again, animation will not be executed. Because it already in
+  forwarded position. In this case it is important to always use reset() method before
+  the forward() method
+
+    * animationController..reset()..forward();
+
+
+
+
+* Register/Remove a callback function that runs every time the animation's value
+  changes.
+
+      void _listener() {
+        //
+      }
+
+
+      To register:
+          _animationController.addListener(_listener)
+
+      If need to remove before dispose:
+          _animationController.removeListener(_listener)
+
+
+
+
+* We can also register/remove a listener to listen animation status as follows,
+
+      void _statusListener(AnimationStatus status) {
+        if (status == AnimationStatus.completed) {
+          //
+        }
+      }
+
+
+      To register:
+          _animationController.addStatusListener(_statusListener)
+
+      If need to remove before dispose:
+          _animationController.removeStatusListener(_statusListener)
+
+
+      AnimationStatus:
+
+          * completed:
+                Animation is stopped at the end.
+
+          * dismissed:
+                Animation is stopped at the beginning.
+
+          * forward:
+                Animation is running forward.
+
+          * reverse:
+                Animation is running backward.
+
+
+
+
+---------- (Animation<T> & Tweens) ----------
+
+* To animate any value type other than a raw double, we use a Tween.
+
+      Colors, Sizes, Integers, Offsets, Alignments, etc
+
+
+Ex:
+    late final AnimationController _animationController;
+    late final Animation<int> _animation;
+
+    @override
+    void initState() {
+      super.initState();
+      _animationController = AnimationController(
+        vsync: this,
+        duration: const Duration(seconds: 2),
+      );
+
+      _animation = IntTween(begin: 0, end: 1000).animate(_animationController);
+    }
+
+
+* To provide curves, use "CurvedAnimation" inside animate method.
+
+      _animation = Tween<double>(begin: 0, end: -(pi / 2)).animate(
+        CurvedAnimation(
+          parent: _rotationController,
+          curve: Curves.bounceOut,
+          reverseCurve: Curves.bounceOut,
+        ),
+      );
+
+
+
+
+---------- (AnimatedBuilder) ----------
+
+* Refresh the screen based on animation controller changes.
+
+
+* Always use AnimationController object for "animation" argument but not an
+  Animation object.
+
+
+
+
+Ex 1: Rotating card along the Y axis:
+
+    class _HomePageState extends State<HomePage>
+        with SingleTickerProviderStateMixin {
+      late final AnimationController _animationController;
+
+      @override
+      void initState() {
+        super.initState();
+
+        _animationController = AnimationController(
+          vsync: this,
+          lowerBound: 0,
+          upperBound: 2 * pi,
+          duration: const Duration(seconds: 2),
+        );
+        _animationController.repeat();
+      }
+
+      @override
+      void dispose() {
+        _animationController.dispose();
+
+        super.dispose();
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(title: const Text('Animations - 1'), centerTitle: true),
+          body: Center(
+            child: AnimatedBuilder(
+              animation: _animationController,
+              child: Container(
+                width: 250,
+                height: 300,
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              builder: (context, child) {
+                return Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.identity()
+                    ..rotateY(_animationController.value),
+                  child: child,
+                );
+              },
+            ),
+          ),
+        );
+      }
+    }
+
+
+
+
+Ex 2: PulseDot
+
+    class PulseDot extends StatefulWidget {
+      final Color _color;
+      final double _dotRadius;
+
+      const PulseDot({super.key, required Color color, required double dotRadius})
+        : _color = color,
+          _dotRadius = dotRadius;
+
+      @override
+      State<PulseDot> createState() => _PulseDotState();
+    }
+
+    class _PulseDotState extends State<PulseDot>
+        with SingleTickerProviderStateMixin {
+      late final AnimationController _animationController;
+      late final Animation<double> _animation;
+
+      @override
+      void initState() {
+        super.initState();
+
+        _animationController = AnimationController(
+          vsync: this,
+          duration: const Duration(seconds: 1),
+        );
+        _animation =
+            Tween<double>(
+              begin: widget._dotRadius * 2,
+              end: widget._dotRadius * 4,
+            ).animate(
+              CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+            );
+        _animationController.repeat();
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        return AnimatedBuilder(
+          animation: _animation,
+
+          child: Center(
+            child: CircleAvatar(
+              radius: widget._dotRadius,
+              backgroundColor: widget._color,
+            ),
+          ),
+
+          builder: (context, child) {
+            final size = _animation.value;
+
+            return Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  colors: [Colors.transparent, Colors.transparent, widget._color],
+                  stops: const [0.5, 0.5, 1.0],
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: child,
+            );
+          },
+        );
+      }
+    }
+
+
+
+
+---------- (Listenable.merge()) ----------
+
+* It lets you combine multiple Listenables into a single Listenable.
+
+
+* It is useful when you want a widget (or animation, or listener) to react when
+  any one of several Listenables changes.
+
+
+Ex:
+
+    AnimatedBuilder(
+      animation: Listenable.merge([
+        _xRotationAnimation,
+        _yRotationAnimation,
+        _zRotationAnimation,
+      ]),
+
+      ...
+    )
+
+
+Ex: Left rotating and flipping circle:
+
+    class HomePage extends StatefulWidget {
+      const HomePage({super.key});
+
+      @override
+      State<HomePage> createState() => _HomePageState();
+    }
+
+    class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+      late AnimationController _zRotationController;
+      late Animation<double> _zRotationAnimation;
+
+      late AnimationController _yRotationController;
+      late Animation<double> _yRotationAnimation;
+
+      @override
+      void initState() {
+        super.initState();
+
+        _zRotationController = AnimationController(
+          vsync: this,
+          duration: const Duration(seconds: 1),
+        );
+        _zRotationAnimation = Tween<double>(begin: 0, end: -pi / 2).animate(
+          CurvedAnimation(parent: _zRotationController, curve: Curves.bounceOut),
+        );
+        _zRotationController.forward();
+
+        _yRotationController = AnimationController(
+          vsync: this,
+          duration: const Duration(seconds: 1),
+        );
+        _yRotationAnimation = Tween<double>(begin: 0, end: pi).animate(
+          CurvedAnimation(parent: _yRotationController, curve: Curves.bounceOut),
+        );
+
+        _zRotationController.addStatusListener((status) {
+          if (status == AnimationStatus.completed) {
+            _yRotationAnimation =
+                Tween<double>(
+                  begin: _yRotationAnimation.value,
+                  end: _yRotationAnimation.value + pi,
+                ).animate(
+                  CurvedAnimation(
+                    parent: _yRotationController,
+                    curve: Curves.bounceOut,
+                  ),
+                );
+            _yRotationController
+              ..reset()
+              ..forward();
+          }
+        });
+        _yRotationController.addStatusListener((status) {
+          if (status == AnimationStatus.completed) {
+            _zRotationAnimation =
+                Tween<double>(
+                  begin: _zRotationAnimation.value,
+                  end: _zRotationAnimation.value + (-pi / 2),
+                ).animate(
+                  CurvedAnimation(
+                    parent: _zRotationController,
+                    curve: Curves.bounceOut,
+                  ),
+                );
+            _zRotationController
+              ..reset()
+              ..forward();
+          }
+        });
+      }
+
+      @override
+      void dispose() {
+        _zRotationController.dispose();
+
+        super.dispose();
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        return Scaffold(
+          body: Center(
+            child: AnimatedBuilder(
+              animation: Listenable.merge([
+                _zRotationAnimation,
+                _yRotationAnimation,
+              ]),
+              builder: (context, child) {
+                return Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.identity()
+                    ..rotateZ(_zRotationAnimation.value)
+                    ..rotateY(_yRotationAnimation.value),
+                  child: child,
+                );
+              },
+              child: const Circle(),
+            ),
+          ),
+        );
+      }
+    }
+
+
+
+
+---------- (Hero animation) ----------
+
+* When you navigate one page to another and if the both pages have same content
+  like an image, you can use Hero animation to show the transition.
+
+
+* Wrap the content in both pages with Hero() widgets and provide same tag.
+
+
+* If you see something like yellow underline when transtion, Wrap the content
+  with Material widget.
+
+
+* We can use "flightShuttleBuilder" in one of both Hero widgets to control the
+  path of the transition.
+
+
+Ex:
+
+@immutable
+final class Person {
+  final String name;
+  final int age;
+  final String image;
+
+  const Person({required this.name, required this.age, required this.image});
+}
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  final persons = const [
+    Person(name: 'John', age: 20, image: '🙋‍♂️'),
+    Person(name: 'Jane', age: 21, image: '🤵'),
+    Person(name: 'Jack', age: 22, image: '👲'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('HomePage'), centerTitle: true),
+      body: ListView.builder(
+        itemCount: persons.length,
+        itemBuilder: (context, index) {
+          final person = persons[index];
+
+          return ListTile(
+            leading: Hero(
+              tag: person.name,
+              child: Text(person.image, style: const TextStyle(fontSize: 40)),
+            ),
+            title: Text(person.name),
+            subtitle: Text('${person.age} years old'),
+            trailing: const Icon(Icons.arrow_forward_rounded),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DetailsPage(person)),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class DetailsPage extends StatelessWidget {
+  final Person _person;
+
+  const DetailsPage(Person person, {super.key}) : _person = person;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Hero(
+          flightShuttleBuilder:
+              (
+                flightContext,
+                animation,
+                flightDirection,
+                fromHeroContext,
+                toHeroContext,
+              ) {
+                switch (flightDirection) {
+                  case HeroFlightDirection.push:
+                    return ScaleTransition(
+                      scale: animation.drive(
+                        Tween<double>(
+                          begin: 0,
+                          end: 2,
+                        ).chain(CurveTween(curve: Curves.fastOutSlowIn)),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: toHeroContext.widget,
+                      ),
+                    );
+                  case HeroFlightDirection.pop:
+                    return Material(
+                      color: Colors.transparent,
+                      child: fromHeroContext.widget,
+                    );
+                }
+              },
+          tag: _person.name,
+          child: Text(_person.image, style: const TextStyle(fontSize: 40)),
+        ),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 20),
+
+            Text(_person.name, style: const TextStyle(fontSize: 20)),
+
+            const SizedBox(height: 20),
+
+            Text(
+              '${_person.age} years old',
+              style: const TextStyle(fontSize: 20),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Animation and motion widgets ----------------------------------------
+
+---------- (AlignTransition) ----------
+
+* To control the alignment using animationController.
+
+
+Ex:
+
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  late final AnimationController _alignmentController;
+  late final Animation<AlignmentGeometry> _alignmentAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _alignmentController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
+    _alignmentAnimation =
+        AlignmentTween(
+          begin: Alignment.bottomLeft,
+          end: Alignment.topRight,
+        ).animate(
+          CurvedAnimation(parent: _alignmentController, curve: Curves.bounceIn),
+        );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('HomePage'), centerTitle: true),
+      body: Column(
+        children: [
+          FilledButton(
+            onPressed: () {
+              _alignmentController.animateTo(0.9);
+            },
+            child: const Text('Animate'),
+          ),
+          Container(
+            width: 400,
+            height: 400,
+            color: Colors.blue,
+            child: AlignTransition(
+              alignment: _alignmentAnimation,
+              child: Container(width: 100, height: 100, color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+
+
+---------- (AnimatedAlign) ----------
+
+* To perform the animation when the widget is rebuilt with new Alignment (state-driven).
+
+
+Ex:
+
+Container(
+  width: 400,
+  height: 400,
+  color: Colors.blue,
+  child: AnimatedAlign(
+    alignment: Alignment.bottomCenter, // change this value on rebuilds
+    duration: const Duration(seconds: 3),
+    child: Container(width: 100, height: 100, color: Colors.red),
+  ),
+)
+
+
+
+
+---------- (AnimatedContainer) ----------
+
+* To animate the properties of a container on state changes.
+
+
+Ex:
+
+ AnimatedContainer(
+  duration: const Duration(seconds: 1),
+  curve: Curves.bounceIn,
+  width: 160 * (_isZoomedIn ? 2 : 1),
+  height: 90 * (_isZoomedIn ? 2 : 1),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(8),
+    image: const DecorationImage(
+      image: AssetImage('assets/wallpaper.jpg'),
+    ),
+  ),
+)
+
+
+
+
+---------- (TweenAnimationBuilder) ----------
+
+* To rebuild widgets between a tween.
+
+
+* Can use "curve" property to provide the curve.
+
+
+* Can use "onEnd" property to track the end of the animation/Tween.
+
+
+Ex:
+
+TweenAnimationBuilder(
+  duration: const Duration(seconds: 2),
+  tween: ColorTween(
+    begin: Color.fromARGB(
+      _random.nextInt(256),
+      _random.nextInt(256),
+      _random.nextInt(256),
+      _random.nextInt(256),
+    ),
+    end: Color.fromARGB(
+      _random.nextInt(256),
+      _random.nextInt(256),
+      _random.nextInt(256),
+      _random.nextInt(256),
+    ),
+  ),
+  onEnd: () {
+    setState(() {});
+  },
+  builder: (context, color, child) {
+    return Circle(color!);
+  },
+)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Pagination ----------------------------------------------------------
+
+* cubit:
+
+    states:
+
+        @immutable
+        sealed class TodosState {
+          final List<TodoEntity> todos;
+
+          const TodosState({required this.todos});
+        }
+
+        final class TodosInitial extends TodosState {
+          const TodosInitial() : super(todos: const []);
+        }
+
+        final class TodosLoading extends TodosState {
+          final bool isFirstLoading;
+
+          const TodosLoading({required super.todos, required this.isFirstLoading});
+        }
+
+        final class TodosSuccess extends TodosState {
+          const TodosSuccess({required super.todos});
+        }
+
+        final class TodosError extends TodosState {
+          final String message;
+
+          const TodosError({required super.todos, required this.message});
+        }
+
+
+    Cubit implementation:
+
+        class TodosCubit extends Cubit<TodosState> {
+          static const _limit = 20;
+          static int _page = 1;
+
+          final LoadTodos _loadTodos;
+
+          TodosCubit({required LoadTodos loadTodos})
+            : _loadTodos = loadTodos,
+              super(const TodosInitial());
+
+          Future<void> loadTodos() async {
+            if (state is TodosLoading) return; // This line is very important
+
+            emit(TodosLoading(todos: state.todos, isFirstLoading: _page == 1));
+
+            final params = LoadTodosType(limit: _limit, page: _page);
+            final res = await _loadTodos(params);
+
+            res.fold(
+              (failure) {
+                emit(TodosError(todos: state.todos, message: failure.message));
+              },
+              (todos) {
+                emit(TodosSuccess(todos: state.todos + todos));
+                _page++;
+              },
+            );
+          }
+        }
+
+
+
+
+* Widget implementation:
+
+class _TodosPageState extends State<TodosPage> {
+  final _scrollController = ScrollController();
+  late final TodosCubit _todosCubit;
+
+  void _activateScrollListener() {
+    _scrollController.addListener(() {
+      final position = _scrollController.position;
+
+      if (position.pixels == position.maxScrollExtent) {
+        _todosCubit.loadTodos();
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _activateScrollListener();
+    _todosCubit = context.read<TodosCubit>();
+    _todosCubit.loadTodos();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext _) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Todos'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              _todosCubit.loadTodos();
+            },
+            icon: const Icon(Icons.refresh_rounded),
+          ),
+        ],
+      ),
+      body: BlocConsumer<TodosCubit, TodosState>(
+        listener: (context, state) {
+          if (state is TodosError) {
+            showSnackBar(context: context, message: state.message);
+          }
+        },
+        builder: (_, state) {
+          final todos = state.todos;
+
+          // We must do this before empty content checking
+          if (state is TodosLoading && state.isFirstLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (todos.isEmpty) {
+            return const Center(child: Text('No Content'));
+          }
+
+          return ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            itemCount: todos.length + (state is TodosLoading ? 1 : 0),
+            itemBuilder: (_, index) {
+              if (index < todos.length) {
+                return TodoCard(todos[index]);
+              }
+
+              // To make sure that page is scrolled up after rendering loading indicator below.
+              Future.delayed(const Duration(milliseconds: 1), () {
+                _scrollController.jumpTo(
+                  _scrollController.position.maxScrollExtent,
+                );
+              });
+
+              return const Padding(
+                padding: EdgeInsetsGeometry.symmetric(vertical: 8),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Classes -------------------------------------------------------------
+
+* We use classes to represent real world entities in the programs.
+
+
+* A class contains following members:
+
+    Instance members (object level):
+        * Instance variables:
+        * Instance methods
+
+    Static members (class level):
+        * static variables
+        * static methods
+
+
+* When we should use instance variables?
+    If each object of the class should contains some property, then make it a
+    instance variable. (like name, age in Student class. Because every student
+    object has it's own name and age)
+
+    Inherited to sub classes.
+
+
+* When we should use instance methods?
+    If we want to access instance members inside a method, then make it a
+    instance method.
+
+    To call to a instance method, we have to use an object.
+        <object>.<method>() {}
+
+    Inside the instance method, we can access current object using "this"
+    keyword.
+
+    Inherited to sub classes.
+
+
+* When we should use static variables?
+    Static variables are not related to specific object. They are class level
+    variables. Can call only using class name.
+
+    If you want to create variables that are not related to objects but related
+    to the class, then make it a static variable.
+
+    Not inherited to sub classes.
+
+
+* When we should use static methods?
+    In a method, if you don't use any instance variable or instance method, then
+    make it a static method. To call to a static method, we have to use the
+    class name.
+
+    Not inherited to sub classes.
+
+
+* Common best practices when creating a class:
+
+    1. When we define instance variables, make them,
+        * final
+        * private
+
+    2. To access, modify instance variables outside of the class use,
+        * getters
+        * setters
+
+        This is called encapsulation.
+
+
+
+
+---------- (final classes) ----------
+
+* Once you mark a class as final, no other library can extend or implement it.
+
+Ex: final class Person {}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Create a model class ------------------------------------------------
+
+* By this model class we can,
+
+    1. Send data to database.
+    2. Get data from database.
+
+
+* For a model class we define all constructor arguments as named arguments.
+
+
+* There are 4 types of instance variable fields,
+
+    1. Named required.
+    2. Named optional with const default value.
+    3. Named optional with non const default value.
+    4. Named optional nullable.
+
+
+Ex:
+
+@immutable
+class UserEntity {
+  final String name;        // as non nullable
+
+  final bool isActive;      // as non nullable
+
+  final DateTime createdAt; // as non nullable
+
+  final String? email;      // as nullable
+
+
+  UserEntity({
+    required this.name,   // named required
+
+    this.isActive = true, // named optional with const default value
+
+    DateTime? createdAt,  // named optional with non const default value
+
+    this.email,           // named optional nullable
+  }) : createdAt = createdAt ?? DateTime.now();
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'is_active': isActive,
+      'created_at': createdAt.toIso8601String(),
+      'email': email,
+    };
+  }
+
+  factory UserEntity.fromMap(Map<String, dynamic> map) {
+    return UserEntity(
+      name: map['name'],
+      isActive: map['is_active'],
+      createdAt: DateTime.parse(map['created_at']),
+      email: map['email'],
+    );
+  }
+}
+
+
+* toMap is a instance method. Inherited to sub classes.
+
+* fromMap is a factory constructor. Not inherited to sub classes.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- extends vs implements -----------------------------------------------
+
+* extends:
+
+    Used to inherite from a normal class (concrete class) or abstract class.
+
+    Need to provide implementation for all abstract instance methods. For concrete
+    methods implementation is optional.
+
+    Parent class concrete instance methods are available in subclasses.
+
+
+* implements:
+
+    Used to inherite from an interface.
+
+    Need to provide implementation for all methods.
+    (abstract methods + concrete methods)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Inheritance ---------------------------------------------------------
+
+* By using inheritance we can inherite parent class instance variables and
+  instance methods to child classes.
+
+
+Ex:
+
+class Person {
+  final String _name;
+  final int _age;
+
+  const Person({required String name, required int age})
+    : _name = name,
+      _age = age;
+
+  void walking() {
+    print('Person is walking');
+  }
+
+  void showDetails() {
+    print('Name  : $_name');
+    print('Age   : $_age');
+  }
+}
+
+class Employee extends Person {
+  final int _salary;
+
+  const Employee({required String name, required int age, required int salary})
+    : _salary = salary,
+      super(name: name, age: age);
+
+  @override
+  void walking() {
+    print('Employee is walking');
+  }
+
+  @override
+  void showDetails() {
+    super.showDetails(); // Method body of parent class showDetails method.
+    print('Salary: $_salary');
+  }
+}
+
+
+1. In child class constructor you should get values for all instance variables
+   including parent class instance variables and initialize inherited instance
+   variables from parent class using super().
+
+    Ex:
+
+      const Employee({required String name, required int age, required int salary})
+        : _salary = salary,
+          super(name: name, age: age);
+
+    Now you can imagine all parent class instance variables available in sub
+    class.
+
+
+2. You can completely override a method which is inherited from parent class
+   inside sub class like "walking" method in above example.
+
+
+3. Instead of completely overriding a method which is inherited from parent
+   class, we can override it extending parent class implementation also like
+   "showDetails" method in above example.
+
+    Ex:
+
+      @override
+      void showDetails() {
+        super.showDetails();
+        print('Salary: $_salary');
+      }
+
+    "super.showDetails()" means the method body of parent class "showDetails"
+    method.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Abstract classes ----------------------------------------------------
+
+* We use abstract classes for:
+
+    1. Force sub classes to provide implementations for specified instance
+       methods (use abstract instance methods).
+
+    2. Provide concrete instance methods for sub classes.
+
+    3. Provide common instance variables to sub classes.
+
+
+* We cannot create objects for an abstract class.
+
+
+* Always use "extends" for inherite to a sub class.
+
+
+* Mainly it contains following entities:
+
+    1. instance variables:
+
+        * That are common for extended sub classes.
+
+
+    2. Concrete instance methods:
+
+        * An instance methods with the body.
+
+        * Automatically available for sub classes.
+
+        * Can provide implementation in sub classes (override). But it is optional.
+
+
+    3. Abstract instance methods
+
+        * An instance method without the body.
+
+        * Must provide implementation in sub classes (override) or we have to
+          make the sub class an abstract class.
+
+
+* If we cannot create objects of an abstract class, why constructors are allowed?
+    To initialize it's instance variable in sub classes using super().
+
+
+* Can contains static variables:
+    Should be initialize at the time of creation or Should be nullable.
+
+    Not inherited to sub classes.
+
+
+* Can contains static methods:
+    Method body is required.
+
+    Not inherited to sub classes.
+
+
+Ex:
+
+abstract class Person {
+  // Instance variables that are common for sub classes
+  final String _name;
+
+  const Person(String name) : _name = name;
+
+  // Method with the body (concrete method)
+  void eating() {
+    print('Person is eating');
+  }
+
+  // Method without the body (abstract method)
+  void walking();
+}
+
+class Student extends Person {
+  final String _country;
+
+  Student({required String name, required String country})
+    : _country = country,
+      super(name);
+
+  @override
+  void walking() {
+    print('Student is walking');
+  }
+}
+
+
+
+
+---------- (sealed classes) ----------
+
+* Same as abstract classes. But can't be extended, or mixed (with mixin) in
+  outside of its library (current .dart file)
+
+* Simply called "Implicitly abstract".
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Interfaces ----------------------------------------------------------
+
+* We use interfaces for:
+
+    1. Force sub classes to provide implementations for specified getters.
+
+          <return_type> get <method_name>;
+
+
+    2. Force sub classes to provide implementations for specified instance
+       variables (or getters and setters).
+
+          abstract <data_type> <getter_or_setter_name>;
+
+
+    3. Force sub classes to provide implementations for specified instance
+       methods (use abstract instance methods).
+
+          <return_type> <method_name>(args);
+
+
+* They are 100% abstract classes. No concrete instance methods.
+
+
+* Objects are not allowed for interfaces.
+
+
+* Constructors are not meaningful for interfaces.
+
+
+* Always use "implements" for inherite to sub classes.
+
+
+* Can contains static variables:
+    Should be initialize at the time of creation or Should be nullable.
+
+    Not inherited to sub classes.
+
+
+* Can contains static methods:
+    Method body is required.
+
+    Not inherited to sub classes.
+
+
+Ex:
+
+abstract interface class Person {
+  // For abstract getters
+  String get name;
+
+  // For abstract getter & setters
+  abstract int age;
+
+  // abstract methods
+  void walking();
+}
+
+class Student implements Person {
+  final String _name;
+  int _age;
+
+  Student({required String name, required int age}) : _name = name, _age = age;
+
+  @override
+  String get name => _name;
+
+  @override
+  int get age => _age;
+
+  @override
+  void set age(int age) => _age = age;
+
+  @override
+  void walking() {
+    print('Student is walking');
+  }
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Clean Architecture --------------------------------------------------
+
+* Folder structure for feature wise development. Always use singular names for
+  folders.
+
+
+/feature
+    /core
+        /constant
+            app_color.dart
+            ...
+
+        /bloc
+            /app_user
+            ...
+
+        /entity
+            user_entity.dart
+            ...
+
+        /error
+            failure.dart
+            server_exception.dart
+            ...
+
+        /service
+            /network
+                api_service.dart (http/dio wrapper)
+                network_info.dart (check connectivity, etc)
+                api_interceptor.dart (logging, etc)
+                ...
+
+            /storage
+                local_storage_service.dart
+                secure_storage_service.dart
+                cache_service.dart
+                ...
+
+            /auth
+                biometric_service.dart
+                ...
+
+            /external
+                location_service.dart
+                notification_service.dart
+                ...
+
+
+        /usecase
+            async_use_case.dart
+            sync_use_case.dart
+
+        /util
+            /validators
+            ...
+
+        /widget
+            app_card.dart
+            tappable_card.dart
+
+            /dialog
+                confirmation_dialog.dart
+                error_dialog.dart
+                ...
+            ...
+
+        /navigation
+            app_router.dart
+            /model
+                home_page_params.dart
+                ...
+
+        app_theme.dart
+
+
+
+
+    /feature1
+        /data
+            /model
+            /repository
+            /datasource
+
+
+        /domain
+            /entity
+            /repository
+            /usecase
+            /util
+
+        /presentation
+            /bloc
+            /page
+            /widget
+            /navigation
+                /model
+                    home_page_param.dart
+                    ...
+
+
+
+
+* Development order:
+
+    1. domain/entity
+    2. domain/repository
+    3. data/model
+    4. data/source
+    5. data/repository
+    6. domain/usecase
+    7. presentation/bloc
+    8. presentation/page
+    9. presentation/widget
+
+
+
+
+* domain/entity:
+
+    To define models to use inside presentation layer.
+
+    In Clean Architecture, we use entities only to structure the data we get
+    from database. Therefore when we design a entity model class, we design it
+    by considering the database table. When we get data from the database we
+    need to consider only 2 kind of arguments for the model.
+
+        1. Named required.
+        2. Named optional nullable.
+
+        Note: We need to consider "Named optional with const default value" and
+              "Named optional with non const default value" only if we send data
+              to database via the model.
+
+    Ex:
+        @immutable
+        class TodoEntity {
+          static const _userIdKey = 'userId';
+          static const _idKey = 'id';
+          static const _titleKey = 'title';
+          static const _isCompletedKey = 'completed';
+
+          final int userId;
+          final int id;
+          final String title;
+          final bool? isCompleted;
+
+          const TodoEntity({
+            required this.userId,
+            required this.id,
+            required this.title,
+            this.isCompleted,
+          });
+
+          Map<String, dynamic> toMap() {
+            return {
+              _userIdKey: userId,
+              _idKey: id,
+              _titleKey: title,
+              _isCompletedKey: isCompleted,
+            };
+          }
+
+          factory TodoEntity.fromMap(Map<String, dynamic> map) {
+            return TodoEntity(
+              userId: map[_userIdKey],
+              id: map[_idKey],
+              title: map[_titleKey],
+              isCompleted: map[_isCompletedKey],
+            );
+          }
+        }
+
+
+* domain/repository:
+
+    To define the interface for data/repositories.
+
+    Naming convension: <feature_name>Repository
+
+    Ex:
+        abstract interface class TodosRepository {
+          Future<Either<Failure, List<TodoEntity>>> loadTodos({
+            required int limit,
+            required int page,
+          });
+        }
+
+
+
+
+* domain/util:
+    To store feature specific utilities.
+
+    If you need to store utilities which can be used in multiple features, then
+    store them if "lib/core/util" folder.
+
+
+
+
+* data/model
+
+    To define the models to use use inside data layer.
+
+    Extended from domain entity.
+
+    Ex:
+        @immutable
+        class TodoModel extends TodoEntity {
+          const TodoModel({
+            required super.userId,
+            required super.id,
+            required super.title,
+            super.isCompleted,
+          });
+
+          factory TodoModel.fromMap(Map<String, dynamic> map) {
+            final todoEntity = TodoEntity.fromMap(map);
+
+            return TodoModel(
+              userId: todoEntity.userId,
+              id: todoEntity.id,
+              title: todoEntity.title,
+              isCompleted: todoEntity.isCompleted,
+            );
+          }
+        }
+
+    "toMap" is available by inheritance.
+
+    factory constructors are not inherited. Therefore we have to define a
+    seperate "fromMap" method. But we can use entity model's fromMap to simplify
+    the process.
+
+
+* data/datasource:
+
+    To define,
+
+        1. The interface for data sources implementations.
+        2. Data sources implementations.
+
+    Ex:
+
+      1. Interface:
+
+        Naming convension: <feature_name>DataSource
+
+        abstract interface class TodosDataSource {
+          Future<List<TodoModel>> loadTodos({required int limit, required int page});
+        }
+
+
+      2. Implementations:
+
+        Naming convension: <feature_name>RemoteDataSource or <feature_name>LocalDataSource
+
+        class TodosRemoteDataSource implements TodosDataSource {
+          static const _baseUrl = String.fromEnvironment(AppString.baseUrl);
+
+          const TodosRemoteDataSource();
+
+          @override
+          Future<List<TodoModel>> loadTodos({
+            required int limit,
+            required int page,
+          }) async {
+            try {
+              final start = (page - 1) * limit;
+
+              final res = await http.get(
+                Uri.parse('$_baseUrl/todos?_limit=$limit&_start=$start'),
+                headers: {'Content-Type': 'application/json'},
+              );
+
+              if (res.statusCode != 200) {
+                throw const ServerException('Invalid response');
+              }
+
+              final todos = jsonDecode(res.body) as List<dynamic>;
+              final todoModels = todos.map((todo) => TodoModel.fromMap(todo)).toList();
+
+              print(todoModels[0].toMap());
+
+              return todoModels;
+            } on ServerException catch (e) {
+              throw ServerException(e.message);
+            } catch (e) {
+              throw const ServerException(
+                'Please check your internet connection or try again later',
+              );
+            }
+          }
+        }
+
+
+        * If you have nothing to return from a function, return "unit" comes
+          with "fpdart" package instead of void. The data type of "unit" is "Unit"
+
+
+
+
+* data/repository:
+
+    Implements from domain/repository.
+
+    We perform following operations here,
+
+        1. Condition checks
+        2. Logics
+        ...
+
+    In here we substitute model class with entity class.
+
+    In here in each data source repository implementation, we get the
+    <feature_name>DataSource interface as a dependency.
+
+    Ex:
+
+        class TodosRemoteRepository implements TodosRepository {
+          final TodosDataSource _todosDataSource;
+
+          const TodosRemoteRepository(TodosDataSource todosDataSource)
+            : _todosDataSource = todosDataSource;
+
+          @override
+          Future<Either<Failure, List<TodoEntity>>> loadTodos({
+            required int limit,
+            required int page,
+          }) async {
+            try {
+              final todoModels = await _todosDataSource.loadTodos(
+                limit: limit,
+                page: page,
+              );
+              return right(todoModels);
+            } on ServerException catch (e) {
+              return left(Failure(e.message));
+            }
+          }
+        }
+
+
+* domain/usecase:
+
+    We should define usecases for each function declarations in
+    <feature_name>Repository interface.
+
+
+    We should implements each usecase from one of following interface (in lib/core/usecases).
+
+        1. AsyncUseCase: for asynchronous operations.
+
+            Ex:
+                abstract interface class AsyncUseCase<SuccessType, ParamsType> {
+                  Future<Either<Failure, SuccessType>> call(ParamsType params);
+                }
+
+        2. SyncUseCase: for synchronous operations.
+
+        Note:
+          You can create more usecase interfaces for your needs.
+
+
+    We should get <feature_name>Repository as a dependency into each usecase.
+
+    Ex:
+
+        @immutable
+        class LoadTodosParam {
+          final int limit;
+          final int page;
+
+          const LoadTodosParam({required this.limit, required this.page});
+        }
+
+        class LoadTodos implements AsyncUseCase<List<TodoEntity>, LoadTodosParam> {
+          final TodosRepository _todosRepository;
+
+          const LoadTodos(TodosRepository todosRepository)
+            : _todosRepository = todosRepository;
+
+          @override
+          Future<Either<Failure, List<TodoEntity>>> call(LoadTodosParam param) async {
+            return await _todosRepository.loadTodos(
+              limit: param.limit,
+              page: param.page,
+            );
+          }
+        }
+
+
+* presentation/bloc:
+
+    We define the state/states of the feature here.
+
+        Use seperate cubits for each value. But if there is only one value for
+        the feature like auth (only User), then you can define the single cubit
+        using feature name (AuthBloc).
+
+        Naming convension:
+
+            Inside the feature:
+                If there is only one value for the feature:
+                    <feature_name>Bloc
+
+                If there are multiple values for the feature:
+                    <value_name>Bloc
+
+            If need to use appwide:
+            Always: App<value_name>Bloc
+
+
+    We get usecases in domain/usecase as dependencies to the blocs in
+    presentation/bloc.
+
+
+    If you need to use a state outside of the feature which it is defined, create a
+    new state in "lib/core/bloc/<cubit_name>" and get it as a dependency
+    into the feature cubit.
+
+
+    As an example, most of the time you need to access user infomations more than
+    one features. Therefore create a new cubit called "app_user" (always prefix
+    name of the bloc with "app_") in "lib/core/bloc" and get it as a dependency
+    into the auth_bloc in auth feature. Then you can update app_user state inside
+    auth_cubit.
+
+        In this case if you want to call a method in AuthBloc using AppUserBloc,
+        then define a instance variable as follow in AppUserBloc
+
+            late final AsyncCallback <public_method_name>;
+
+        Now inside AuthBloc constructor body you can initialize it as follows,
+
+            _appUserBloc.<public_method_name> = <name_of_the_method_you_want_to_call>;
+
+        If you get any uninitialized error when you call the method using AppUserBloc
+        the reason is AuthBloc is not initialized yet. In this case you can
+        use registerSingleton and pass the AuthBloc directly to it without using
+        callbacks as follows,
+
+            registerSingleton(AuthBloc(...)); // correct
+
+            registerSingleton(() => AuthBloc(...)); // wrong
+
+
+    In this case you need to use UserEntity inside app_user cubit. But app_user
+    should not depend on a feature. Therefore we should move the user_entity.dart
+    file into "lib/core/entity" folder.
+
+
+
+
+    ---------- (Use state value of one cubit inside another cubit) ----------
+
+        * Never get one cubit to another as dependency in this case.
+
+
+        * use context.read<Cubit>() in UI layer to read the value and pass them
+          to the another cubit as arguments via a function.
+
+
+    Use BlocListener if you want to call a Cubit method when state of another
+    Cubit is changed. Never get one cubit to another as a dependency for this case.
+
+
+
+
+* presentation/widget:
+    To define common re-usable widgets of the feature:
+        presentation/widget/
+
+    To define common re-usable widgets of multiple features:
+        lib/core/widget/
+
+
+
+
+* presentation/page:
+    To define pages related to the specific feature.
+
+
+
+
+* presentation/navigation/model:
+    To define models to pass data to pages on navigation.
+
+    If you want  to pass data from a page in one feature to a page in another
+    feature, define that models in core/navigation/model folder.
+
+
+
+
+* Dependency injection:
+
+    We use the package: get_it
+
+
+    Create 2 files called,
+        init_dependencies.dart
+        init_dependencies.main.dart
+
+        in /lib folder to define all dependencies.
+
+
+    Ex:
+
+        final getIt = GetIt.instance;
+
+        void _todos() { // seperate function for each feature
+          getIt
+            ..registerLazySingleton<TodosDataSource>(
+              () => const TodosRemoteDataSource(),
+            )
+            ..registerLazySingleton<TodosRepository>(
+              () => TodosRemoteRepository(getIt()),
+            )
+            ..registerLazySingleton(
+              () => TodosCubit(loadTodos: LoadTodos(getIt()))
+            );
+        }
+
+        void initDependencies() {
+          _todos();
+        }
+
+
+        We use registerLazySingleton only for shared objects like,
+            1. DataSource implementations
+            2. Repository implementations
+            3. Blocs
+
+            Use registerLazySingleton for usecases only if they are used in
+            multiple blocs.
+
+
+
+
+---------- (Some rules to follow) ----------
+
+* Never use HydratedBloc to store secure informations in local storage. Use it
+  just to store state related infomations.
+
+      To store HydratedBloc state related data, use "getApplicationSupportDirectory()".
+      Use "getApplicationDocumentsDirectory()" only if you want the state to sync
+      with cloud backups.
+
+
+      To store sensitive informations, use "flutter_secure_storage" package.
+
+          Create the singleton class called SecureStorageService and store it in
+          "lib/core/service/" directory. Define all read and write logics in this
+          class.
+
+
+      To store non-sensitive data in local storage use suitable storage package.
+
+          Create the singleton class called StorageService and store it in
+          "lib/core/service/" directory. Define all read and write logics in this
+          class.
+
+
+* When you need to call a specific methods of a Cubit when a page loads, keep
+  them in main page initState method.
+
+      _authCubit.verifyToken();
+
+      _postsCubit.loadPosts();
+
+      _selectedValuesCubit.clear();
+
+
+      Note:
+          If you want to call a method as above, then extract them to seperate
+          functions for clean code.
+
+
+* Always use Container for network images. Because we can provide place holder,
+  border, border radius and shape using one widget.
+
+
+* If any widget is reusable, the extract it to feature/presentation/widget folder.
+  If it can be used in multiple features, then extract it to lib/core/widget folder.
+  All of other page specific widgets must be defined inside the page.
+
+
+* Always use "settingsOf(context)" to get arguments to the page. If you use
+  ModalRoute.of(context), page will be performed unnecessary rebuilds.
+
+    @override
+    void didChangeDependencies() {
+      super.didChangeDependencies();
+
+      _userData = ModalRoute.settingsOf(context)!.arguments as UserData;
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Select multiple choices using a cubit -------------------------------
+
+* Cubit example:
+
+    class SelectedServiceOptionsCubit extends Cubit<SelectedServiceOptionsState> {
+      SelectedServiceOptionsCubit()
+        : super(const SelectedServiceOptionsState.initial());
+
+      void update({
+        required int id,
+        required int price,
+        required int duration,
+        bool remove = false,
+      }) {
+        List<int> optionIds;
+        int totalAmount;
+        int totalDuration;
+
+        if (remove) {
+          optionIds = [...state.optionIds]..remove(id);
+          totalAmount = state.totalAmount - price;
+          totalDuration = state.totalDuration - duration;
+        } else {
+          optionIds = [...state.optionIds, id];
+          totalAmount = state.totalAmount + price;
+          totalDuration = state.totalDuration + duration;
+        }
+
+        emit(
+          SelectedServiceOptionsState(
+            optionIds: optionIds,
+            totalAmount: totalAmount,
+            totalDuration: totalDuration,
+          ),
+        );
+      }
+
+      void clear() {
+        emit(const SelectedServiceOptionsState.initial());
+      }
+    }
+
+
+
+
+* Extract and seperate the widget which you want to rebuild on each click, and
+  wrap it with BlocBuilder.
+
+
+
+
+* Logic to detect is selected or not:
+      state.optionIds.contains(option.id)
+
+
+
+
+* buildWhen logic:
+
+      buildWhen: (previous, current) {
+        final idInPrevious = previous.optionIds.contains(option.id);
+        final idInCurrent = current.optionIds.contains(option.id);
+
+        if (idInPrevious && !idInCurrent) return true;
+
+        if (!idInPrevious && idInCurrent) return true;
+
+        return false;
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Fonts ---------------------------------------------------------------
+
+tracking-tight  ----------> -0.025 * fontSize
+tracking-normal ----------> 0
+tracking-wide   ----------> 0.025 * fontSize
+
+
+leading-tight  ----------> 1.25
+leading-snug   ----------> 1.375
+leading-normal ----------> 1.5
+
+
+* Headings:
+
+    h1: fontSize: 30, letterSpacing: -0.025 * fontSize, height: 1.25, fontWeight: 800 (extra-bold)
+
+    h2: fontSize: 24, letterSpacing: -0.025 * fontSize, height: 1.25, fontWeight: 700 (bold)
+
+    h3: fontSize: 20, letterSpacing: 0, height: 1.375, fontWeight: 600 (semi-bold)
+
+    h4: fontSize: 18, letterSpacing: 0, height: 1.375, fontWeight: 600 (semi-bold)
+
+    h5: fontSize: 16, letterSpacing: 0, height: 1.5, fontWeight: 500 (medium)
+
+    h6: fontSize: 14, letterSpacing: 0.025 * fontSize, height: 1.5, fontWeight: 500 (medium)
+
+
+* Body:
+    Use just Text() without any styles.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Create a singleton class --------------------------------------------
+
+* We need a singleton class to make sure that we create and share only one
+  client instance inside the application.
+
+
+
+
+---------- (With Eager Initialization) ----------
+
+* Access type:
+
+  1. final socketService = SocketService.instance;
+
+      class SocketService {
+        static const instance = SocketService._internal();
+
+        const SocketService._internal();
+      }
+
+
+  2. final socketService = SocketService();
+
+      class SocketService {
+        static const _instance = SocketService._internal();
+
+        const SocketService._internal();
+
+        factory SocketService() {
+          return _instance;
+        }
+      }
+
+
+  Note: By using above techniques we make sure that only one object of
+        SocketService class is created.
+
+
+* Now create the client instance as a private, static and nullable instance variable.
+
+    class SocketService {
+      static const instance = SocketService._internal();
+
+      static Socket? _socket;
+
+      const SocketService._internal();
+    }
+
+
+    Note:
+      * Why private:
+          This variable should not be accessed outside of the class.
+
+      * Why static?
+          For memory efficiency.
+
+      * Why nullable?
+          If it is not nullable we have to initialize it at the time of
+          creation or inside the constructor. Most of the time we have to
+          implement some complex logic to initialize the variable. Therefore we
+          make it nullable and use a seperate method to initialize it.
+
+      * Why not final?
+          We have to re-assign the variable to null at the time of dispose.
+
+
+* Now create instance methods to initialize, get and dispose the client instance.
+
+  * initialize & get:
+      To make sure that the value of the client instance is always not null.
+
+
+  * dispose:
+      To dispose the client instance resources when we don't need it anymore.
+
+
+
+
+    class SocketService {
+      static const instance = SocketService._internal();
+
+      static Socket? _socket;
+
+      const SocketService._internal();
+
+      Socket _initializeSocket() {
+        final socket = io(
+          'http://10.0.2.2:3000',
+          OptionBuilder().setTransports(['websocket']).build(),
+        );
+        return socket.connect();
+      }
+
+      Socket get socket {
+        if (_socket != null) return _socket!;
+        _socket = _initializeSocket();
+        return _socket!;
+      }
+
+      void dispose() {
+        if (_socket == null) return;
+        _socket!.dispose();
+        _socket = null;
+      }
+    }
+
+
+
+
+---------- (With Lazy Initialization) ----------
+
+class SocketService {
+  static SocketService? _instance;
+
+  const SocketService._internal();
+
+  factory SocketService() {
+    if (_instance != null) return _instance!;
+    _instance = SocketService._internal();
+    return _instance!;
+  }
+}
+
+* Tip: Create the singleton class object as same as client instance
+  (static nullable) and initialize or just return it if not null from factory
+  constructor.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Dialogs -------------------------------------------------------------
+
+* Always use custom widgets for dialogs.
+
+
+Ex:
+
+import 'package:flutter/material.dart';
+
+final class ConfirmationDialog {
+  static const instance = ConfirmationDialog._internal();
+  static bool _isVisible = false;
+
+  const ConfirmationDialog._internal();
+
+  void close(BuildContext context) {
+    if (!_isVisible) return;
+    Navigator.pop(context);
+    _isVisible = false;
+  }
+
+  Future<void> show({
+    required BuildContext context,
+    required String title,
+    required String description,
+  }) async {
+    if (_isVisible) return;
+
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        _isVisible = true;
+
+        return PopScope(
+          canPop: false,
+          child: AlertDialog(
+            title: Text(title),
+            content: Text(description),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  close(context);
+                },
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  //
+                },
+                child: const Text('Ok'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Overlays ------------------------------------------------------------
+
+* Overlays are always shown on the top of all widgets in flutter.
+
+
+
+
+---------- (OverlayPortal & OverlayPortalController) ----------
+
+* We use OverlayPortal widgets to show/hide a widget like tooltip.
+
+* The OverlayPortal widget itself must be in the widget tree - you're just
+  controlling its visibility
+
+* As an example if you want to show a tooltip for a widget, then wrap that
+  widget with OverlayPortal.
+
+* We use OverlayPortalController to control the OverlayPortal visibility.
+
+     final _controller = OverlayPortalController();
+
+     _controller.show();
+     _controller.hide();
+     _controller.toggle();
+
+* Most of the time we use one of following widget to place the OverlayPortals.
+
+    * Center
+    * Align
+    * Positioned
+
+
+Ex:
+
+class OverlayPortalPage extends StatefulWidget {
+  const OverlayPortalPage({super.key});
+
+  @override
+  State<OverlayPortalPage> createState() => _OverlayPortalPageState();
+}
+
+class _OverlayPortalPageState extends State<OverlayPortalPage> {
+  final _controller = OverlayPortalController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Simple OverlayPortal'),
+        centerTitle: true,
+      ),
+
+      body: OverlayPortal(
+        controller: _controller,
+        overlayChildBuilder: (context) {
+          return Positioned(
+            top: 200,
+            left: 200,
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                'Hello from Overlay!',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+        },
+        child: Center(
+          child: ElevatedButton(
+            onPressed: () {
+              _controller.toggle();
+            },
+            child: const Text('Toggle Overlay'),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+---------- (Overlay & OverlayEntry) ----------
+
+* We use them to implement a widget like loading dialog.
+
+* Overlay and OverlayEntry need not to be in the widget tree.
+
+* Because of we use the OverlayEntry outside of the widget tree, we must wrap
+  the widget which we return from OverlayEntry with Material widget.
+
+* Material widget always acquire the screen size. Therefore we can provide an
+  overlay color (darken the background) using "color" property of the Material
+  widget.
+
+
+Ex:
+
+final class _LoadingOverlayController {
+  final void Function() hide;
+  final void Function(String message) updateMessage;
+
+  const _LoadingOverlayController({
+    required this.hide,
+    required this.updateMessage,
+  });
+}
+
+final class LoadingOverlay {
+  static const instance = LoadingOverlay._internal();
+  static _LoadingOverlayController? _controller;
+
+  const LoadingOverlay._internal();
+
+  _LoadingOverlayController _show({
+    required BuildContext context,
+    required String message,
+  }) {
+    final overlay = Overlay.of(context);
+    final messageStreamController = StreamController<String>();
+    messageStreamController.add(message);
+    final width = MediaQuery.of(context).size.width;
+
+    final overlayEntry = OverlayEntry(
+      builder: (context) {
+        return Material(
+          color: Colors.black54,
+          child: Center(
+            child: Container(
+              constraints: BoxConstraints(maxWidth: width - 32),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.teal,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox.square(
+                    dimension: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      color: Colors.white,
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  StreamBuilder(
+                    stream: messageStreamController.stream,
+                    builder: (context, asyncSnapshot) {
+                      return Text(
+                        textAlign: TextAlign.center,
+                        asyncSnapshot.data ?? '',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  const Text(
+                    'This may take a few seconds',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    overlay.insert(overlayEntry);
+
+    return _LoadingOverlayController(
+      hide: () {
+        overlayEntry.remove();
+        overlayEntry.dispose();
+        messageStreamController.close();
+      },
+      updateMessage: (message) {
+        messageStreamController.add(message);
+      },
+    );
+  }
+
+  void show({required BuildContext context, required String message}) {
+    if (_controller != null) return;
+    _controller = _show(context: context, message: message);
+  }
+
+  void updateMessage(String message) {
+    if (_controller == null) return;
+    _controller!.updateMessage(message);
+  }
+
+  void hide() {
+    if (_controller == null) return;
+    _controller!.hide();
+    _controller = null;
+  }
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- RBAC system (authz.dart) --------------------------------------------
+
+* authz - authorization.
+
+
+* RBAC: Role Based Access Control.
+
+
+* This is used to define permissions for each user based on their roles.
+
+
+* Can use in both frontend and backend.
+
+
+Ex:
+
+enum Role { admin, user }
+
+abstract interface class Resource {
+  // All properties that are related to authz in each resource
+  String get ownerID;
+}
+
+abstract interface class AccessControl {
+  // All properties that are related to authz in the user
+  String get id;
+  Role get role;
+
+  // All authz action permissions
+  bool canDelete(Resource resource);
+}
+
+
+* Implements all resource models like Posts, Products, etc from "Resource"
+  interface.
+
+    Ex:
+
+      class Post implements Resource {
+        final String ownerID;
+        // other properties of the post
+
+        const Post({required this.ownerID});
+      }
+
+
+* Implements User model from "AccessControl" interface.
+
+    Ex:
+
+      class User implements AccessControl {
+        final String id;
+        final Role role;
+
+        const User({required this.id, required this.role});
+
+        @override
+        bool canDelete(Resource resource) {
+          switch (role) {
+            case Role.admin:
+              return true;
+            case Role.user:
+              return id == resource.ownerID;
+          }
+        }
+      }
+
+
+* Usage:
+
+    void main() {
+      const post = Post(ownerID: '1');
+      const user = User(id: '2', role: Role.admin);
+
+      print('Has permission: ${user.canDelete(post)}');
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Searching -----------------------------------------------------------
+
+---------- widgets ----------
+
+    1. SearchDelegate:
+        Older approach. Dont use for new projects.
+
+    2. SearchBar:
+        To create a searchbar.
+
+    3. SearchAnchor:
+        To define search trigger & to show search suggestions.
+
+        SearchAnchor.bar:
+            Provides SearchBar as the search trigger by default.
+
+
+
+
+---------- Implement search feature for an app ----------
+
+* Recommended height for SearchBar: 36
+
+
+* Process:
+
+    1. Click on the search icon.
+
+
+    2. Now you go to a new page for searching: SearchPage
+
+        * In this page mainly there are 2 widgets in the app bar.
+            1. Back arrow button (as the leading property of AppBar)
+
+            2. SearchBar (as the title property of AppBar)
+                Add a close icon button as a trailing widget of the AppBar to
+                clear the search query and use a cubit to track the state.
+
+            Ex:
+
+              AppBar(
+                title: SearchBar(
+                  controller: _searchController,
+                  constraints: const BoxConstraints(minHeight: 36, maxHeight: 36),
+                  elevation: const WidgetStatePropertyAll(0),
+                  onChanged: (query) {
+                    _searchQueryCubit.updateQuery(query);
+                  },
+                  trailing: [
+                    BlocBuilder<SearchQueryCubit, String>(
+                      buildWhen: (previous, current) {
+                        if (previous.isEmpty && current.isNotEmpty) return true;
+                        if (previous.isNotEmpty && current.isEmpty) return true;
+                        return false;
+                      },
+                      builder: (_, query) {
+                        if (query.isEmpty) return const SizedBox();
+
+                        return Transform.scale(
+                          scale: 0.85,
+                          child: IconButton(
+                            onPressed: () {
+                              _searchController.clear();
+                              _searchQueryCubit.updateQuery('');
+                            },
+                            icon: const Icon(Icons.close_rounded),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              )
+
+
+        * Add a ListView of ListTiles to show suggestions as the Scaffold body.
+
+            Previous searches:
+
+                ListTile:
+                  leading: Icon(Icons.history_rounded)
+                  title: Text(suggestion)
+                  trailing: Icon(Icons.arrow_outward_rounded)
+
+            New Suggestions:
+
+                ListTile:
+                  leading: Icon(Icons.search_rounded)
+                  title: Text(suggestion)
+                  trailing: Icon(Icons.arrow_outward_rounded)
+
+
+        * Now you will be redirected to another page (SearchResult) to show
+          search results on following actions:
+              1. Click on a suggestion.
+
+              2. On submit of the SearchBar.
+
+
+    3. In SearchResult page,
+
+        * There are 3 widgets in the AppBar:
+            1. Back arrow button as AppBar leading widget. When you click on
+               this, both SearchResultPage and SearchPage must be closed.
+
+            2. SearchBar to show the search query and clear icon. This is just for
+               representation. When you click on this, you will be redirected to
+               SearchPage again. Use onTap callback to track clicks.
+
+            3. Filter icon button for advanced filtering. Use a model view to
+               show advanced filtering options.
+
+
+        * Use Scaffold body to show search results.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Debounce ------------------------------------------------------------
+
+* Use nullable Timer object;
+
+Ex:
+
+  Timer? _timer;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _onQueryChange(String query) {
+    if (_timer?.isActive ?? false) _timer?.cancel();
+    _timer = Timer(const Duration(seconds: 1), () {
+      print('---------- $query ----------');
+    });
+  }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Add gradient overlay and some content on an image -------------------
+
+* Use 2 nested containers:
+    Outer container:
+        To place image
+
+    Inner container:
+        To place gradient & content
+
+
+---------- (Adjust height based on the content) ----------
+
+Ex:
+
+Container(
+  decoration: const BoxDecoration(
+    image: DecorationImage(
+      image: AssetImage('assets/nature.jpg'),
+      fit: BoxFit.cover,
+    ),
+  ),
+
+  child: Container(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(colors: [Colors.black54, Colors.black54]),
+    ),
+
+    child: const Text(
+      'This is the sample text to test texts on gradient This is the sample text to test texts on gradient This is the sample text to test texts on gradient',
+      style: TextStyle(fontSize: 20, color: Colors.white),
+    ),
+  ),
+)
+
+
+
+
+---------- (With fixed height) ----------
+
+Ex:
+
+Container(
+  height: 400,
+  decoration: const BoxDecoration(
+    image: DecorationImage(
+      image: AssetImage('assets/nature.jpg'),
+      fit: BoxFit.cover,
+    ),
+  ),
+  child: Container(
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(colors: [Colors.black54, Colors.black54]),
+    ),
+    child: const Text(
+      'This is the sample text to test texts on gradient This is the sample text to test texts on gradient This is the sample text to test texts on gradient',
+      style: TextStyle(fontSize: 20, color: Colors.white),
+    ),
+  ),
+)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- ImageView -----------------------------------------------------------
+
+* Like chanel image view in youtube mobile application when we click on the
+  chanel image.
+
+
+Ex:
+
+final class ImageView {
+  static const instance = ImageView._internal();
+  static bool _isVisible = false;
+
+  const ImageView._internal();
+
+  Future<void> show({
+    required BuildContext context,
+    required String imagePath,
+  }) async {
+    if (_isVisible) return;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        _isVisible = true;
+
+        return const Padding(
+          padding: EdgeInsets.all(16),
+          child: CircleAvatar(
+            backgroundImage: NetworkImage(
+              'https://www.befunky.com/images/wp/nature-photography.jpg',
+            ),
+          ),
+        );
+      },
+    ).then((value) {
+      _isVisible = false;
+    });
+  }
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Timer ---------------------------------------------------------------
+
+* Timer is asynchronous.
+
+
+* Most of the time we create a nullable instance variable to works with a Timer.
+
+    Timer? timer;
+
+
+* Starts immediately when created and run callback function after the specified
+  duration.
+
+    Ex:
+      Timer(Duration(seconds: 2), () {
+        print('This runs after 2 seconds');
+      });
+
+
+* Starts immediately when created and continuously runs the callback at the
+  specified interval.
+
+    Ex:
+      Timer.periodic(Duration(seconds: 1), (timer) {
+        print('This runs every second');
+      });
+
+
+* timer?.cancel():
+
+    Once you cancel a Timer in Flutter, there's no way to restart or resume it.
+    You have to create a new Timer instance.
+
+
+* timer?.isActive:
+
+    Timer:
+        isActive becomes false when,
+            * it completes OR
+
+            * when cancelled
+
+
+    Timer.periodic:
+        isActive stays true until you call cancel().
+
+
+* timer?.tick:
+
+    Number of executions of the Timer.periodic() callback. Not useful for
+    Timer().
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Image Show using PageView -----------------------------------------------------------------
+
+import 'dart:async';
+import 'package:flutter/material.dart';
+
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+class SlideShow extends StatefulWidget {
+  const SlideShow({super.key});
+
+  @override
+  State<SlideShow> createState() => _SlideShowState();
+}
+
+class _SlideShowState extends State<SlideShow> {
+  final _pageController = PageController();
+  final _numberOfItems = 5;
+  Timer? _timer;
+  bool _isReverse = false;
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      _pageController.animateToPage(
+        _currentIndex,
+        duration: const Duration(seconds: 1),
+        curve: Curves.easeOut,
+      );
+
+      if (_currentIndex == _numberOfItems - 1) {
+        _isReverse = true;
+      } else if (_currentIndex == 0) {
+        _isReverse = false;
+      }
+
+      if (_isReverse) {
+        _currentIndex--;
+      } else {
+        _currentIndex++;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _timer?.cancel();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 220,
+          child: PageView(
+            controller: _pageController,
+            children: List.generate(_numberOfItems, (index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ClipRRect(
+                  borderRadius: BorderRadiusGeometry.circular(10.4),
+                  child: Image.network(
+                    [
+                      'https://media.istockphoto.com/82hqww5lJ8fOAUJXsUVP2Ag8=',
+                      'https://media.iston1zdNZXzFWKtnC1KpPk-b-zBsw5R2HbV6QUw=',
+                      'https://images.squarespace-cdn.com/contenge--ssf2d8.jpg',
+                      'https://images.sq0046-Cutting-Your-Hair-blogbanner1.jpg',
+                      'https://www.patrickshairdes2/shutterstock_603506807.jpg',
+                    ][index],
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+
+                      return const ColoredBox(color: Colors.white24);
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return const ColoredBox(color: Colors.white24);
+                    },
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+
+        const SizedBox(height: 20),
+
+        SmoothPageIndicator(
+          controller: _pageController,
+          count: _numberOfItems,
+          effect: const WormEffect(
+            dotColor: Colors.white24,
+            activeDotColor: Colors.white,
+            dotWidth: 16,
+            dotHeight: 8,
+          ), // your preferred effect
+        ),
+      ],
+    );
+  }
+}
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Authentication with JWT ------------------------------------------------------
+
+---------- (Online-first application) ----------
+
+* Add following operations in auth feature:
+    login
+    register
+    password reset
+    validateToken
+
+
+* Add following operations to app_user_cubit in
+  core/common/cubits/app_user_cubit.dart
+
+    emitAppUserSuccess
+    emitAppUserFailure
+    signOut
+
+
+
+
+Process:
+
+1. Save jwt in local storage at the initial signup and in every signin.
+
+2. After signin/signup, if the user closes the application and opens it again
+   (to auth state persistance),
+
+      * Firstly, check if the jwt is existed in the local storage or not.
+
+      * If not, redirected to LoginPage.
+
+      * If yes, then validate the token from the server.
+
+      * If validation is success, redirected to HomePage.
+
+      * If validation is a failure, redirected to LoginPage.
+
+
+Ex:
+
+* (app_router.dart)
+
+    * No need to contain the SplashPage.
+
+
+    sealed class AppRouter {
+      static const homePage = '/home';
+      static const loginPage = '/login';
+      static const authGate = '/auth-gate';
+
+      static final router = GoRouter(
+        initialLocation: authGate,
+
+        routes: [
+          GoRoute(path: homePage, builder: (context, state) => const HomePage()),
+
+          GoRoute(path: loginPage, builder: (context, state) => const LoginPage()),
+
+          GoRoute(path: authGate, builder: (context, state) => const AuthGate()),
+        ],
+      );
+    }
+
+
+
+
+* (auth_gate.dart)
+
+
+    class AuthGate extends StatefulWidget {
+      const AuthGate({super.key});
+
+      @override
+      State<AuthGate> createState() => _AuthGateState();
+    }
+
+    class _AuthGateState extends State<AuthGate> {
+      late final AuthCubit _authCubit;
+
+      @override
+      void initState() {
+        super.initState();
+
+        _authCubit = context.read<AuthCubit>();
+
+        Future.delayed(const Duration(seconds: 2), () {
+          _authCubit.validateToken();
+        });
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        return BlocListener<AuthCubit, AuthState>(
+          listener: (context, state) {
+            if (state is AuthSuccess) {
+              context.go(AppRouter.homePage);
+            } else {
+              context.go(AppRouter.loginPage);
+            }
+          },
+          child: const SplashPage(), // or some loading indication
+        );
+      }
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Theming -------------------------------------------------------------
+
+* Always use following way to define themes in flutter:
+
+      ThemeData(
+        useMaterial3: true,
+
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.yellow,
+
+          brightness: Brightness.dark,
+        ),
+      );
+
+
+    * For light theme: Brightness.light
+    * For dark theme : Brightness.dark
+
+
+* "ColorScheme.fromSeed" generates a full colorscheme based on seed color. But
+  you can override each color using it's properties.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Create a singleton class --------------------------------------------
+
+* To access like "Singleton.instance":
+
+      final class Singleton {
+        static const instance = Singleton._internal();
+
+        const Singleton._internal();
+      }
+
+
+
+
+* To access like "Singleton()":
+
+      final class Singleton {
+        static const _instance = Singleton._internal();
+
+        const Singleton._internal();
+
+        factory Singleton() {
+          return _instance;
+        }
+      }
+
+
+
+
+* With late initialization (Not recommended usually):
+
+      final class Singleton {
+        static Singleton? _instance;
+
+        const Singleton._internal();
+
+        factory Singleton() {
+          if (_instance != null) return _instance!;
+
+          _instance = const Singleton._internal();
+          return _instance!;
+        }
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Create a client singleton class -------------------------------------
+
+final class SocketClient {
+  static const instance = SocketClient._internal();
+
+  static Socket? _socket;
+
+  const SocketClient._internal();
+
+  Socket _initialize() {
+    final socket = io(
+      'http://localhost:3000',
+      OptionBuilder().setTransports(['websocket']).build(),
+    );
+
+    return socket;
+  }
+
+  Socket get socket {
+    if (_socket != null) return _socket!;
+
+    _socket = _initialize();
+    return _socket!;
+  }
+
+  void dispose() {
+    if (_socket == null) return;
+
+    _socket!.dispose();
+    _socket = null;
+  }
+}
+
+--------------------------------------------------------------------------------
