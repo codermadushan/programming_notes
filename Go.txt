@@ -8565,26 +8565,42 @@ Ex:
       })
 
 
-      * Read a json object to a struct:
+      * Read a json object to a struct/map:
 
-            var user models.User
-
-            err := json.NewDecoder(r.Body).Decode(&user)
+            var user1 User
+            err := json.NewDecoder(r.Body).Decode(&user1)
             r.Body.Close()
 
+                * Zeroth values will be assigned to the non-provided fields.
 
-      * Read a list of json objects to a slice of structs:
+                * Additional fields will be ignored.
 
-            var users []models.User
+            or,
 
-            err := json.NewDecoder(r.Body).Decode(&users)
+            var user2 map[string]any
+            err := json.NewDecoder(r.Body).Decode(&user2)
             r.Body.Close()
 
+                * All provided fields will be considered.
 
-      * Zeroth values will be assigned to the non-provided fields.
 
+      * Read a list of json objects to a slice of structs/map:
 
-      * Additional fields will be ignored.
+            var users1 []User
+            err := json.NewDecoder(r.Body).Decode(&users1)
+            r.Body.Close()
+
+                * Zeroth values will be assigned to the non-provided fields.
+
+                * Additional fields will be ignored.
+
+            or,
+
+            var users2 []map[string]any
+            err := json.NewDecoder(r.Body).Decode(&users2)
+            r.Body.Close()
+
+                * All provided fields will be considered.
 
 --------------------------------------------------------------------------------
 
@@ -8617,13 +8633,23 @@ Ex:
 
 * Path Params:
 
-      mux.HandleFunc("GET /teachers/{id}", ...)
+      * mux.HandleFunc("GET /teachers/{id}", ...)
+
+            id := r.PathValue("id")
+
+            * In this case to match with this route, id is required.
+
+            * If not available, returns an empty string.
 
 
-      id := r.PathValue("id")
+      * mux.HandleFunc("GET /teachers/{path...}", ...)
 
+            path := r.PathValue("path")
 
-      * If not available, returns an empty string.
+            * In this case if "GET /teachers" already exists, to match with this
+              path, "path" is required. Otherwise this route handles it all.
+
+            * If not available, returns an empty string.
 
 --------------------------------------------------------------------------------
 
@@ -8651,8 +8677,8 @@ Ex:
 
 * To send the response body as json:
 
-      json.NewEncoder(w).Encode(<struct>) or,
-      json.NewEncoder(w).Encode(<slice_of_structs>)
+      json.NewEncoder(w).Encode(<struct> / <map>) or,
+      json.NewEncoder(w).Encode(<slice_of_structs> / <slice_of_maps>)
 
 --------------------------------------------------------------------------------
 
