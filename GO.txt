@@ -8429,6 +8429,9 @@ Ex:
             /middlewares
             router.go
 
+        /config
+            config.go
+
         /features
             /users
                 handler.go
@@ -8583,14 +8586,30 @@ Ex:
 
 
 
+* Sample internal/config/config.go:
+
+      type Config struct {
+        Port        string
+        DatabaseURL string
+      }
+
+      func Load() *Config {
+        return &Config{
+          Port:        os.Getenv("PORT"),
+          DatabaseURL: os.Getenv("DATABASE_URL"),
+        }
+      }
+
+
+
+
 * Sample cmd/api/server.go:
 
       func main() {
-        port := os.Getenv("PORT")
+        config := config.Load()
 
         ctx := context.Background()
-        connString := os.Getenv("DB_URL")
-        pool, err := db.NewPool(ctx, connString)
+        pool, err := db.NewPool(ctx, config.DatabaseURL)
         if err != nil {
           log.Fatalln("Failed to connect to the database:", err)
         }
@@ -8603,11 +8622,11 @@ Ex:
         router := api.NewRouter(userHandler)
 
         server := http.Server{
-          Addr:    fmt.Sprintf(":%s", port),
+          Addr:    fmt.Sprintf(":%s", config.Port),
           Handler: router,
         }
 
-        fmt.Println("Server is running on port:", port)
+        fmt.Println("Server is running on port:", config.Port)
         err = server.ListenAndServe()
         if err != nil {
           log.Fatalln("Failed to start the server:", err)
