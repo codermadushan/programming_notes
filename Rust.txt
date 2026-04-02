@@ -5195,19 +5195,17 @@ impl<T: Trait> Hotel<T> {
 * Allowed only for references because of dynamic nature.
 
 
-Ex:
+* For immutable references:
 
-      * For immutable references:
-
-            let values: Vec<&dyn Trait> = vec![&value1, &value2, ...];
+      let values: Vec<&dyn Trait> = vec![&value1, &value2, ...];
 
 
-      * For mutable references:
+* For mutable references:
 
-            let values: Vec<&mut dyn Trait> = vec![&mut value1, &mut value2, ...];
+      let values: Vec<&mut dyn Trait> = vec![&mut value1, &mut value2, ...];
 
 
-      * In this case values vector can contains any references of objects which
-        implement "Trait" trait.
+* In this case values vector can contains any references of objects which
+      implement "Trait" trait.
 
 --------------------------------------------------------------------------------
