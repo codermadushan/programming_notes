@@ -9176,6 +9176,13 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 
 
+* pool.Ping(ctx):
+
+      * Health check operation for the database connection pool.
+
+
+
+
 * pool.Exec(...):
 
       * To execute SQL without returning rows.
