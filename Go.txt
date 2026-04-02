@@ -8419,75 +8419,163 @@ Ex:
 
 ---------- API Project Folder Structure ----------------------------------------
 
-/project-root
-    /cmd (This folder contains the main entry point of your application. Typically one per binary)
+/root
+    /cmd
         /api
-            server.go (Entry point)
-            .env
+            server.go
 
-
-    /internal (This folder contains the private application code, including your API handlers, models, repos, etc)
+    /internal
         /api
-            /handlers (Use plural)
-            /middlewares (Use plural)
-            /routers
+            /middlewares
+            router.go
 
+        /features
+            /users
+                handler.go
+                model.go
+                repository.go
+                routes.go
+                service.go
 
-        /models (Use plural)
-
-
-        /repositories
-            /mongodb
-                mongoconnect.go
-
-
-            /sqlconnect
-                sqlconfig.go
-
+        /platform
+            /db
+                postgres.go
 
     /pkg
-        /utils (Use plural)
-            error_handling.go
-            jwt_processing.go
 
+    /certs
 
-    /proto (For gRPC APIs)
-
-
-    go.mod
-
-
-    go.sum
+    .env
 
 
 
 
-* Sample handler:
+* Sample internal/platform/db/postgres.go:
 
-      * ./internal/api/handlers/students.go
+      func NewPool(ctx context.Context, connString string) (*pgxpool.Pool, error) {
+        config, err := pgxpool.ParseConfig(connString)
+        if err != nil {
+          return nil, err
+        }
 
-      func GetStudents(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprint(w, "Hello From GetStudents")
+        config.MinConns = 5
+        config.MaxConns = 25
+        config.MaxConnLifetime = time.Hour
+        config.MaxConnIdleTime = 30 * time.Minute
+
+        pool, err := pgxpool.NewWithConfig(ctx, config)
+        if err != nil {
+          return nil, err
+        }
+
+        err = pool.Ping(ctx)
+        if err != nil {
+          return nil, err
+        }
+
+        return pool, nil
       }
 
 
 
 
-* Sample router:
+* Sample internal/features/users/model.go:
 
-      * ./internal/api/routers/students.go
-
-      func StudentsRouter(mux *http.ServeMux) {
-        mux.HandleFunc("GET /students", handlers.GetStudents)
+      type User struct {
+        ID   int    `json:"id"`
+        Name string `json:"name"`
+        Age  int    `json:"age"`
       }
 
 
-      * ./internal/api/routers/router.go
 
-      func Router() *http.ServeMux {
+
+* Sample internal/features/users/repository.go:
+
+      type UserRepository struct {
+        pool *pgxpool.Pool
+      }
+
+      func NewUserRepository(pool *pgxpool.Pool) *UserRepository {
+        return &UserRepository{pool: pool}
+      }
+
+      func (r *UserRepository) GetUserByID(ctx context.Context, id string) (*User, error) {
+        query := `SELECT id, name, age FROM users WHERE id = $1`
+
+        var user User
+        err := r.pool.QueryRow(ctx, query, id).Scan(&user.ID, &user.Name, &user.Age)
+        if err != nil {
+          return nil, err
+        }
+
+        return &user, nil
+      }
+
+
+
+
+* Sample internal/features/users/service.go:
+
+      type UserService struct {
+        userRepository *UserRepository
+      }
+
+      func NewUserService(userRepository *UserRepository) *UserService {
+        return &UserService{userRepository: userRepository}
+      }
+
+      func (s *UserService) GetUserByID(ctx context.Context, id string) (*User, error) {
+        return s.userRepository.GetUserByID(ctx, id)
+      }
+
+
+
+
+* Sample internal/features/users/handler.go:
+
+      type UserHandler struct {
+        userService *UserService
+      }
+
+      func NewUserHandler(userService *UserService) *UserHandler {
+        return &UserHandler{userService: userService}
+      }
+
+      func (h *UserHandler) GetUserByID(w http.ResponseWriter, r *http.Request) {
+        id := r.PathValue("id")
+
+        user, err := h.userService.GetUserByID(r.Context(), id)
+        if err == pgx.ErrNoRows {
+          http.Error(w, "User not found", http.StatusNotFound)
+          return
+        }
+        if err != nil {
+          http.Error(w, "Failed to fetch user", http.StatusInternalServerError)
+          return
+        }
+
+        json.NewEncoder(w).Encode(user)
+      }
+
+
+
+
+* Sample internal/features/users/routes.go:
+
+      func RegisterUserRoutes(mux *http.ServeMux, userHandler *UserHandler) {
+        mux.HandleFunc("GET /users/{id}", userHandler.GetUserByID)
+      }
+
+
+
+
+* Sample internal/api/router.go:
+
+      func NewRouter(userHandler *users.UserHandler) *http.ServeMux {
         mux := http.NewServeMux()
 
-        StudentsRouter(mux)
+        users.RegisterUserRoutes(mux, userHandler)
 
         return mux
       }
@@ -8495,14 +8583,35 @@ Ex:
 
 
 
-* In server.go:
+* Sample cmd/api/server.go:
 
-      router := routers.Router()
+      func main() {
+        port := os.Getenv("PORT")
 
-      server := &http.Server{
-        Addr:      fmt.Sprintf(":%d", port),
-        TLSConfig: tlsConfig,
-        Handler:   router,
+        ctx := context.Background()
+        connString := os.Getenv("DB_URL")
+        pool, err := db.NewPool(ctx, connString)
+        if err != nil {
+          log.Fatalln("Failed to connect to the database:", err)
+        }
+
+        // users
+        userRepository := users.NewUserRepository(pool)
+        userService := users.NewUserService(userRepository)
+        userHandler := users.NewUserHandler(userService)
+
+        router := api.NewRouter(userHandler)
+
+        server := http.Server{
+          Addr:    fmt.Sprintf(":%s", port),
+          Handler: router,
+        }
+
+        fmt.Println("Server is running on port:", port)
+        err = server.ListenAndServe()
+        if err != nil {
+          log.Fatalln("Failed to start the server:", err)
+        }
       }
 
 --------------------------------------------------------------------------------
@@ -9029,63 +9138,29 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
       (internal/db/pool.go)
 
-      var (
-        pool *pgxpool.Pool
-        once sync.Once
-      )
-
-      func newPool(ctx context.Context, databaseURL string) (*pgxpool.Pool, error) {
-        config, err := pgxpool.ParseConfig(databaseURL)
+      func NewPool(ctx context.Context, connString string) (*pgxpool.Pool, error) {
+        config, err := pgxpool.ParseConfig(connString)
         if err != nil {
           return nil, err
         }
 
-        config.MaxConns = 25
         config.MinConns = 5
+        config.MaxConns = 25
         config.MaxConnLifetime = time.Hour
         config.MaxConnIdleTime = 30 * time.Minute
 
-        return pgxpool.NewWithConfig(ctx, config)
-      }
-
-      func Initialize() {
-        once.Do(func() {
-          ctx := context.Background()
-          databaseURL := os.Getenv("DATABASE_URL")
-
-          p, err := newPool(ctx, databaseURL)
-          if err != nil {
-            log.Fatalln("Failed to connect to the database:", err)
-          }
-
-          err = p.Ping(ctx)
-          if err != nil {
-            log.Fatalln("Failed to ping database:", err)
-          }
-
-          pool = p
-          log.Println("Successfully connected to the database")
-        })
-      }
-
-      func Get() *pgxpool.Pool {
-        if pool == nil {
-          log.Fatalln("Database pool is not initialized")
+        pool, err := pgxpool.NewWithConfig(ctx, config)
+        if err != nil {
+          return nil, err
         }
-        return pool
-      }
 
-      func Close() {
-        if pool != nil {
-          pool.Close()
+        err = pool.Ping(ctx)
+        if err != nil {
+          return nil, err
         }
+
+        return pool, nil
       }
-
-
-      * In server.go file:
-
-            db.Initialize()
-            defer db.Close()
 
 
 
