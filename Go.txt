@@ -8427,7 +8427,9 @@ Ex:
     /internal
         /api
             /middlewares
-            router.go
+
+            /router
+                router.go
 
         /config
             config.go
@@ -8573,7 +8575,7 @@ Ex:
 
 
 
-* Sample internal/api/router.go:
+* Sample internal/api/router/router.go:
 
       func NewRouter(userHandler *users.UserHandler) *http.ServeMux {
         mux := http.NewServeMux()
@@ -8619,7 +8621,7 @@ Ex:
         userService := users.NewUserService(userRepository)
         userHandler := users.NewUserHandler(userService)
 
-        router := api.NewRouter(userHandler)
+        router := router.NewRouter(userHandler)
 
         server := http.Server{
           Addr:    fmt.Sprintf(":%s", config.Port),
