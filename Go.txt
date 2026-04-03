@@ -8433,6 +8433,7 @@ Ex:
 
         /config
             config.go
+            loader.go
 
         /features
             /users
@@ -8595,6 +8596,11 @@ Ex:
         DatabaseURL string
       }
 
+
+
+
+* Sample internal/config/loader.go:
+
       func Load() *Config {
         return &Config{
           Port:        os.Getenv("PORT"),
@@ -8621,7 +8627,7 @@ Ex:
         userService := users.NewUserService(userRepository)
         userHandler := users.NewUserHandler(userService)
 
-        router := router.NewRouter(userHandler)
+        router := api.NewRouter(userHandler)
 
         server := http.Server{
           Addr:    fmt.Sprintf(":%s", config.Port),
