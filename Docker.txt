@@ -70,3 +70,188 @@
           * Easily managed at scale using -> Kubernetes.
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Images vs Containers ------------------------------------------------
+
+* A Docker image is a read-only template that contains everything needed to run
+  an application.
+
+    Includes:
+
+        * Application code
+        * Runtime (e.g., Node.js, Python)
+        * Libraries & dependencies
+        * Configuration
+
+    * Think of an image as a blueprint.
+
+
+
+
+* A container is a running instance of an image.
+
+    Key properties:
+
+        * Has a read-write layer on top of the image
+        * Is isolated (process, filesystem, network)
+        * Can be started, stopped, and deleted
+
+    * Think of a container as a live application created from the blueprint.
+
+
+
+
+* One image     → can create many containers
+* One container → uses exactly one image
+
+
+
+
+* Analogy
+
+    * Image = Class
+    * Container = Object (instance of the class)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Dockerfile ----------------------------------------------------------
+
+* A Dockerfile is a text file that contains a set of instructions used to build
+  a Docker image.
+
+
+* Docker reads the Dockerfile and executes each instruction step-by-step to
+  create an image
+
+
+* Dockerfile → builds → Image → runs → Container
+
+
+* Common instructions
+
+    FROM       → base image
+
+    WORKDIR    → set working directory (default: .)
+
+    COPY / ADD → copy files into image
+
+    RUN        → execute commands during build
+
+    CMD        → default command when container starts
+
+    EXPOSE     → declare ports
+
+
+* In Dockerfile, each command is a layer. If one layer changes, all layers after
+  it are rebuilt.
+
+    Ex:
+
+        FROM node
+
+        WORKDIR /app
+
+        COPY . /app
+
+        RUN npm install
+
+        EXPOSE 80
+
+        CMD [ "node", "server.js" ]
+
+
+    * In this case, if we change our source code, the "COPY . /app" should be
+      rebuilt.
+
+    * Therfore all layers after that command is also going to rebuild.
+
+    * But "RUN npm install" is an unnecessary rebuild.
+
+    * Therefore we can optimize this as follow:
+
+        FROM node
+
+        WORKDIR /app
+
+        COPY package.json /app
+
+        RUN npm install
+
+        COPY . /app
+
+        EXPOSE 80
+
+        CMD [ "node", "server.js" ]
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Basics --------------------------------------------------------------
+
+---------- (Images) ----------
+
+* Docker images are read-only. If you make any changes to the source code, you
+  have to rebuild the image.
+
+
+* Manage images:
+
+    * Build an image:
+
+        docker build -t <image_name:version> <Dockerfile_path>
+
+
+    * Show all images:
+
+        docker images -a
+
+
+    * Build a container and run from an image:
+
+        docker run -p <host_port>:<image_port> <image_name:version>
+
+
+    * Remove an image:
+
+        docker rmi <image_name:version>
+
+
+
+
+---------- (Containers) ----------
+
+* Manage containers:
+
+    * Show all containers:
+
+        docker ps -a
+
+
+    * Stop a container:
+
+        docker stop <container_name>
+
+
+    * Start a stopped container:
+
+        docker start <container_name>
+
+
+    * Remove a container:
+
+        docker rm <container_name>
+
+
+    * Remove all stopped containers:
+
+        docker container prune
+
+--------------------------------------------------------------------------------
