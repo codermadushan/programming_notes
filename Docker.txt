@@ -209,14 +209,15 @@
         docker build -t <image_name:version> <Dockerfile_path>
 
 
-    * Show all images:
+    * Show images:
 
-        docker images -a
+        Only tagged images   : docker images
+        Tagged + intermediate: docker images -a
 
 
     * Build a container and run from an image:
 
-        docker run -p <host_port>:<image_port> <image_name:version>
+        docker run -d --name <container_name> -p <host_port>:<image_port> <image_name:version>
 
 
     * Remove an image:
@@ -230,9 +231,10 @@
 
 * Manage containers:
 
-    * Show all containers:
+    * Show containers:
 
-        docker ps -a
+        All         : docker ps -a
+        Running only: docker ps
 
 
     * Stop a container:
