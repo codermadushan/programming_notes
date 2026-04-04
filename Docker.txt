@@ -1,0 +1,72 @@
+---------- Introduction --------------------------------------------------------
+
+* Docker is a container technology: A tool for creating and managing containers.
+
+
+* Container:
+
+      * A standardized unit of software.
+
+      * A package of code and dependencies to run that code.
+
+
+* Why we need containers?
+
+      1. Environment consistency:
+
+          * Same OS, runtime, and dependencies everywhere.
+
+
+      2. dependency isolation:
+
+          * Each project has its own environment.
+          * No conflicts between libraries, runtimes, or DB versions.
+
+
+      3. Fast project setup:
+
+          * Start full stack with one command (docker-compose up).
+          * Easy onboarding for new developers.
+
+
+      4. Lightweight execution:
+
+          * Faster and smaller than virtual machines.
+          * Uses host OS kernel (no full OS per app).
+
+
+      5. Simplified deployment:
+
+          * Build once -> run anywhere.
+          * Same container runs in dev, staging, and production.
+
+
+      6. Reproducibility & Versioning:
+
+          * Container images are immutable.
+          * Easy rollback to previous versions.
+
+
+      7. Microservices support:
+
+          * Run multiple services independently.
+          * Scale specific services easily.
+
+
+      8. Better resource utilization:
+
+          * Efficient CPU and memory usage.
+          * Run many containers on one machine.
+
+
+      9. Improved isolation & security:
+
+          * Applications run in isolated environments.
+          * Reduces risk of system-wide issues.
+
+
+      10. Works with orchestration tools:
+
+          * Easily managed at scale using -> Kubernetes.
+
+--------------------------------------------------------------------------------

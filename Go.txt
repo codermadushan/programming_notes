@@ -8622,10 +8622,9 @@ Ex:
           log.Fatalln("Failed to connect to the database:", err)
         }
 
-        // users
-        userRepository := users.NewUserRepository(pool)
-        userService := users.NewUserService(userRepository)
-        userHandler := users.NewUserHandler(userService)
+        userHandler := users.NewUserHandler(
+          users.NewUserService(users.NewUserRepository(pool)),
+        )
 
         router := api.NewRouter(userHandler)
 
