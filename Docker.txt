@@ -69,6 +69,16 @@
 
           * Easily managed at scale using -> Kubernetes.
 
+
+* To check disk usage:
+
+    docker system df
+
+
+* Full cleanup:
+
+    docker system prune -a --volumes
+
 --------------------------------------------------------------------------------
 
 
@@ -194,9 +204,7 @@
 
 
 
----------- Basics --------------------------------------------------------------
-
----------- (Images) ----------
+---------- Images --------------------------------------------------------------
 
 * Docker images are read-only. If you make any changes to the source code, you
   have to rebuild the image.
@@ -219,15 +227,22 @@
 
         docker run -d --name <container_name> -p <host_port>:<image_port> <image_name:version>
 
+        * use --rm flag if you want to delete the container after stopped
+          automatically.
+
+        * use --name flag to provide a name to the container.
+
 
     * Remove an image:
 
         docker rmi <image_name:version>
 
+--------------------------------------------------------------------------------
 
 
 
----------- (Containers) ----------
+
+---------- Containers ----------------------------------------------------------
 
 * Manage containers:
 
@@ -244,7 +259,9 @@
 
     * Start a stopped container:
 
-        docker start <container_name>
+        docker start <container_name> (by default this is detached)
+
+        docker start -a <container_name> (attach mode)
 
 
     * Remove a container:
@@ -255,5 +272,57 @@
     * Remove all stopped containers:
 
         docker container prune
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Attached & Detached Containers --------------------------------------
+
+* When we create and run a container using an image, we can use -d flag to
+  detach from the container:
+
+        docker run -d ...
+
+
+* To attach again to see future log messages:
+
+        docker attach <container_name>
+
+
+* To see log messages without attaching:
+
+        docker logs <container_name>
+
+
+* To see previous log messages and attach again to see future logs:
+
+        docker logs -f <container_name> (-f -> follow)
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Interactive Mode ----------------------------------------------------
+
+* If you want to input data (STDIN), we have to use Interactive mode.
+
+
+* Create and run a container:
+
+    docker run -it <image_name:version>
+
+        i : Interactive
+        t : Create a terminal
+
+
+* To start a container:
+
+    docker start -ai <container_name>
+
+        a : attack
+        i : Interactive
 
 --------------------------------------------------------------------------------
