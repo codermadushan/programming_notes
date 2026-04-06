@@ -8594,6 +8594,8 @@ Ex:
       type Config struct {
         Port        string
         DatabaseURL string
+        TLSCertFile string
+        TLSKeyFile  string
       }
 
 
@@ -8605,6 +8607,8 @@ Ex:
         return &Config{
           Port:        os.Getenv("PORT"),
           DatabaseURL: os.Getenv("DATABASE_URL"),
+          TLSCertFile: os.Getenv("TLS_CERT_FILE"),
+          TLSKeyFile:  os.Getenv("TLS_KEY_FILE"),
         }
       }
 
@@ -8628,13 +8632,18 @@ Ex:
 
         router := api.NewRouter(userHandler)
 
+        tlsConfig := &tls.Config{
+          MinVersion: tls.VersionTLS12,
+        }
+
         server := http.Server{
-          Addr:    fmt.Sprintf(":%s", config.Port),
-          Handler: router,
+          Addr:      fmt.Sprintf(":%s", config.Port),
+          Handler:   router,
+          TLSConfig: tlsConfig,
         }
 
         fmt.Println("Server is running on port:", config.Port)
-        err = server.ListenAndServe()
+        err = server.ListenAndServeTLS(config.TLSCertFile, config.TLSKeyFile)
         if err != nil {
           log.Fatalln("Failed to start the server:", err)
         }
