@@ -237,6 +237,13 @@
 
         docker rmi <image_name:version>
 
+
+    * Rename an image tag:
+
+        docker tag <old_name:old_tag> <new_name:new_tag>
+
+        * In This case a new image is created with the new tag
+
 --------------------------------------------------------------------------------
 
 
@@ -272,6 +279,13 @@
     * Remove all stopped containers:
 
         docker container prune
+
+
+* Copy files/folders into a container:
+
+    Copy into a container: docker cp <host_path> <container_name>:<container_path>
+
+    Copy from a container: docker cp <container_name>:<container_path> <host_path>
 
 --------------------------------------------------------------------------------
 
@@ -324,5 +338,40 @@
 
         a : attack
         i : Interactive
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Remote Repository Of Docker Images ----------------------------------
+
+* To upload an image to the DockerHub, it should contains the tag as follows:
+
+    <username>/<repository>:<tag>
+
+    * To rename an existing image:
+
+        docker tag <old_image_name>:<old_tag> <username>/<new_image_name>:<tag>
+
+
+* To login use:
+
+    docker login
+
+
+* To logout use:
+
+    docker logout
+
+
+* To upload an image to DockerHub:
+
+    docker push <image>
+
+
+* To get an image from the DockerHub:
+
+    docker pull <image>
 
 --------------------------------------------------------------------------------
