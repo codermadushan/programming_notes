@@ -7396,37 +7396,82 @@ Ex:
 * The reflection features are provided by the package: reflect
 
 
-Ex:
-    func main() {
-      var x any = 10
-      v := reflect.ValueOf(x)
+* Everything revolves around two core types:
 
-      fmt.Println("Value   :", v)          // 10
-      fmt.Println("Type    :", v.Type())   // int
-      fmt.Println("Kind    :", v.Kind())   // int
-      fmt.Println("Is Zero :", v.IsZero()) // false
-    }
+      1. reflect.Type:
 
-    * v.IsZero() checks that is this the zero value of that type.
+            * Return type of: reflect.TypeOf().
+
+            * Static description of the value.
+
+            * No data, just structure.
+
+            * Immutable metadata.
+
+            * Ask: What kind of thing is that?
+
+            * Usage:
+
+                  t := reflect.TypeOf(value)
 
 
-* Type vs Kind:
+      2. reflect.Value:
+
+            * Return type of: reflect.ValueOf().
+
+            * Actual runtime data.
+
+            * Can read or modify (if allowed).
+
+            * Carries the value itself.
+
+            * Ask: What is the actual value and can I use/change it?
+
+            * Usage:
+
+                  v := reflect.ValueOf(value)         : If you don't want to modify the value.
+
+                  v := reflect.ValueOf(&value).Elem() : If you want to modify the value. Elem() dereference the provided pointer.
+
+
+
+
+* To modify a value, we have to provide it as a pointer.
+
+      func main() {
+        x := 10
+        v := reflect.ValueOf(&x).Elem()
+
+        v.SetInt(20)
+
+        fmt.Println(v) // 20
+      }
+
+
+
+
+* Some basic methods:
 
       func main() {
         type MyInt int
+        var value MyInt = 10
 
-        a := 10
-        var b MyInt = 20
+        v := reflect.ValueOf(value)
 
-        v1 := reflect.ValueOf(a)
-        v2 := reflect.ValueOf(b)
-
-        fmt.Println("Value:", v1.Type()) // int
-        fmt.Println("Kind :", v1.Kind()) // int
-
-        fmt.Println("Value:", v2.Type()) // main.MyInt
-        fmt.Println("Kind :", v2.Kind()) // int
+        fmt.Println(v)          // 10
+        fmt.Println(v.Type())   // main.MyInt
+        fmt.Println(v.Kind())   // int
+        fmt.Println(v.IsZero()) // false
       }
+
+
+      * Type: Exact type
+
+      * Kind: Underlying category (int, struct, etc)
+
+      * IsZero: Is this value the default zeroth value for its type?
+
+
 
 
 * Check the type of a value is int or not:
@@ -7446,65 +7491,9 @@ Ex:
 
 
 
----------- (Update values) ----------
+---------- (Reflects With Structs) ----------
 
-* To modify a value, we have to provide it as a pointer.
-
-      func main() {
-        x := 10
-        v := reflect.ValueOf(&x).Elem()
-
-        v.SetInt(20)
-
-        fmt.Println(v) // 20
-      }
-
-
-      * Elem() : Get the underlying element.
-
-
-
-
----------- (Reflect With Structs) ----------
-
-* To update Struct fields with reflects, the fields must be public.
-
-      func main() {
-        p := Person{Name: "Alice", age: 30}
-
-        v1 := reflect.ValueOf(p)
-
-        fmt.Println("Number of fields:", v1.NumField())
-        fmt.Println("Value of first field:", v1.Field(0))
-
-        v2 := reflect.ValueOf(&p).Elem()
-        nameField := v2.FieldByName("Name")
-        if nameField.CanSet() {
-          nameField.SetString("John")
-        } else {
-          fmt.Println("Cannot set value")
-        }
-
-        fmt.Println(v2)
-      }
-
-
-* With methods:
-
-      func main() {
-        p := Person{}
-
-        v := reflect.ValueOf(p)
-        fmt.Println(v) // {}
-
-        fmt.Println("Number of methods:", v.NumMethod()) // Number of methods: 1
-
-        // Access methods by indexes
-        method1 := v.Method(0)
-
-        // Access methods by names
-        method2 := v.MethodByName("GetName")
-      }
+* jlkj
 
 --------------------------------------------------------------------------------
 
@@ -8140,6 +8129,21 @@ Ex:
       * Registered ports        : 1024 - 49151
 
       * Dynamic or private ports: 49152 - 65535
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- REST APIs -----------------------------------------------------------
+
+* REST: Representational State Transfer
+
+      * It is an architectural style (not a protocol like HTTP itself) used for
+        designing network applications, especially APIs.
+
+
+* JSON over HTTP/1.1
 
 --------------------------------------------------------------------------------
 
