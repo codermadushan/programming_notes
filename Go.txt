@@ -7493,7 +7493,50 @@ Ex:
 
 ---------- (Reflects With Structs) ----------
 
-* jlkj
+type Person struct {
+	Name string `json:"name,omitempty"`
+	Age  int    `json:"age,omitempty"`
+}
+
+func main() {
+	p := Person{
+		Name: "John Cena",
+		Age:  49,
+	}
+
+	v1 := reflect.ValueOf(&p).Elem()
+	v2 := reflect.ValueOf(p)
+
+	t := reflect.TypeOf(p)
+
+	// Number of fields
+	fmt.Println(v1.NumField()) // 2
+
+	// * Access values of each fields
+	// * Order is same as declaration order of the struct fields
+	fmt.Println(v1.Field(0))            // John Cena
+	fmt.Println(v1.Field(1))            // 49
+	fmt.Println(v1.FieldByName("Name")) // John Cena
+	fmt.Println(v1.FieldByName("Age"))  // 49
+
+	// Check the type and kind of a field
+	fmt.Println(v1.Field(0).Type())                // int
+	fmt.Println(v1.Field(0).Kind() == reflect.Int) // true
+
+	// Check a value can be changed or not
+	fmt.Println(v1.CanSet())          // true
+	fmt.Println(v2.CanSet())          // false
+	fmt.Println(v1.Field(1).CanSet()) // true
+	fmt.Println(v2.Field(1).CanSet()) // false
+
+	// Access json tags
+	fmt.Println(t.Field(0).Tag.Get("json")) // age,omitempty
+
+	// Change field values
+	v1.FieldByName("Name").Set(reflect.ValueOf("Anna Silva"))
+	v1.FieldByName("Age").SetInt(50)
+	fmt.Println(v1) // {Anna Silva 50}
+}
 
 --------------------------------------------------------------------------------
 
