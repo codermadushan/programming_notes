@@ -1,0 +1,52 @@
+---------- Initialize A Project ------------------------------------------------
+
+* npm init -y
+
+* npm i -D typescript tsx @types/node
+
+* npx tsc --init
+
+* Set "rootDir" and "outDir" in tsconfig.json file
+
+* Add scripts to package.json file
+
+      "scripts": {
+        "dev": "tsx watch src/index.ts",
+        "build": "tsc",
+        "start": "node dist/index.js"
+      },
+
+
+
+
+---------- (Informations) ----------
+
+Compilation:
+
+      tsc:
+
+            * Type-check your code
+            * Compile .ts -> .js
+            * Write files to /dist (or configured output dir)
+
+
+      tsc --noEmit:
+
+            * Type-check your code
+            * Not generate .js files
+            * Not write anything to disk
+
+
+
+
+@types/node:
+
+      * Provides typescript type definitions for the Node.js runtime API.
+
+      * If your project is browser only, you don't need to install @types/node.
+
+      * It requires only if your project uses Node-specific features:
+
+            fs, path, http, crypto, etc
+
+--------------------------------------------------------------------------------
