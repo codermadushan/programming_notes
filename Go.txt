@@ -8074,6 +8074,132 @@ Ex:
 
 
 
+---------- Cookies -------------------------------------------------------------
+
+* A cookie is a small piece of data that a server sends to a client, which the
+  client stores and automatically sends back with every subsequent request to
+  that server.
+
+
+* Set a cookie:
+
+      http.SetCookie(w, &http.Cookie{...})
+
+
+* Properties:
+
+      1. Name: Name of the cookie
+
+
+      2. Value: Value of the cookie
+
+
+      3. Path:
+
+            * Controls which URL paths can access the cookie.
+
+            * A cookie is sent only if the request path starts with the
+              cookie's path.
+
+            * Default: Request path.
+
+            * If the cookie's path matches, the browser sends it with all HTTP
+              methods (GET, POST, PATCH, DELETE, etc).
+
+
+      4. Domain:
+
+            * Controls which domains/subdomains receive the cookie.
+
+            * Most of the time we don't set manually. It will be provided
+              automarically.
+
+            * you can only set cookie for:
+
+                  * The same domain, or
+                  * A parent domain
+
+                  Ex: If the request comes from "api.example.com", You can set
+                      Domain=api.example.com or Domain=example.com
+
+            * Default: Domain of the current request.
+
+
+      5. Expires & MaxAge:
+
+            * Expires: Exact timestamp of expiration.
+
+            * MaxAge : Relative time in seconds.
+
+            * If both are provided, MaxAge is considered.
+
+            * If both are not provided:
+
+                  * Expires = Session
+
+                  * The cookie is deleted when the browser session ends
+                    (browser close), not when the tab closes.
+
+
+      6. HttpOnly:
+
+            * If true, prevents accessing the cookie using javascript.
+
+            * Default: false
+
+
+      7. Secure:
+
+            * If true, sends the cookie only over HTTPS.
+
+            * Default: false
+
+
+      8. SameSite:
+
+            * SameSite controls whether cookies are sent when a request
+              originates from another site (different origin).
+
+            * A site is basically: scheme + domain
+
+                  Ex:
+                      Consider: https://example.com
+
+                      https://example.com     -> SameSite
+
+                      https://api.example.com -> SameSite (Subdomain counts as same site)
+
+                      https://evil.com        -> Different site
+
+
+            * Values:
+
+                  http.SameSiteStrictMode:
+
+                      Cookie is sent only when request originates from the same
+                      site.
+
+                  http.SameSiteLaxMode:
+
+                      Cookie is sent for same site requests and top-level
+                      cross-site GET navigation, but blocks them for background
+                      or unsafe cross-site requests to help prevent cross-site
+                      request forgery.
+
+                  http.SameSiteNoneMode:
+
+                      Cookie is sent in all requests, including cross-site.
+
+
+            * Default: http.SameSiteDefaultMode
+
+                  Browser sets default: Lax
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Create A HTTP Server In GO ------------------------------------------
 
 * Basic:
@@ -9556,7 +9682,7 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 
 
-* Update a row:
+* Partially update a database row:
 
       func (r *UserRepository) UpdateUserByID(ctx context.Context, id string, updates map[string]any) (*User, error) {
         query := `SELECT id, name, age FROM users WHERE id = $1`
