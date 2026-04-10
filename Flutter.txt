@@ -4664,3 +4664,199 @@ final class SocketClient {
 }
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Clean Architecture With Flutter -------------------------------------
+
+---------- (Folder structure, inside ./lib) ----------
+
+/core
+
+    /network
+
+    /storage
+
+    /errors
+
+    /extensions
+
+    /domain
+
+        /usecases
+            usecase.dart ------------------------------------------------------> Interface
+
+    /data
+
+    /presentation
+
+        /widgets
+
+    /utils
+
+    app_router.dart
+
+    injection.dart
+
+/features
+
+    /users
+
+        /data
+
+            /models
+
+                user_model.dart
+
+            /datasources
+
+                users_data_source.dart ----------------------------------------> Interface
+
+                users_remote_data_source.dart ---------------------------------> Implementation
+
+            /repositories
+
+                users_remote_repository.dart ----------------------------------> Implementation
+
+        /domain
+
+            /entities
+
+            /repositories
+
+                users_repository.dart -----------------------------------------> Interface
+
+            /usecases
+
+                get_user.dart
+
+                update_user.dart
+
+        /presentation
+
+            /cubits
+
+                /user_cubit
+
+            /widgets
+
+                user_card.dart
+
+            /pages
+
+                user_page.dart
+
+            /models -----------------------------------------------------------> Models for UI and Navigations
+
+        /utils
+
+        users_injection.dart
+
+/shared
+
+    /data
+
+    /domain
+
+        /entities
+
+            user.dart
+
+    /presentation
+
+        /cubits
+
+            /app_user_cubit
+
+
+
+
+* Folders:
+
+      /core:
+
+          * Store generic reusable things here.
+
+
+      /shared:
+
+          * Reusable items, but not truely generic.
+          * They are related to features.
+
+
+
+
+---------- (Share data between pages) ----------
+
+      * To share data to next page:
+
+            * To send:
+
+                  Navigator.pushNamed(
+                    ...
+                    arguments: <data>,
+                  );
+
+
+            * To access:
+
+                  late final String _message;
+
+                  @override
+                  void didChangeDependencies() {
+                    _message = ModalRoute.settingsOf(context)!.arguments as String;
+
+                    super.didChangeDependencies();
+                  }
+
+
+      * To share data between multiple screens use cubits.
+
+
+
+
+---------- (Create Global Cubits) ----------
+
+* Example:
+
+      * In auth feature, we define auth_cubit.
+
+      * But sometimes we need to access the user details in other features also.
+
+      * Therefore we create a seperate cubit called app_user_cubit in
+        shared/presentation/cubits folder.
+
+      * After that we can import app_user_cubit to the auth_cubit as a dependency
+        and emit states.
+
+
+
+
+* Calling methods in feature cubit using the global cubit:
+
+      * Step 1:
+
+            Create a "late final" instance variables to hold each method of
+            feature cubit in global cubit.
+
+                late final VoidCallback logOut;
+
+
+      * Step 2:
+
+            Initialize them inside the feature cubit constructor:
+
+                AuthCubit({
+                  ...
+                }) : ... {
+                  _appUserCubit.logOut = _logOut;
+                }
+
+
+      Note:
+
+          In this case auth_cubit must be initialized before app_user_cubit is
+          used.
+
+--------------------------------------------------------------------------------
