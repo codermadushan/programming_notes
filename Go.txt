@@ -9835,3 +9835,33 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
       }
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Logger --------------------------------------------------------------
+
+* Log file location:
+
+      logs/app.log
+
+
+* In internal/platform/logger/logger.go:
+
+      func NewLogger(file *os.File) *slog.Logger {
+        jsonHandler := slog.NewJSONHandler(file, nil)
+
+        return slog.New(jsonHandler)
+      }
+
+
+* In server.go:
+
+      file, err := os.OpenFile(config.LogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+      if err != nil {
+        log.Fatalln("Failed to open the log file:", err)
+      }
+      defer file.Close()
+      logger := logger.NewLogger(file)
+
+--------------------------------------------------------------------------------
