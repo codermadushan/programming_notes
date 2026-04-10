@@ -9848,28 +9848,57 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 * We usually perform logs in handler layer.
 
-      logger.Debug(<message>, key1, value1, key2, value2)
-      logger.Info(<message>, key1, value1, key2, value2)
-      logger.Warn(<message>, key1, value1, key2, value2)
-      logger.Error(<message>, key1, value1, key2, value2)
+      slog.Debug(...)
+      slog.Info(...)
+      slog.Warn(...)
+      slog.Error(...)
 
 
 * In internal/platform/logger/logger.go:
 
-      func NewLogger(file *os.File) *slog.Logger {
-        jsonHandler := slog.NewJSONHandler(file, nil)
-
-        return slog.New(jsonHandler)
+      func Register(logFile *os.File) {
+        jsonHandler := slog.NewJSONHandler(logFile, nil)
+        logger := slog.New(jsonHandler)
+        slog.SetDefault(logger)
       }
 
 
 * In server.go:
 
-      file, err := os.OpenFile(config.LogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+      logFile, err := os.OpenFile(config.LogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
       if err != nil {
         log.Fatalln("Failed to open the log file:", err)
       }
       defer file.Close()
-      logger := logger.NewLogger(file)
+      logger.Register(logFile)
+
+
+* Add additional fields to the log:
+
+      slog.Error(<message>, slog.Int("Age", 50), slog.String("Name", "John"), ..., slog.Any("any", 10))
+
+
+* slog.With:
+
+      childSlog := slog.With(slog.String("name", "John"), slog.Int("age", 35))
+      childSlog.Info(<message>)
+
+      * When I use childSlog, It automatically adds name and age fields.
+
+
+* slog.Group:
+
+      * Used to add nested data.
+
+      slog.Info("info message", slog.Group("group", slog.Int("age", 50), slog.String("name", "John")))
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- RateLimiter ---------------------------------------------------------
+
+* jlkj
 
 --------------------------------------------------------------------------------
