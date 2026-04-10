@@ -9846,6 +9846,14 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
       logs/app.log
 
 
+* We usually perform logs in handler layer.
+
+      logger.Debug(<message>, key1, value1, key2, value2)
+      logger.Info(<message>, key1, value1, key2, value2)
+      logger.Warn(<message>, key1, value1, key2, value2)
+      logger.Error(<message>, key1, value1, key2, value2)
+
+
 * In internal/platform/logger/logger.go:
 
       func NewLogger(file *os.File) *slog.Logger {
