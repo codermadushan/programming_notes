@@ -19,6 +19,25 @@ t---------- Fixes --------------------------------------------------------------
 
             "password-store": "gnome-libsecret"
 
+
+
+
+---------- (Remove Emulator Transparency In Hyprland) ----------
+
+* Paste following line in ~/.config/hypr/input.conf file:
+
+      windowrule = opacity 1.0 1.0, match:class <ClassName>
+
+
+* To find class names of running clients:
+
+      hyprctl clients
+
+
+* Reload if needed:
+
+      hyprctl reload
+
 --------------------------------------------------------------------------------
 
 
