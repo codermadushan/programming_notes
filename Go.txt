@@ -9848,18 +9848,17 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 * We usually perform logs in handler layer.
 
-      slog.Debug(...)
-      slog.Info(...)
-      slog.Warn(...)
-      slog.Error(...)
+      logger.Debug(...)
+      logger.Info(...)
+      logger.Warn(...)
+      logger.Error(...)
 
 
 * In internal/platform/logger/logger.go:
 
-      func Register(logFile *os.File) {
+      func NewLogger(logFile *os.File) *slog.Logger {
         jsonHandler := slog.NewJSONHandler(logFile, nil)
-        logger := slog.New(jsonHandler)
-        slog.SetDefault(logger)
+        return slog.New(jsonHandler)
       }
 
 
@@ -9870,35 +9869,26 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
         log.Fatalln("Failed to open the log file:", err)
       }
       defer file.Close()
-      logger.Register(logFile)
+      logger := logger.NewLogger(logFile)
 
 
 * Add additional fields to the log:
 
-      slog.Error(<message>, slog.Int("Age", 50), slog.String("Name", "John"), ..., slog.Any("any", 10))
+      logger.Error(<message>, slog.Int("Age", 50), slog.String("Name", "John"), ..., slog.Any("any", 10))
 
 
-* slog.With:
+* logger.With:
 
-      childSlog := slog.With(slog.String("name", "John"), slog.Int("age", 35))
-      childSlog.Info(<message>)
+      childLogger := logger.With(slog.String("name", "John"), slog.Int("age", 35))
+      childLogger.Info(<message>)
 
-      * When I use childSlog, It automatically adds name and age fields.
+      * When I use childLogger, It automatically adds name and age fields.
 
 
-* slog.Group:
+* logger.Group:
 
       * Used to add nested data.
 
-      slog.Info("info message", slog.Group("group", slog.Int("age", 50), slog.String("name", "John")))
-
---------------------------------------------------------------------------------
-
-
-
-
----------- RateLimiter ---------------------------------------------------------
-
-* jlkj
+      logger.Info("info message", slog.Group("group", slog.Int("age", 50), slog.String("name", "John")))
 
 --------------------------------------------------------------------------------
