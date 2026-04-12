@@ -9810,7 +9810,7 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
           tag := userType.Field(i).Tag.Get("json")
 
           for k, v := range updates {
-            if k+",omitempty" == tag && fieldValue.CanSet() {
+            if k == strings.TrimSuffix(tag, ",omitempty") && fieldValue.CanSet() {
               fieldValue.Set(reflect.ValueOf(v).Convert(fieldValue.Type()))
             }
           }

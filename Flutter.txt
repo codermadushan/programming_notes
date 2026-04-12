@@ -4329,7 +4329,7 @@ final class ImageView {
 
 
 
----------- Image Show using PageView -----------------------------------------------------------------
+---------- Image Show using PageView -------------------------------------------
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -4772,7 +4772,7 @@ final class SocketClient {
 
 
 
-* Folders:
+---------- (Folders) ----------
 
       /core:
 
@@ -4783,6 +4783,50 @@ final class SocketClient {
 
           * Reusable items, but not truely generic.
           * They are related to features.
+
+
+
+
+---------- (Dependency Injection) ----------
+
+* Use the package: get_it
+
+
+* Create an instance:
+
+      final getIt = GetIt.instance;
+
+
+* Methods:
+
+      getIt.registerLazySingleton<T>(...):
+
+          * One instance, created only when first used.
+
+          * Never be recreated.
+
+          * Used for:
+
+                * API clients
+                * DB clients
+                * Data sources
+                * Repositories
+
+
+      getIt.registerSingleton<T>(...):
+
+          * One instance, created immediately.
+
+          * Used when pre-initialized state required.
+
+
+      getIt.registerFactory<T>(...):
+
+          * A new instance will be created at every request.
+
+          * Used for short-lived objects like:
+
+                * Short lived cubits that are need to be reset.
 
 
 
@@ -4858,5 +4902,96 @@ final class SocketClient {
 
           In this case auth_cubit must be initialized before app_user_cubit is
           used.
+
+
+
+
+---------- (Page Navigation) ----------
+
+* Recommended to use: go_router
+
+
+* Initialization:
+
+    return MaterialApp.router(
+      ...
+      routerConfig: router,
+    );
+
+
+
+
+* AppRouter (core/app_router.dart):
+
+      final router = GoRouter(
+        initialLocation: "/home",
+
+        routes: [
+          GoRoute(path: "/home", builder: (context, state) => HomePage()),
+          ...
+        ],
+      );
+
+
+
+
+* Navigation methods:
+
+      context.go(...):
+
+          * Remove all previous pages and go to new page.
+
+
+      context.push(...):
+
+          * Push a new page on top of current page.
+
+
+      context.pop():
+
+          * Remove the most top page in the navigation stack.
+
+
+      context.replace(...):
+
+          * Does not push a new route.
+          * Update the current route entry.
+
+
+      context.pushReplacement(...):
+
+          * Adds a new route entry, then removes the previous one.
+
+
+
+
+* Share data between pages:
+
+      * Send data:
+
+            context.push('/page2/101?name=flutter', extra: "Hello World");
+
+
+      * Access data:
+
+            final router = GoRouter(
+              ...
+
+              routes: [
+                GoRoute(
+                  path: "/page2/:id",
+                  builder: (context, state) {
+                    final id = state.pathParameters["id"] as String;
+                    final message = state.extra as String;
+                    final name = state.uri.queryParameters["name"] as String;
+
+                    return Page2(id: id, message: message, name: name);
+                  },
+                ),
+
+                ...
+
+              ],
+            );
 
 --------------------------------------------------------------------------------

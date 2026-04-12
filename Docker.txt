@@ -158,8 +158,20 @@
     EXPOSE     → declare ports
 
 
-* In Dockerfile, each command is a layer. If one layer changes, all layers after
-  it are rebuilt.
+* Each instruction in a Dockerfile creates a seperate layer.
+
+
+* Layers are cached by Docker to speed up builds.
+
+
+* If a layer has not changed, Docker reuses it from cache.
+
+
+* If a layer is rebuilt:
+
+    * That layer is rebuilt.
+
+    * All sebsequent layers are also rebuilt (cache invalidated).
 
     Ex:
 
@@ -179,7 +191,7 @@
     * In this case, if we change our source code, the "COPY . /app" should be
       rebuilt.
 
-    * Therfore all layers after that command is also going to rebuild.
+    * Therfore all layers after that command is also going to be rebuilt.
 
     * But "RUN npm install" is an unnecessary rebuild.
 
@@ -204,88 +216,89 @@
 
 
 
----------- Images --------------------------------------------------------------
+---------- Basic Image Commands ------------------------------------------------
 
 * Docker images are read-only. If you make any changes to the source code, you
   have to rebuild the image.
 
 
-* Manage images:
-
-    * Build an image:
-
-        docker build -t <image_name:version> <Dockerfile_path>
 
 
-    * Show images:
+* Show all images:
 
-        Only tagged images   : docker images
-        Tagged + intermediate: docker images -a
-
-
-    * Build a container and run from an image:
-
-        docker run -d --name <container_name> -p <host_port>:<image_port> <image_name:version>
-
-        * use --rm flag if you want to delete the container after stopped
-          automatically.
-
-        * use --name flag to provide a name to the container.
+    docker images -a
 
 
-    * Remove an image:
-
-        docker rmi <image_name:version>
 
 
-    * Rename an image tag:
+* Build an image:
 
-        docker tag <old_name:old_tag> <new_name:new_tag>
+    docker build -t <name:version> <Dockerfile_path>
 
-        * In This case a new image is created with the new tag
+
+
+
+* Rename an image:
+
+    docker tag <old_name:old_version> <new_name:new_version>
+
+
+    * A new image will be created with the new name
+
+
+
+
+* Run an image (Create a container):
+
+    docker run --rm -p <host_port:container_port> <name:version>
+
+
+    * Use --name <container_name> to provide a name to the container.
+
+    * Use -d to run the container in detach mode.
+
+
+
+
+* Remove an image:
+
+    docker rmi <name:version>
 
 --------------------------------------------------------------------------------
 
 
 
 
----------- Containers ----------------------------------------------------------
+---------- Basic Containers Commands -------------------------------------------
 
-* Manage containers:
+* Show containers:
 
-    * Show containers:
+    docker ps    : show all running containers
 
-        All         : docker ps -a
-        Running only: docker ps
-
-
-    * Stop a container:
-
-        docker stop <container_name>
+    docker ps -a : show all containers
 
 
-    * Start a stopped container:
-
-        docker start <container_name> (by default this is detached)
-
-        docker start -a <container_name> (attach mode)
 
 
-    * Remove a container:
+* Stop a container:
 
-        docker rm <container_name>
-
-
-    * Remove all stopped containers:
-
-        docker container prune
+    docker stop <container_name>
 
 
-* Copy files/folders into a container:
 
-    Copy into a container: docker cp <host_path> <container_name>:<container_path>
 
-    Copy from a container: docker cp <container_name>:<container_path> <host_path>
+* Start a stopped container:
+
+    docker start <container_name>    : In detach mode
+
+    docker start -a <container_name> : In attach mode
+
+
+
+
+* Remove a container:
+
+    docker rm <container_name>
 
 --------------------------------------------------------------------------------
 
@@ -297,22 +310,22 @@
 * When we create and run a container using an image, we can use -d flag to
   detach from the container:
 
-        docker run -d ...
+    docker run -d ...
 
 
 * To attach again to see future log messages:
 
-        docker attach <container_name>
+    docker attach <container_name>
 
 
 * To see log messages without attaching:
 
-        docker logs <container_name>
+    docker logs <container_name>
 
 
 * To see previous log messages and attach again to see future logs:
 
-        docker logs -f <container_name> (-f -> follow)
+    docker logs -f <container_name> (-f -> follow)
 
 --------------------------------------------------------------------------------
 
@@ -324,20 +337,22 @@
 * If you want to input data (STDIN), we have to use Interactive mode.
 
 
-* Create and run a container:
+* Create a container in interactive mode:
 
-    docker run -it <image_name:version>
+    docker run -it ...
 
-        i : Interactive
-        t : Create a terminal
+        -i : Interactive mode
+        -t : Create a terminal to enter inputs
 
 
-* To start a container:
 
-    docker start -ai <container_name>
 
-        a : attack
-        i : Interactive
+* To start a stopped container:
+
+    docker start -ia ...
+
+        i : Interactive mode
+        a : Attach mode
 
 --------------------------------------------------------------------------------
 
@@ -348,11 +363,13 @@
 
 * To upload an image to the DockerHub, it should contains the tag as follows:
 
-    <username>/<repository>:<tag>
+    <username>/<repository_name>:<version>
 
     * To rename an existing image:
 
         docker tag <old_image_name>:<old_tag> <username>/<new_image_name>:<tag>
+
+
 
 
 * To login use:
@@ -360,14 +377,20 @@
     docker login
 
 
+
+
 * To logout use:
 
     docker logout
 
 
+
+
 * To upload an image to DockerHub:
 
     docker push <image>
+
+
 
 
 * To get an image from the DockerHub:
