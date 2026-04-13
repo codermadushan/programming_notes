@@ -125,6 +125,27 @@
     * Image = Class
     * Container = Object (instance of the class)
 
+
+
+
+* We can consider a container as follows:
+
+    +-------------------------------------------------+
+    |                                                 |
+    |  Container Layer (Read-Write)                   | <--- Container
+    |                                                 |
+    |  +---------------------------------+            |
+    |  |                                 |            |
+    |  |  Instruction #3: Image Layer 3  |            |
+    |  |                                 |            |
+    |  |  Instruction #2: Image Layer 2  | <--- Image |
+    |  |                                 |            |
+    |  |  Instruction #3: Image Layer 3  |            |
+    |  |                                 |            |
+    |  +---------------------------------+            |
+    |                                                 |
+    +-------------------------------------------------+
+
 --------------------------------------------------------------------------------
 
 
@@ -250,12 +271,14 @@
 
 * Run an image (Create a container):
 
-    docker run --rm -p <host_port:container_port> <name:version>
+    docker run -p <host_port:container_port> <name:version>
 
 
-    * Use --name <container_name> to provide a name to the container.
+        * Use -d to run the container in detach mode.
 
-    * Use -d to run the container in detach mode.
+        * Use --rm command to remove the container after stopping it.
+
+        * Use --name <container_name> to provide a name to the container.
 
 
 
@@ -396,5 +419,154 @@
 * To get an image from the DockerHub:
 
     docker pull <image>
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Managing Data & Working With Volumes --------------------------------
+
+* Data:
+
+    1. Application Data:
+
+            * Ex: Code + Environment
+
+            * Written & provided by you (=the developer).
+
+            * Added to image in build phase.
+
+            * Fixed: Can't be changed once image is built.
+
+            * Read-only, hence stored in images.
+
+
+    2. Temporary App Data:
+
+            * Ex: Entered user inputs.
+
+            * Fetched/Produced in running container.
+
+            * Stored in memory or temporary files.
+
+            * Dynamic and changing, but cleared regularly.
+
+            * Read + Write, Temporary, hence stored in containers.
+
+
+    3. Permanent App Data:
+
+            * Ex: User accounts.
+
+            * Fetched/Produced in running containers.
+
+            * Stored in files or a database.
+
+            * Must not be lost if container stops/restarts.
+
+            * Read + Write, Permanent, stored with containers & volumes.
+
+
+
+
+* Suppose we run a server inside a container. In this case we store user data of
+  the server as txt files in the container file system.
+
+* When you stop the container and start it again, these stored files are still
+  exist because of the container's read-write layer.
+
+* But if you remove the container, data will be removed.
+
+* That is why we need volumes.
+
+
+
+
+---------- (Volumes) ----------
+
+* Volumes are folders in your host machine hard drive which are mounted into
+  containers.
+
+
+* Volumes persist if a container shuts down. If a container restart and mounts a
+  volume, any data inside of that volume is available in the container.
+
+
+* A container can write data into a volume and read data from it.
+
+
+* When a container writes -> data goes directly into the volume (host storage).
+
+
+* No "sync later" - It's immediate persistence.
+
+
+* There are 2 types of docker volumes:
+
+    1. Named Volumes
+    2. Bind Mounts
+
+
+* Anonymous volumes are a third form of docker volume - but conceptually they're
+  a variant of named volumes without an explicit names.
+
+        * To specify anonymous volumes in Dockerfile:
+
+            VOLUME [ "/app/feedback" ]
+
+        * Anonymous volumes are tied to the specific container they were created
+          with.
+
+        * When you remove a container with "docker rm" command, the link between
+          the container and the volume is broken.
+
+        * To remove a container with its volumes:
+
+            docker rm -v <container_name>
+
+
+* To see all volumes:
+
+    docker volume ls
+
+
+* To remove all unused volumes:
+
+    docker volume prune    : Remove all unused anonymous volumes
+
+    docker volume prune -a : Remove all unused anonymous + named volumes
+
+
+* Remove a specific volume:
+
+    docker volume rm <volume name>
+
+
+
+
+---------- (Named Volumes) ----------
+
+* In Docker, a named volume is a persistent storage mechanism managed by Docker
+  itself, where you explicitly give the volume a name instead of letting Docker
+  generate one automatically.
+
+
+* You cannot defined named volumes inside the Dockerfile.
+
+
+* Define a named volume:
+
+    docker run -v <name>:<container_path> ...
+
+
+* To remove all unused named volumes:
+
+    docker volume prune -a
+
+
+* To remove a specific named volume:
+
+    docker volume rm <volume_name>
 
 --------------------------------------------------------------------------------
