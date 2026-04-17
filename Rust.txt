@@ -3074,7 +3074,7 @@ Ex:
 * There are 2 types of associated value varients:
 
       1. Tuple varients
-      1. Struct varients
+      2. Struct varients
 
 
 Ex - Tuple varient:
@@ -3263,10 +3263,8 @@ Ex:
 
 ---------- (If Let Construct) ----------
 
-* The "if let" construct combines an if statement with a variable declaration.
-
-
-* We use this to match with only one variant of an enum.
+* Use if let when you want to conditionally extract associated values from one
+  enum variant.
 
 
 * Syntax:
@@ -3280,7 +3278,7 @@ Ex:
       * else is optional
 
 
-* Ex:
+Ex 1:
 
       enum Milk {
             LowFat(i32),
@@ -3304,9 +3302,46 @@ Ex:
       }
 
 
+Ex 2:
+
+      * With tuple variants:
+
+            enum Event {
+                  Click(i32, i32),
+                  Key(char),
+            }
+
+            fn main() {
+                  let e = Event::Click(10, 20);
+
+                  if let Event::Click(x, y) = e {
+                        println!("x: {}, y: {}", x, y);
+                  }
+            }
+
+
+      * With struct variants:
+
+            enum Message {
+                  Move { x: i32, y: i32 },
+                  Quit,
+            }
+
+            fn main() {
+                  let msg = Message::Move { x: 5, y: 10 };
+
+                  if let Message::Move { x, y } = msg {
+                        println!("x: {}, y: {}", x, y);
+                  }
+            }
+
+
 
 
 ---------- (Let Else Contruct) ----------
+
+* Use this when you want to early exit if pattern doesn't match.
+
 
 * Syntax:
 

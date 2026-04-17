@@ -557,16 +557,11 @@
 
 * Define a named volume:
 
-    docker run -v <name>:<container_path> ...
+    docker run -v <volume_name>:<container_file_path> ...
 
 
 * To remove all unused named volumes:
 
     docker volume prune -a
-
-
-* To remove a specific named volume:
-
-    docker volume rm <volume_name>
 
 --------------------------------------------------------------------------------
