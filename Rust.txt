@@ -5243,4 +5243,40 @@ impl<T: Trait> Hotel<T> {
 * In this case values vector can contains any references of objects which
       implement "Trait" trait.
 
+
+
+
+---------- (Associated Constants In A Trait) ----------
+
+trait Taxable {
+    const TAX_RATE: f64 = 0.25;
+
+    fn tax_bill(&self) -> f64;
+}
+
+struct Income {
+    amount: f64,
+}
+
+impl Taxable for Income {
+    // const TAX_RATE: f64 = 0.5; (Can override like this if needed)
+
+    fn tax_bill(&self) -> f64 {
+        self.amount * Self::TAX_RATE
+    }
+}
+
+fn main() {
+    let income = Income { amount: 50000.50 };
+
+    println!("Total tax owed: ${:.2}", income.tax_bill());
+}
+
+
+
+
+---------- () ----------
+
+* jklj
+
 --------------------------------------------------------------------------------

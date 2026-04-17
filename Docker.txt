@@ -564,4 +564,24 @@
 
     docker volume prune -a
 
+
+
+
+---------- (Bind Mounts) ----------
+
+* A way to map a specific directory or file from your host machine into a
+  container. Instead of docker managing the storage (like volumes), you directly
+  "bind" a host path to a container path.
+
+
+* Changes on host -> Immediately visible in container.
+
+
+* Mostly used in development to mount source code.
+
+    docker run -v $(pwd):/app <container_name>
+
+
+* jlkj
+
 --------------------------------------------------------------------------------
