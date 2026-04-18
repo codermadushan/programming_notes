@@ -673,6 +673,36 @@ Step 2:
 
 
 
+---------- Byte Slices ---------------------------------------------------------
+
+* A byte slice is simply a slice whose element type is byte.
+
+
+* byte itself is just an alias for uint8 (an unsigned 8-bit integer).
+
+
+* Min Value: 0, Max value: 255.
+
+
+Ex:
+    msg := "hello"
+    byteSlice := []byte(msg)
+    fmt.Println(byteSlice) // [104 101 108 108 111]
+
+
+    ASCII table:
+
+        Char Decimal Binary
+        h    104     0110 1000
+        e    101     0110 0101
+        l    108     0110 1100
+        o    111     0110 1111
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Maps ----------------------------------------------------------------
 
 * Map provides an efficient way to store and retrieve key value pairs.
@@ -3137,11 +3167,80 @@ func main() {
 * Represent any data using a string.
 
 
+* How it works:
+
+      * Step 1: Group data into 24-bit chunks.
+
+      * Step 2: Split each 24-bit chunk into 4 6-bit groups.
+
+
+* Base64 fixed character table:
+
+      Index 0-25  -> A-Z
+      Index 26-51 -> a-z
+      Index 52-61 -> 0-9
+      Index 62    -> +
+      Index 63    -> /
+
+
 * Base64 encoded string size is ~33% bigger than original size of the data.
 
+      * Suppose we have 3 bytes of data
 
-* Before convert data to a base64 string, we have to convert data to an byte
-  slice.
+      * Base64 works like this:
+
+            * Takes 3 bytes (24 bits) of input.
+            * Splits into 4 groups of 6 bits.
+            * Each 6-bit value maps to a printable ASCII character.
+
+      * Original: 3 bytes = 24 bits.
+
+      * Base64 output: 4 characters = 4 bytes = 32 bits.
+
+      * (24 / 32) * 100 = ~33% larger.
+
+
+Ex:
+    * Convert "hello" to base64:
+
+    func main() {
+      msg := "hello"
+
+      byteSlice := []byte(msg) // [104 101 108 108 111]
+
+      encoded := base64.StdEncoding.EncodeToString(byteSlice) // aGVsbG8=
+    }
+
+    * When we convert "hello" to a byte slice, it becomes [104 101 108 108 111].
+
+    * ASCII table:
+
+        Char Decimal Binary
+        h    104     0110 1000
+        e    101     0110 0101
+        l    108     0110 1100
+        o    111     0110 1111
+
+    * In base64 we divide bits in to 6 bit groups:
+
+          -> 104 101 108 108 111
+          -> 01101000 01100101 01101100 01101100 01101111
+          -> 01101000 01100101 01101100 | 01101100 01101111 (split into 24-bit chunks)
+          -> 011010 000110 010101 101100 | 011011 000110 1111 (split each group into 6-bit chunks)
+          -> 011010 000110 010101 101100 | 011011 000110 111100 000000 (replace missing bits with zeros)
+          -> 26 6 21 44 | 27 6 60 0
+          -> a G V s | b G 8 A
+          -> a G V s | b G 8 =
+
+    * Why replace A with =:
+
+          * For last group we calculate the answer for following equation:
+
+                original_data_length_in_bytes % 3
+
+          * If the answer is 1, we replace last 2 characters with ==
+
+          * If the answer is 2, we replace last characters with =
 
 
 
