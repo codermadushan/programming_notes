@@ -3197,7 +3197,7 @@ func main() {
 
       * Base64 output: 4 characters = 4 bytes = 32 bits.
 
-      * (24 / 32) * 100 = ~33% larger.
+      * 32/24 = 1.33 = ~33% larger.
 
 
 Ex:
