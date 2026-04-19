@@ -3267,6 +3267,12 @@ fmt.Println(string(data))
 
 ---------- (URL encoding / decoding) ----------
 
+* Difference:
+
+      1. + replaced with - (dash)
+      2. / replaced with _ (underscore)
+
+
 * To encode and decode strings to pass via urls. Because urls consider some
   base64 characters as url specific characters. (like /, +)
 
@@ -3275,6 +3281,17 @@ fmt.Println(string(data))
 
 
 * base64.URLEncoding.DecodeString(<string>)
+
+
+
+
+---------- (Raw Encoding) ----------
+
+* Raw means remove =
+
+* RawStdEncoding: ignore =
+
+* RawURLEncoding: ignore =
 
 --------------------------------------------------------------------------------
 
@@ -10008,6 +10025,8 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
       salt := make([]byte, 16)  : Generate the byte array with zeros
       _, err := rand.Read(salt) : Replace all zeros with random values (0-255)
 
+      * Never use "math/rand" to generate random bytes. Always use "crypto/rand"
+
 
 * Salt:
 
@@ -10083,5 +10102,22 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
         data := fmt.Sprintf("$argon2id$v=%d$t=%d$p=%d$m=%d$%s$%s", argon2.Version, time, threads, memory, salt, hash)
         fmt.Println(data)
       }
+
+
+* Number of characters when we convert a byte slice to a base64 string:
+
+      * Consider 32 byte slice
+
+      Step 1: Divide number of bytes in 3 and get the ceil value and rest of it.
+
+            = 32 / 3
+            = 10.66
+            = ceil: 11, rest 2
+
+      Step 2: Multiply that value by 4. This is the length of the base64 string.
+
+            length of the string: 4 * 11 = 44
+
+      Step 3: Last (3 - rest) characters are =
 
 --------------------------------------------------------------------------------
