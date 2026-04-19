@@ -9991,3 +9991,97 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
       logger.Info("info message", slog.Group("group", slog.Int("age", 50), slog.String("name", "John")))
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Hashing Passwords ---------------------------------------------------
+
+* For hashing passwords it is recommended to use "IDKey" (argon2id) function of
+  "argon2" external package.
+
+      golang.org/x/crypto/argon2
+
+
+* Generate a given number of random bytes:
+
+      salt := make([]byte, 16)  : Generate the byte array with zeros
+      _, err := rand.Read(salt) : Replace all zeros with random values (0-255)
+
+
+* Salt:
+
+      * A salt is a random value added to a password before hashing.
+
+      * A salt is not a secret.
+
+      * The salt is stored alongside the hash in the database.
+
+      * Why salt is important:
+
+            1. Prevents identical hashes for same password.
+            2. Defeats rainbow table attacks.
+            3. Slow brute-force attacks.
+
+      * The same salt with the same password will produce the same hash.
+
+      * The commonly recommended salt size is: 16 bytes.
+
+
+* argon2.IDKey:
+
+      password := "mypassword"
+      byteHash := argon2.IDKey([]byte(password), salt, 1, 64*1024, 4, 32)
+
+      * Extra parameters:
+
+            time (iterations):
+                Number of passes over memory.
+
+            memory:
+                Memory usage in kilobytes.
+
+            threads:
+                Number of parallel computation threads.
+
+            keyLen:
+                Number of bytes in the derived hash output.
+
+
+* We don't store raw bytes in most application databases. We convert them to
+  base64 strings.
+
+
+* Format to store hashes in database:
+
+      $<algorithm>$v=<version>$t=<time>$p=<parallelism>$m=<memory>$<base64_salt>$<base64_hash>
+
+      Ex: $argon2id$v=19$t=1$p=4$m=65536$H7aRMAXNz8ZsY/oBwbZNkg==$+kUthIlUfkNuuLVBgK4F770qtZTo6RF3dqN+Qh5fXi0=
+
+      To remember: algo version tpm salt hash
+
+
+* Ex:
+
+      func main() {
+        byteSalt := make([]byte, 16)
+        _, err := rand.Read(byteSalt)
+        if err != nil {
+          log.Fatalln("Failed to generate random bytes")
+        }
+
+        password := "mypassword"
+
+        time := 1
+        threads := 4
+        memory := 64 * 1024
+
+        byteHash := argon2.IDKey([]byte(password), byteSalt, uint32(time), uint32(memory), uint8(threads), 32)
+        hash := base64.StdEncoding.EncodeToString(byteHash)
+        salt := base64.StdEncoding.EncodeToString(byteSalt)
+
+        data := fmt.Sprintf("$argon2id$v=%d$t=%d$p=%d$m=%d$%s$%s", argon2.Version, time, threads, memory, salt, hash)
+        fmt.Println(data)
+      }
+
+--------------------------------------------------------------------------------

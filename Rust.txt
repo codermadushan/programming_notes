@@ -5248,29 +5248,35 @@ impl<T: Trait> Hotel<T> {
 
 ---------- (Associated Constants In A Trait) ----------
 
-trait Taxable {
-    const TAX_RATE: f64 = 0.25;
+* An associated constant is a constant declared within the trait. A constant is
+  a name for a fixed, immutable value.
 
-    fn tax_bill(&self) -> f64;
-}
 
-struct Income {
-    amount: f64,
-}
+Ex:
 
-impl Taxable for Income {
-    // const TAX_RATE: f64 = 0.5; (Can override like this if needed)
+      trait Taxable {
+            const TAX_RATE: f64 = 0.25;
 
-    fn tax_bill(&self) -> f64 {
-        self.amount * Self::TAX_RATE
-    }
-}
+            fn tax_bill(&self) -> f64;
+      }
 
-fn main() {
-    let income = Income { amount: 50000.50 };
+      struct Income {
+            amount: f64,
+      }
 
-    println!("Total tax owed: ${:.2}", income.tax_bill());
-}
+      impl Taxable for Income {
+            // const TAX_RATE: f64 = 0.5; (Can override like this if needed)
+
+            fn tax_bill(&self) -> f64 {
+                  self.amount * Self::TAX_RATE
+            }
+      }
+
+      fn main() {
+            let income = Income { amount: 50000.50 };
+
+            println!("Total tax owed: ${:.2}", income.tax_bill());
+      }
 
 
 
