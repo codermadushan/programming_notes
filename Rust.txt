@@ -2866,7 +2866,7 @@ Ex:
 * Associated functions are functions that are attached to a type.
 
 
-They are not methods.
+* They are not methods.
 
 
 * We often use associated functions for constructors:
@@ -5076,12 +5076,36 @@ Ex:
 
 
 
+---------- (self & Self With Traits) ----------
+
+* Case 1:
+
+      trait <Trait> {
+            ...
+      }
+
+      * self -> The instance of unknown type
+
+      * Self -> Unknown implementing type
+
+
+* Case 2:
+
+      impl <Trait> for <Type> {
+            ...
+      }
+
+      * self -> The instance of concrete type
+
+      * Self -> Concrete implementing type
+
+
+
+
 ---------- (Traits For Function Parameter Constraints) ----------
 
 * impl in a function parameter is a shorthand for saying "This function accepts
   any type that implements given trait".
-
-
 
 
 Ex:
@@ -5100,15 +5124,11 @@ Ex:
       * x as a mutable reference parameter     ->  x: &mut impl <Trait>
 
 
-
-
 * Equivalent generic version:
 
       fn print_value<T: <Trait>>(x: T) {
             ...
       }
-
-
 
 
 * Consider the following scenarios:
@@ -5218,6 +5238,13 @@ impl<T: Trait> Hotel<T> {
   available only for the types which implement "Trait" trait.
 
 
+* Why not "impl Hotel<Trait>" ?
+
+      * T is still generic, just constrained.
+
+      * You can do "impl Hotel<Type>" if the Type is a concrete type like String.
+
+
 
 
 ---------- (Trait Objects) ----------
@@ -5250,6 +5277,15 @@ impl<T: Trait> Hotel<T> {
 
 * An associated constant is a constant declared within the trait. A constant is
   a name for a fixed, immutable value.
+
+
+* In Rust, there's a strict separation:
+
+      * self -> Refers to a value (an instance of a type).
+      * Self -> Refers to the type itself.
+
+
+* Trait constants are defined at the type level, not per-instance.
 
 
 Ex:
