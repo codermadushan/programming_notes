@@ -153,6 +153,63 @@ flutter_native_splash:
 
 
 
+---------- UI Designs ----------------------------------------------------------
+
+---------- (Apply Gradient On An Image) ----------
+
+SizedBox
+    Stack
+        Image
+        Container with gradient
+        Other widgets
+
+
+* Ex:
+
+    SizedBox(
+      width: double.infinity,
+      height: 300,
+
+      child: Stack(
+        children: [
+          Image.asset(
+            "assets/images.jpeg",
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+          ),
+
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black, Colors.transparent],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+              ),
+            ),
+          ),
+
+          // Other widgets
+        ],
+      ),
+    ),
+
+
+* To position other widgets, use following widgets:
+
+      * Positioned(...)
+      * Column(...)
+      * Row(...)
+
+
+* If you apply the image to the full page (to Scaffold body), Do not use the
+  SizedBox.
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Texts ---------------------------------------------------------------
 
 ---------- (style_res.dart) ----------

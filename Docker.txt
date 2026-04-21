@@ -574,7 +574,7 @@
   "bind" a host path to a container path.
 
 
-* Changes on host -> Immediately visible in container.
+* Host_Path <----------> Container_Path
 
 
 * Mostly used in development to mount source code.
@@ -582,6 +582,16 @@
     docker run -v $(pwd):/app <container_name>
 
 
-* jlkj
+* Key properties:
+
+    1. Real-time sync:
+
+        * Changes on host      -> Instantly visible in container
+        * Changes in container -> Effect host files
+
+
+    2. Overrides container data:
+
+        * If /app already has files in the image, they get hidden when you mount.
 
 --------------------------------------------------------------------------------
