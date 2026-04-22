@@ -198,6 +198,7 @@ SizedBox
 * To position other widgets, use following widgets:
 
       * Positioned(...)
+      * Align(...)
       * Column(...)
       * Row(...)
 

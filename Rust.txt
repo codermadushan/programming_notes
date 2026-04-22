@@ -422,7 +422,7 @@ Ex:
 
 
 
----------- Array ---------------------------------------------------------------
+---------- Arrays ---------------------------------------------------------------
 
 * An array is a fixed-size collection of homogenous data (data of the same type)
 
@@ -453,6 +453,18 @@ Ex:
       numbers[2] = 10;
 
       numbers = [4, 5, 6]; // Length must be same
+
+
+* Array initialization shorthand:
+
+      Ex 1: Generate 5 zeros in i32:
+
+            let zeros = [0; 5]; // [value; length] (for default types)
+
+
+      Ex 2: Generate 5 1s in u8:
+
+            let values = [0u8; 5]; // [<value><type>; <length>] (for specific types)
 
 --------------------------------------------------------------------------------
 
@@ -5317,8 +5329,106 @@ Ex:
 
 
 
----------- () ----------
+---------- (Getters In Traits) ----------
 
-* jklj
+* Consider the following code:
+
+      trait Taxable {
+            const TAX_RATE: f64 = 0.25;
+
+            fn tax_bill(&self) -> f64;
+      }
+
+      struct Income {
+            amount: f64,
+      }
+
+      impl Taxable for Income {
+            fn tax_bill(&self) -> f64 {
+                  self.amount * Self::TAX_RATE
+            }
+      }
+
+      struct Bonus {
+            amount: f64,
+      }
+
+      impl Taxable for Bonus {
+            const TAX_RATE: f64 = 0.5;
+
+            fn tax_bill(&self) -> f64 {
+                  self.amount * Self::TAX_RATE
+            }
+      }
+
+
+* In this code, both implementation of "tax_bill" method for Income and Bonus
+  structs are same.
+
+
+* Therefore we can define that method as a default method inside the Taxable
+  trait as follows.
+
+      trait Taxable {
+            const TAX_RATE: f64 = 0.25;
+
+            fn tax_bill(&self) -> f64 {
+                  self.amount * Self::TAX_RATE
+            }
+      }
+
+      struct Income {
+            amount: f64,
+      }
+
+      impl Taxable for Income {}
+
+      struct Bonus {
+            amount: f64,
+      }
+
+      impl Taxable for Bonus {
+            const TAX_RATE: f64 = 0.5;
+      }
+
+
+* But in this case we get an error because we cannot guarantee that implementing
+  type of Taxable trait contains the property called "amount".
+
+
+* We can fix this as follows by defining a getter method signature inside the
+  Taxable trait.
+
+      trait Taxable {
+            const TAX_RATE: f64 = 0.25;
+
+            fn amount(&self) -> f64;
+
+            fn tax_bill(&self) -> f64 {
+                  self.amount() * Self::TAX_RATE
+            }
+      }
+
+      struct Income {
+            amount: f64,
+      }
+
+      impl Taxable for Income {
+            fn amount(&self) -> f64 {
+                  self.amount
+            }
+      }
+
+      struct Bonus {
+            amount: f64,
+      }
+
+      impl Taxable for Bonus {
+            const TAX_RATE: f64 = 0.5;
+
+            fn amount(&self) -> f64 {
+                  self.amount
+            }
+      }
 
 --------------------------------------------------------------------------------
