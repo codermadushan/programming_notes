@@ -205,6 +205,61 @@ SizedBox
 * If you apply the image to the full page (to Scaffold body), Do not use the
   SizedBox.
 
+
+
+
+---------- (Blur A Child Widget) ----------
+
+ImageFiltered(
+  imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+
+  child: ...,
+),
+
+
+
+
+---------- (Apply Blur To A Background) ----------
+
+ClipRect( ----------------------------------------------------> To stop the blur
+
+  child: SizedBox( --------------------------> Background which you want to blur
+
+    child: BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+
+      child: Text("TEXT"),
+    ),
+  ),
+),
+
+* BackdropFilter is applied to all of it's parent widgets.
+
+
+Ex: Glass Morphism effect:
+
+    * Use a Container instead of the SizedBox to apply a transparent color.
+
+    ClipRect(
+      child: Container(
+        color: Colors.white24,
+        width: 300,
+        height: 150,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          child: Center(
+            child: Text(
+              "TEXT",
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+
 --------------------------------------------------------------------------------
 
 
