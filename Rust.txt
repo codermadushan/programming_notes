@@ -5285,6 +5285,22 @@ impl<T: Trait> Hotel<T> {
 
 
 
+---------- (Associated Methods In A Trait) ----------
+
+* Inside a trait, the methods do not take "self" at all are called associated
+  methods.
+
+
+* Trait associated methods are defined at the type level, not per-instance.
+
+
+* To access them we have to use implemented concrete type:
+
+      <implemented_type>::<associated_method>(...);
+
+
+
+
 ---------- (Associated Constants In A Trait) ----------
 
 * An associated constant is a constant declared within the trait. A constant is
@@ -5430,5 +5446,85 @@ Ex:
                   self.amount
             }
       }
+
+
+
+
+---------- (Setters In Traits) ----------
+
+* Suppose we have to define a default method called "double_amount" inside a
+  trait to multiply the "amount" value of the implemented type instance.
+
+      trait Taxable {
+            const TAX_RATE: f64 = 0.25;
+
+            fn amount(&self) -> f64;
+
+            fn tax_bill(&self) -> f64 {
+                  self.amount() * Self::TAX_RATE
+            }
+
+            fn double_amount(&mut self) {
+                  self.amount = self.amount() * 2.0
+            }
+      }
+
+      struct Bonus {
+            amount: f64,
+      }
+
+      impl Taxable for Bonus {
+            const TAX_RATE: f64 = 0.5;
+
+            fn amount(&self) -> f64 {
+                  self.amount
+            }
+      }
+
+
+* But in this case we get an error because we cannot guarantee that implementing
+  type of Taxable trait contains the property called "amount".
+
+
+* We can fix it as follows using setters:
+
+      trait Taxable {
+            const TAX_RATE: f64 = 0.25;
+
+            fn amount(&self) -> f64;
+
+            fn tax_bill(&self) -> f64 {
+                  self.amount() * Self::TAX_RATE
+            }
+
+            fn set_amount(&mut self, new_amount: f64);
+
+            fn double_amount(&mut self) {
+                  self.set_amount(self.amount() * 2.0);
+            }
+      }
+
+      struct Bonus {
+            amount: f64,
+      }
+
+      impl Taxable for Bonus {
+            const TAX_RATE: f64 = 0.5;
+
+            fn set_amount(&mut self, new_amount: f64) {
+                  self.amount = new_amount;
+            }
+
+            fn amount(&self) -> f64 {
+                  self.amount
+            }
+      }
+
+
+
+
+---------- (Super Traits) ----------
+
+* jklj
 
 --------------------------------------------------------------------------------
