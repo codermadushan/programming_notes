@@ -661,69 +661,63 @@ Ex: Remove all permission for a file for group and others and allow only read
 
 ---------- (Zip) ----------
 
-* Installation:
+* Flags:
 
-      sudo pacman -S zip unzip --needed
+      -r : recursive
+      -q : quiet
 
 
 * Zip a folder:
 
-      zip -r <output_name> <folder_name>
+      zip -rq <output_name> <folder_name>
 
 
 * Unzip a zip:
 
-      unzip <zip_file_name>
+      unzip -q <zip_file_name>
 
-
-* To hide the file list (quiet mode):
-
-      Zip  : zip -rq <output_name> <folder_name>
-
-      Unzip: unzip -q <zip_file_name>
+--------------------------------------------------------------------------------
 
 
 
 
----------- (Encryption) ----------
-
-* Generate a random password:
-
-      pwgen -sync <length> <num_of_passwords>
-
-
-      Note:
-
-            s - Generate completely random passwords
-            y - Include at least one special symbol in the password
-            n - Include at least one number in the password
-            c - Include at least one capital letter in the password
-
+---------- Encryption ----------------------------------------------------------
 
 * If you want to encrypt a folder, create a tarball for that forlder first.
 
 
+---------- (Generate a random password) ----------
+
+* pwgen -sync <length> <num_of_passwords>
+
+      s - Generate completely random passwords
+      y - Include at least one special symbol in the password
+      n - Include at least one number in the password
+      c - Include at least one capital letter in the password
+
+
+
+
+---------- (Symmetric Encryption) ----------
+
 * Encryption:
 
 
-      gpg --symmetric --no-symkey-cache --cipher-algo aes256 <file_name>
+      gpg --symmetric --no-symkey-cache --cipher-algo aes256 <file> (3)
 
 
-      Note:
+      * When you execute this command you can enter the encryption password.
 
-            When you execute this command you can enter the encryption password.
-            After that a file named <file_name>.gpg will be created.
+      * After that a file will be created with .gpg extension.
 
 
 * Decryption:
 
-      gpg --output gpg_manual.txt --decrypt gpg_manual.txt.gpg
+      gpg --output <output_file> --decrypt <encrypted_file> (2)
 
 
-      Note:
-
-            If you don't specify --output, decrypted data will be printed in
-            the console.
+      * If you don't specify --output, decrypted data will be printed in
+        the console.
 
 --------------------------------------------------------------------------------
 
