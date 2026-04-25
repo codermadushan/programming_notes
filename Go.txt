@@ -4610,10 +4610,12 @@ Ex 2:
             }
             defer gr.Close()
 
-            _, err = io.Copy(os.Stdout, gr)
+            data, err := io.ReadAll(gr)
             if err != nil {
               log.Fatalln("Failed to read data:", err)
             }
+
+            fmt.Println(string(data))
           }
 
 --------------------------------------------------------------------------------
