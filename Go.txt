@@ -9049,9 +9049,60 @@ Ex:
 
 
 
----------- HTTP Interfaces -----------------------------------------------------
+---------- http Package --------------------------------------------------------
 
-* jlkj
+---------- (http.Handler) ----------
+
+type Handler interface {
+  ServeHTTP(http.ResponseWriter, *http.Request)
+}
+
+
+* A handler is something that can handle an HTTP request.
+
+
+* Anything that implements "ServeHTTP" method is a handler.
+
+
+* When an HTTP request comes in, Go's server calls:
+
+      handler.ServeHTTP(w, r)
+
+          w -> http.ResponseWriter (Used to send response)
+          r -> http.Request (Incoming request data)
+
+      Ex:
+
+          type MyHandler struct{}
+
+          func (h *MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+            fmt.Println("ServeHTTP of MyHandler is called")
+          }
+
+          func main() {
+            handler := &MyHandler{}
+
+            server := &http.Server{
+              Addr:    ":3000",
+              Handler: handler,
+            }
+
+            server.ListenAndServe()
+          }
+
+
+
+
+---------- (http.HandlerFunc) ----------
+
+type HandlerFunc func(ResponseWriter, *Request)
+
+func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
+	f(w, r)
+}
+
+
+* ljljj
 
 --------------------------------------------------------------------------------
 
