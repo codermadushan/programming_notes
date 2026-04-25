@@ -702,7 +702,6 @@ Ex: Remove all permission for a file for group and others and allow only read
 
 * Encryption:
 
-
       gpg --symmetric --no-symkey-cache --cipher-algo aes256 <file> (3)
 
 

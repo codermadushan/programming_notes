@@ -4540,6 +4540,67 @@ Ex 2:
 
 
 
+---------- Compressions --------------------------------------------------------
+
+---------- (gzip) ----------
+
+* gzip.NewWritter(<io.Writer>):
+
+      * Compress data and write to the wrapped writer.
+
+      * We can use "gzip.NewWriterLevel" to provide a specific compression level.
+
+      Ex:
+
+          func main() {
+            file, err := os.Create("data.gz")
+            if err != nil {
+              log.Fatalln("Failed to create the file:", err)
+            }
+            defer file.Close()
+
+            gw := gzip.NewWriter(file)
+            defer gw.Close()
+
+            n, err := gw.Write([]byte("Hello World"))
+            if err != nil {
+              log.Fatalln("Failed to write data:", err)
+            }
+
+            fmt.Println("Successfully written", n, "bytes")
+          }
+
+
+* gzip.NewReader(<io.Reader>):
+
+      * Read compressed data from the wrapped reader and decompress.
+
+      Ex:
+
+          func main() {
+            file, err := os.Open("data.gz")
+            if err != nil {
+              log.Fatalln("Failed to open the file:", err)
+            }
+            defer file.Close()
+
+            gr, err := gzip.NewReader(file)
+            if err != nil {
+              log.Fatalln("Failed to create the reader:", err)
+            }
+            defer gr.Close()
+
+            _, err = io.Copy(os.Stdout, gr)
+            if err != nil {
+              log.Fatalln("Failed to read data:", err)
+            }
+          }
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- (Goroutines) --------------------------------------------------------
 
 * Goroutines are just functions that leave the main thread and run in the
@@ -8966,6 +9027,15 @@ Ex:
 
 
 
+---------- HTTP Interfaces -----------------------------------------------------
+
+* jlkj
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Access Request Body From Server -------------------------------------
 
 * URL-Encoded form data:
@@ -10096,7 +10166,7 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
       Ex: $argon2id$v=19$t=1$p=4$m=65536$H7aRMAXNz8ZsY/oBwbZNkg==$+kUthIlUfkNuuLVBgK4F770qtZTo6RF3dqN+Qh5fXi0=
 
-      To remember: algo version tpm salt hash
+      To remember: algo version tpm salt hash (7)
 
 
 * Ex:
