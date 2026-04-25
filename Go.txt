@@ -4084,6 +4084,26 @@ Ex:
 
 
 
+---------- (Best Way To Read Data From A Reader) ----------
+
+* io.ReadAll(r):
+
+      * Allocates memory for the entire stream.
+
+      * Returns full data as a []byte.
+
+      * Use when the data size is small or bounded.
+
+
+* io.Copy(dst, src):
+
+      * Streams data chunk by chunk by using a fixed-size buffer internally.
+
+      * Use when data may be large or unbounded.
+
+
+
+
 ---------- (io.Writer) ----------
 
 * The "io.Writer" interface has only one method called "Writer" which
