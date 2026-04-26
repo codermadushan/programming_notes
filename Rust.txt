@@ -5525,6 +5525,7 @@ Ex:
 
 ---------- (Super Traits) ----------
 
-* jlj
+* A supertrait is a trait from which another trait inherits functionality. The
+  parent is called the supertrait and the child is called the subtrait.
 
 --------------------------------------------------------------------------------

@@ -9113,9 +9113,11 @@ Ex:
 
 ---------- (http.Handler) ----------
 
-type Handler interface {
-  ServeHTTP(http.ResponseWriter, *http.Request)
-}
+* Definition:
+
+      type Handler interface {
+        ServeHTTP(http.ResponseWriter, *http.Request)
+      }
 
 
 * A handler is something that can handle an HTTP request.
@@ -9155,14 +9157,72 @@ type Handler interface {
 
 ---------- (http.HandlerFunc) ----------
 
-type HandlerFunc func(ResponseWriter, *Request)
+* Definition:
 
-func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
-	f(w, r)
-}
+      type HandlerFunc func(ResponseWriter, *Request)
+
+      func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
+        f(w, r)
+      }
 
 
-* ljljj
+* Any HandlerFunc type function is a handler:
+
+      func handleRequest(w http.ResponseWriter, r *http.Request) {
+        fmt.Println("request is handled")
+      }
+
+      func main() {
+        var handler http.HandlerFunc = handleRequest
+
+        server := &http.Server{
+          Addr:    ":3000",
+          Handler: handler,
+        }
+
+        server.ListenAndServe()
+      }
+
+
+* We use HandlerFunc type to convert any function with
+  func(http.ResponseWriter, *http.Request) signature to a handler.
+
+
+
+
+---------- (http.ServeMux) ----------
+
+* It is a custom handler struct provided by http package.
+
+
+* To create an instance of that struct:
+
+      mux := http.NewServeMux()
+
+
+* mux.Handle:
+
+      * Instead of responding every request, we can use mux.Handle to respond
+        only to a specific url patterns.
+
+            mux.Handle(<pattern>, <handler>)
+
+
+      * In this case the ServeHTTP method of provided handler is executed when a
+        request matches with the specified pattern.
+
+
+* mux.HandleFunc:
+
+      * Same idea of mux.Handle, but use a function with
+        func(http.ResponseWriter, *http.Request) signature.
+
+            mux.HandleFunc(<pattern>, <func>)
+
+
+      * Internally same as:
+
+            mux.Handle(<pattern>, http.HandlerFunc(<func>))
 
 --------------------------------------------------------------------------------
 
