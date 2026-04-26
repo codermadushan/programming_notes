@@ -9224,6 +9224,20 @@ Ex:
 
             mux.Handle(<pattern>, http.HandlerFunc(<func>))
 
+
+
+
+---------- (Others) ----------
+
+* If you url pattern is /a/b/c:
+
+      /a/b/c  -> Matches
+      /a/b/c/ -> Does not match
+
+
+* An unmatched request is handled by / only if it is registered (acting as a
+  catch-all); otherwise, the server returns a 404 error.
+
 --------------------------------------------------------------------------------
 
 
