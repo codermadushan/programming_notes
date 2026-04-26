@@ -1903,13 +1903,12 @@ Ex: (With pointer receiver)
 
       * B has an anonymous field "A".
 
-      * That field can hold any value that implements the A interface.
+      * That field can hold any instance of a type that implements the A interface.
 
-      * Now we can call to methods defined inside A using  a instance of B. In
-        this case methods are called on the instance which is hold by A
-        anonymous field.
+      * Simply we can think all methods and fields of that instance are directly
+        copy paste to struct B.
 
-      * But we can override that methods if required.
+      * But we can override that fields and methods if required.
 
 
 
@@ -2020,6 +2019,9 @@ Ex:
 
 * In this case all fields and methods of "Rectangle" is directly accessible to
   "Shape" (If it is an interface, all method definitions are available to).
+
+* We can think all fields and methods of "Rectangle" struct are copy paste to
+  "Shape" struct.
 
 
 
