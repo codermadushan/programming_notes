@@ -2295,6 +2295,64 @@ Ex: (With pointer receiver)
           * The reason is a method with a pointer receiver is included only in
             the method set of *T, not T.
 
+
+
+
+---------- (Defining Methods For Custom Types) ----------
+
+* We can define a custom type using any existing type.
+
+
+* When we convert a compatible instance to that custom type, all defined methods
+  for that custom type are available to the convered instance.
+
+
+* Ex 1: Defining custom struct type:
+
+      type Person struct {
+        Name string
+        Age  int
+      }
+
+      func (p *Person) showInfo() {
+        fmt.Println("Name:", p.Name)
+        fmt.Println("Age :", p.Age)
+      }
+
+      func main() {
+        p := struct {
+          Name string
+          Age  int
+        }{
+          Name: "John",
+          Age:  32,
+        }
+
+        var person Person = p
+
+        person.showInfo()
+      }
+
+
+* Ex 2: Defining custom function type:
+
+      type MyFunc func(int) int
+
+      func (f MyFunc) Call(x int) int {
+        return f(x)
+      }
+
+      func square(x int) int {
+        return x * x
+      }
+
+      func main() {
+        var f MyFunc = square
+        value := f.Call(5)
+
+        fmt.Println(value)
+      }
+
 --------------------------------------------------------------------------------
 
 
