@@ -1905,10 +1905,10 @@ Ex: (With pointer receiver)
 
       * That field can hold any instance of a type that implements the A interface.
 
-      * Simply we can think all methods and fields of that instance are directly
-        copy paste to struct B.
+      * Simply we can think all methods of that instance which are defined
+        inside A interface are directly copy paste to struct B.
 
-      * But we can override that fields and methods if required.
+      * But we can override that methods if required.
 
 
 
