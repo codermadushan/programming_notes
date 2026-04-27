@@ -9208,8 +9208,20 @@ Ex:
             mux.Handle(<pattern>, <handler>)
 
 
-      * In this case the ServeHTTP method of provided handler is executed when a
-        request matches with the specified pattern.
+      * When a request arrives, the server always calls:
+
+            mux.ServeHTTP(w, r)
+
+
+      * Inside mux.ServeHTTP:
+
+            * It matches the request URL path against registered patterns.
+
+            * Finds the corresponding <handler> you registered with mux.Handle.
+
+            * Then it delegates:
+
+                  handler.ServeHTTP(w, r)
 
 
 * mux.HandleFunc:
