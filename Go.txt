@@ -9568,6 +9568,9 @@ Ex:
 
 ---------- Middlewares ---------------------------------------------------------
 
+* A wrapper that intercepts the request/response pipeline around a handler.
+
+
 * We use middlewares for various purposes like:
 
       * Logging
@@ -9577,11 +9580,9 @@ Ex:
       ...
 
 
-
-
 * Basic middleware structure:
 
-      func SecurityHeaders(next http.Handler) http.Handler {
+      func <middleware_name>(next http.Handler) http.Handler {
         return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
           // Runs before handler
@@ -9593,14 +9594,11 @@ Ex:
         })
       }
 
-
       * http.Handler interface:
 
             type Handler interface {
                 ServeHTTP(ResponseWriter, *Request)
             }
-
-
 
 
 * To initialize a middleware in the server:
@@ -9826,16 +9824,25 @@ Ex:
 
       type middleware func(http.Handler) http.Handler
 
-      func applyMiddlewares(handler http.Handler, middlewares ...middleware) http.Handler {
-        for _, middleware := range middlewares {
-          handler = middleware(handler)
-        }
+      func ChainMiddlewares(middlewares ...middleware) middleware {
+        return func(next http.Handler) http.Handler {
+          for i := len(middlewares) - 1; i >= 0; i-- {
+            next = middlewares[i](next)
+          }
 
-        return handler
+          return next
+        }
       }
 
 
-      * Usage: applyMiddlewares(mux, m4, m3, m2, m1)
+      * Usage:
+
+            middlewareChain := ChainMiddlewares(middleware1, middleware2)
+
+            server := &http.Server{
+              ...
+              Handler: middlewareChain(mux),
+            }
 
 --------------------------------------------------------------------------------
 
