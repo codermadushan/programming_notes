@@ -9024,8 +9024,13 @@ Ex:
 
 * Sample internal/features/users/routes.go:
 
-      func RegisterUserRoutes(mux *http.ServeMux, userHandler *UserHandler) {
-        mux.HandleFunc("GET /users/{id}", userHandler.GetUserByID)
+      func RegisterUserRoutes(topMux *http.ServeMux, userHandler *UserHandler) {
+        usersMux := http.NewServeMux()
+
+        usersMux.HandleFunc("GET /{id}", userHandler.GetUserByID)
+        ...
+
+        topMux.Handle("/users/", http.StripPrefix("/users", usersMux))
       }
 
 
@@ -9033,12 +9038,12 @@ Ex:
 
 * Sample internal/api/router/router.go:
 
-      func NewRouter(userHandler *users.UserHandler) *http.ServeMux {
+      func RegisterRoutes(topMux *http.ServeMux, userHandler *users.UserHandler) {
         mux := http.NewServeMux()
 
         users.RegisterUserRoutes(mux, userHandler)
 
-        return mux
+        topMux.Handle("/api/", http.StripPrefix("/api", mux))
       }
 
 
@@ -9075,17 +9080,29 @@ Ex:
       func main() {
         config := config.Load()
 
+        // Initialize the pool
         ctx := context.Background()
         pool, err := db.NewPool(ctx, config.DatabaseURL)
         if err != nil {
           log.Fatalln("Failed to connect to the database:", err)
         }
 
-        userHandler := users.NewUserHandler(
-          users.NewUserService(users.NewUserRepository(pool)),
-        )
+        // Register the logger
+        logFile, err := os.OpenFile(config.LogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+        if err != nil {
+          log.Fatalln("Failed to open the log file:", err)
+        }
+        defer logFile.Close()
+        logger := logger.NewLogger(logFile)
 
-        router := api.NewRouter(userHandler)
+        // users
+        userRepository := users.NewUserRepository(pool)
+        userService := users.NewUserService(userRepository)
+        userHandler := users.NewUserHandler(userService, logger)
+
+        mainMux := http.NewServeMux()
+
+        api.RegisterRoutes(mainMux, userHandler)
 
         tlsConfig := &tls.Config{
           MinVersion: tls.VersionTLS12,
@@ -9093,7 +9110,7 @@ Ex:
 
         server := http.Server{
           Addr:      fmt.Sprintf(":%s", config.Port),
-          Handler:   router,
+          Handler:   mainMux,
           TLSConfig: tlsConfig,
         }
 
