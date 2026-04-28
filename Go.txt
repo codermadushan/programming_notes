@@ -9200,6 +9200,24 @@ Ex:
       mux := http.NewServeMux()
 
 
+* How ServeMux matches routes:
+
+      1. Exact:
+
+            /users
+
+            matches only /users
+
+
+      2. Prefix:
+
+            /users/
+
+            /users     ---> matches if not defined
+            /users/    ---> matches if not defined
+            /users/123 ---> matches if not defined
+
+
 * mux.Handle:
 
       * Instead of responding every request, we can use mux.Handle to respond
@@ -9235,20 +9253,6 @@ Ex:
       * Internally same as:
 
             mux.Handle(<pattern>, http.HandlerFunc(<func>))
-
-
-
-
----------- (Others) ----------
-
-* If you url pattern is /a/b/c:
-
-      /a/b/c  -> Matches
-      /a/b/c/ -> Does not match
-
-
-* An unmatched request is handled by / only if it is registered (acting as a
-  catch-all); otherwise, the server returns a 404 error.
 
 --------------------------------------------------------------------------------
 
@@ -10417,5 +10421,82 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
         data := fmt.Sprintf("$argon2id$v=%d$t=%d$p=%d$m=%d$%s$%s", argon2.Version, time, threads, memory, salt, hash)
         fmt.Println(data)
       }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Sub Routes ----------------------------------------------------------
+
+* In go standard library (net/http), there is no first-class concept called
+  "sub-routes" like in other frameworks.
+
+
+* Instead, sub-routing is composed behavior built using http.ServeMux,
+  handler chaining, and prefix matching.
+
+
+* What happens on a request?
+
+    func main() {
+      childMux := http.NewServeMux()
+
+      childMux.HandleFunc("GET /users", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprint(w, "users handler")
+      })
+
+      mainMux := http.NewServeMux()
+
+      mainMux.Handle("/api/", childMux)
+
+      server := &http.Server{
+        Addr:    ":3000",
+        Handler: mainMux,
+      }
+
+      server.ListenAndServe()
+    }
+
+
+    * Case: request to /api/users.
+
+    * mainMux matches /api/ and forwards the request to childMux.
+
+    * But the request path is still /api/users.
+
+    * childMux tries to match /users
+
+    * No match because it sees /api/users, not /users
+
+    * So your handler is never executed.
+
+
+* To fix it we can use http.StripPrefix(<prefix>, <handler>):
+
+      It removes a fixed prefix from the request URL path before passing the
+      request to another handler.
+
+
+* fix:
+
+    func main() {
+      childMux := http.NewServeMux()
+
+      childMux.HandleFunc("GET /users", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprint(w, "users handler")
+      })
+
+      mainMux := http.NewServeMux()
+
+      mainMux.Handle("/api/", http.StripPrefix("/api", childMux))
+
+      server := &http.Server{
+        Addr:    ":3000",
+        Handler: mainMux,
+      }
+
+      server.ListenAndServe()
+    }
 
 --------------------------------------------------------------------------------
