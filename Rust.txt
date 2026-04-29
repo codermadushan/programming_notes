@@ -5280,7 +5280,7 @@ impl<T: Trait> Hotel<T> {
 
 
 * In this case values vector can contains any references of objects which
-      implement "Trait" trait.
+  implement "Trait" trait.
 
 
 
@@ -5527,5 +5527,180 @@ Ex:
 
 * A supertrait is a trait from which another trait inherits functionality. The
   parent is called the supertrait and the child is called the subtrait.
+
+
+* Ex:
+
+      trait SuperTrait {
+            ...
+      }
+
+      trait SubTrait: SuperTrait {
+            ...
+      }
+
+      * You can think like copy paste all things in SuperTrait into SubTrait.
+
+
+* If you implement the SubTrait for a type, you also must implement SuperTrait
+  for that type.
+
+
+* Ex:
+
+      trait Investment {
+            fn amount(&self) -> f64;
+
+            fn set_amount(&mut self, new_amount: f64);
+
+            fn double_amount(&mut self) {
+                  self.set_amount(self.amount() * 2.0);
+            }
+      }
+
+      trait Taxable: Investment {
+            const TAX_RATE: f64 = 0.25;
+
+            fn tax_bill(&self) -> f64 {
+                  self.amount() * Self::TAX_RATE
+            }
+      }
+
+      struct Income {
+            amount: f64,
+      }
+
+      impl Taxable for Income {}
+
+      impl Investment for Income {
+            fn amount(&self) -> f64 {
+                  self.amount
+            }
+
+            fn set_amount(&mut self, new_amount: f64) {
+                  self.amount = new_amount;
+            }
+      }
+
+
+
+
+---------- (Traits With Generics) ----------
+
+* definition:
+
+      trait SuperTrait<T> {
+            ...
+      }
+
+      trait SubTrait: SuperTrait<X> {
+            ...
+      }
+
+      * X is a concrete type like f64, u32, etc.
+
+      * If any type implements SubTrait, It must implements SuperTrait<X> also.
+
+
+* Ex:
+
+      trait Investment<T> {
+            fn amount(&self) -> T;
+
+            fn double_amount(&mut self);
+      }
+
+      trait Taxable: Investment<f64> {
+            const TAX_RATE: f64 = 0.25;
+
+            fn tax_bill(&self) -> f64 {
+                  self.amount() * Self::TAX_RATE
+            }
+      }
+
+      struct Income {
+            amount: f64,
+      }
+
+      impl Taxable for Income {}
+
+      impl Investment<f64> for Income {
+            fn amount(&self) -> f64 {
+                  self.amount
+            }
+
+            fn double_amount(&mut self) {
+                  self.amount *= 2.0;
+            }
+      }
+
+
+
+
+---------- (Implementing The Display Trait On A Struct) ----------
+
+use std::fmt::{Display, Formatter, Result};
+
+struct Apple {
+    kind: String,
+    price: f64,
+}
+
+impl Display for Apple {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        write!(f, "{} 🍎 for {}", self.kind, self.price)
+    }
+}
+
+
+
+
+---------- (Implementing The Display Trait On An Enum) ----------
+
+use std::fmt::{Display, Formatter, Result};
+
+enum AppleType {
+    RedDelicious,
+    GrannySmith,
+}
+
+impl Display for AppleType {
+      fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+            match self {
+                  AppleType::RedDelicious => write!(f, "🍎 Delicious 🍎"),
+
+                  AppleType::GrannySmith => write!(f, "🍏 Granny Smith 🍏"),
+            }
+      }
+}
+
+
+
+
+---------- (Implementing The Debug Trait) ----------
+
+use std::fmt::{Debug, Formatter, Result};
+
+enum AppleType {
+    RedDelicious,
+    GrannySmith,
+}
+
+impl Debug for AppleType {
+      fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+            match self {
+                  AppleType::RedDelicious => write!(f, "🍎 Delicious 🍎"),
+
+                  AppleType::GrannySmith => write!(f, "🍏 Granny Smith 🍏"),
+            }
+      }
+}
+
+
+
+
+---------- () ----------
+
+* jklj
 
 --------------------------------------------------------------------------------

@@ -9042,6 +9042,7 @@ Ex:
         mux := http.NewServeMux()
 
         users.RegisterUserRoutes(mux, userHandler)
+        ...
 
         topMux.Handle("/api/", http.StripPrefix("/api", mux))
       }
