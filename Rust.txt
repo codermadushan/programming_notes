@@ -5697,6 +5697,15 @@ impl Debug for AppleType {
 }
 
 
+* If all fields implement Debug trait, we can use:
+
+      #[derive(Debug)]
+      enum AppleType {
+            RedDelicious,
+            GrannySmith,
+      }
+
+
 
 
 ---------- (Formatter Methods) ----------
@@ -5739,5 +5748,164 @@ impl Drop for Apple {
         }
     }
 }
+
+
+
+
+---------- (Implementing The Clone Trait) ----------
+
+* The Clone trait models the ability to create a duplicate of an instance.
+
+
+use std::clone::Clone;
+
+struct Appointment {
+    doctor: String,
+    start_time: String,
+    end_time: String,
+}
+
+impl Clone for Appointment {
+    fn clone(&self) -> Self {
+        Self {
+            doctor: self.doctor.clone(),
+            start_time: self.start_time.clone(),
+            end_time: self.end_time.clone(),
+        }
+    }
+}
+
+
+* If all field types implements Clone trait, then we can use:
+
+      #[derive(Clone)]
+      struct Appointment {
+            doctor: String,
+            start_time: String,
+            end_time: String,
+      }
+
+
+
+
+---------- (Implementing The Copy Trait) ----------
+
+* If you implement the Copy trait, you have to implement the Clone trait also.
+
+
+* The reason is Close trait is the super trait of Copy trait. Copy trait
+  uses Clone trait internally.
+
+
+* Copy trait is applied:
+
+      1. When we re-assign a variable to another variable.
+
+      2. When we pass a variable to a function parameter.
+
+
+* Ex:
+
+      #[derive(Clone)]
+      struct Duration {
+            hours: u32,
+            minutes: u32,
+            seconds: u32,
+      }
+
+      impl Copy for Duration {}
+
+
+
+
+---------- (Implementing The PartialEq Trait For Structs) ----------
+
+* Use when equality may be non-total (floats, custom fuzzy comparisons).
+
+
+struct Flight {
+    origin: String,
+    destination: String,
+    time: String,
+}
+
+impl PartialEq for Flight {
+    fn eq(&self, other: &Self) -> bool {
+        self.origin == other.origin && self.destination == other.destination
+    }
+}
+
+impl Flight {
+    fn new(origin: &str, destination: &str, time: &str) -> Self {
+        Self {
+            origin: origin.to_string(),
+            destination: destination.to_string(),
+            time: time.to_string(),
+        }
+    }
+}
+
+fn main() {
+    let flight1 = Flight::new("New York", "London", "08:00");
+    let flight2 = Flight::new("New York", "London", "20:00");
+
+    println!("{}", flight1 == flight2);
+
+    println!("{}", flight1.eq(&flight2));
+    println!("{}", flight1.ne(&flight2));
+}
+
+
+
+
+---------- (Defining Equality For Different Types) ----------
+
+struct BusTrip {
+    origin: String,
+    destination: String,
+    time: String,
+}
+
+struct Flight {
+    origin: String,
+    destination: String,
+    time: String,
+}
+
+impl PartialEq<BusTrip> for Flight {
+    fn eq(&self, other: &BusTrip) -> bool {
+        self.origin == other.origin && self.destination == other.destination
+    }
+}
+
+
+
+
+---------- (Implementing The PartialEq Trait For Enums) ----------
+
+* jklj
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------- (Implementing The Eq Trait) ----------
+
+* Use when equality is strict and mathematically sound.
 
 --------------------------------------------------------------------------------
