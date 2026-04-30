@@ -5699,8 +5699,45 @@ impl Debug for AppleType {
 
 
 
----------- () ----------
+---------- (Formatter Methods) ----------
 
-* jklj
+use std::fmt::{Display, Formatter, Result};
+
+struct Apple {
+    kind: String,
+    price: f64,
+}
+
+impl Display for Apple {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.debug_struct("** Apple **")
+            .field("Kind", &self.kind)
+            .field("Price", &self.price)
+            .finish()
+    }
+}
+
+
+
+
+---------- (Implementing The Drop Trait) ----------
+
+use std::fs;
+use std::ops::Drop;
+
+struct Apple {
+    kind: String,
+    price: f64,
+}
+
+impl Drop for Apple {
+    fn drop(&mut self) {
+        match fs::remove_file("apple.txt") {
+            Ok(_) => println!("Goodbye, my sweet apple"),
+
+            Err(error) => println!("Error deleting file: {}", error),
+        }
+    }
+}
 
 --------------------------------------------------------------------------------
