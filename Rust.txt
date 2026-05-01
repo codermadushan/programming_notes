@@ -5883,29 +5883,194 @@ impl PartialEq<BusTrip> for Flight {
 
 ---------- (Implementing The PartialEq Trait For Enums) ----------
 
-* jklj
+* == or eq() returns true only if both variants their associated values are same.
 
 
+#[derive(PartialEq)]
+enum Musician {
+    SingerSongwriter(String),
+    Band(u32),
+}
 
+fn main() {
+    let rustin_bieber = Musician::SingerSongwriter("Rustin".to_string());
+    let rustin_timberlake = Musician::SingerSongwriter("Rustin".to_string());
+    let holly = Musician::SingerSongwriter("Holly".to_string());
 
+    let rust_no_one = Musician::Band(5);
+    let unrustworthy = Musician::Band(4);
+    let rust_for_vengeance = Musician::Band(5);
 
+    println!("{}", rustin_bieber == rustin_timberlake); // true
+    println!("{}", rustin_bieber == holly); // false
 
-
-
-
-
-
-
-
-
-
-
+    println!("{}", rust_no_one == unrustworthy); // false
+    println!("{}", rust_no_one == rust_for_vengeance); // true
+}
 
 
 
 
 ---------- (Implementing The Eq Trait) ----------
 
+* It doesn't contain any method.
+
+
 * Use when equality is strict and mathematically sound.
+
+      1. Reflexive : a == a
+
+      2. Symmetric : a == b implies b ==a (required by PartialEq as well)
+
+      3. Transitive: a == b and b == c implies a == c (required by PartialEq as well)
+
+
+* Some types do not satisfy a == a always:
+
+      fn main() {
+            let value1 = 0.0 / 0.0;
+            let value2 = 20.0 / 2.0;
+
+            println!("{}", value1 == value1); // false
+            println!("{}", value2 == value2); // true
+      }
+
+
+* It is a sub trait of PartialEq trait.
+
+
+* Like Clone and Copy.
+
+
+
+
+---------- (Implementing The PartialOrd Trait) ----------
+
+* Indicates that a type can be ordered/sorted.
+
+
+* It is a sub trait of PartialEq trait.
+
+
+use std::cmp::Ordering;
+
+struct Job {
+    salary: u32,
+    commute_time: u32,
+}
+
+impl PartialEq for Job {
+    fn eq(&self, other: &Self) -> bool {
+        self.salary == other.salary
+    }
+}
+
+impl PartialOrd for Job {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        if self.salary == other.salary {
+            Some(Ordering::Equal)
+        } else if self.salary < other.salary {
+            Some(Ordering::Less)
+        } else if self.salary > other.salary {
+            Some(Ordering::Greater)
+        } else {
+            None
+        }
+    }
+}
+
+fn main() {
+    let job1 = Job {
+        salary: 50000,
+        commute_time: 10,
+    };
+
+    let job2 = Job {
+        salary: 40000,
+        commute_time: 20,
+    };
+
+    println!("{}", job1 > job2); // true
+}
+
+
+
+
+---------- (Associated Types) ----------
+
+* We can define associated types in a trait and it can be used in function which
+  are defined inside the trait.
+
+
+* Associated types are defined in type level like associated constants. To access
+  them we have to use "Self".
+
+
+* We have to assign a concrete type for those associated types when we
+  implemented.
+
+      trait <TraitName> {
+            type <TypeName>;
+      }
+
+
+* Ex 1:
+
+      use std::ops::Add;
+
+      #[derive(Debug)]
+      struct Lunch {
+            cost: f64,
+      }
+
+      impl Add for Lunch {
+            type Output = Self;
+
+            fn add(self, rhs: Self) -> Self::Output {
+                  Self {
+                        cost: self.cost + rhs.cost,
+                  }
+            }
+      }
+
+      fn main() {
+            let one = Lunch { cost: 10.99 };
+            let two = Lunch { cost: 16.15 };
+
+            println!("{:?}", one + two);
+      }
+
+
+* Consider the following function:
+
+      fn add_two_numbers<T>(a: T, b: T) -> T {
+            a + b
+      }
+
+
+      * This function is not correct, because rust cannot guarantee that type T
+        implements Add trait.
+
+
+      * Therefore we can modify it as follows:
+
+            use std::ops::Add;
+
+            fn add_two_numbers<T: Add>(a: T, b: T) -> T {
+                  a + b
+            }
+
+
+      * This is also not correct, because we have to provide values for
+        associated types of Add trait.
+
+
+      * We can fix it as follows:
+
+            use std::ops::Add;
+
+            fn add_two_numbers<T: Add<Output = T>>(a: T, b: T) -> T {
+                  a + b
+            }
 
 --------------------------------------------------------------------------------
