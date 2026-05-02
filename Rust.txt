@@ -4966,6 +4966,76 @@ Ex:
 
 
 
+---------- Inherent impl Blocks ------------------------------------------------
+
+* impl block that defines methods or associated functions directly on a type
+  itself, not through a trait.
+
+      impl TypeName {
+            ...
+      }
+
+
+* We can define multiple Inherent impl blocks for a type. Rust merges them
+  logically.
+
+
+* Associated methods and associated constants are allowed in Inherent impl
+  blocks. But associated types are not allowed.
+
+      struct User {
+            name: String,
+      }
+
+      impl User {
+            // An associated constant
+            const CONST_VALUE: i32 = 10;
+
+            // An associated methods (no self)
+            fn new(name: String) -> Self {
+                  Self { name }
+            }
+      }
+
+      impl User {
+            // A method (uses self)
+            fn greet(&self) {
+                  println!("Hello, {}", self.name);
+            }
+      }
+
+
+* Associated members are defined in type level. Therefore to access them we have
+  to use TypeName or Self.
+
+      Self     -> Inside the impl block
+
+      TypeName -> Outside of the impl block
+
+
+* To get access to the Calling instance of the implemented type inside a method,
+  we can use "self".
+
+      self      -> As an immutable value parameter
+      mut self  -> As a mutable value parameter
+      &self     -> As an immutable reference
+      &mut self -> As a mutable reference
+
+
+* you cannot define more than one method with same name even their signatures
+  are not same.
+
+
+* Define generic methods for non - generic types ----------------------------------------------------------------------------------
+
+
+* impl for Generic types ----------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Define type aliases -------------------------------------------------
 
 * We can use "type" keyword:
@@ -6072,5 +6142,58 @@ fn main() {
             fn add_two_numbers<T: Add<Output = T>>(a: T, b: T) -> T {
                   a + b
             }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Generics vs Associated Types ----------------------------------------
+
+* Use generics when a type/trait should work with many possible types, chosen at
+  usage time.
+
+
+* Ex:
+
+      trait Add<T> {
+            fn add(&self, rhs: T) -> Self;
+      }
+
+      #[derive(Debug)]
+      struct Point(i32);
+
+      impl Add<i32> for Point {
+            fn add(&self, rhs: i32) -> Self {
+                  Point(self.0 + rhs)
+            }
+      }
+
+      impl Add<Point> for Point {
+            fn add(&self, rhs: Point) -> Self {
+                  Point(self.0 + rhs.0)
+            }
+      }
+
+      fn main() {
+            let one = Point(10);
+            let two = Point(20);
+
+            let addition1 = one.add(10);
+            let addition2 = one.add(two);
+
+            // Usage time
+            println!("{:?}", addition1); // Point(20)
+            println!("{:?}", addition2); // Point(30)
+      }
+
+
+      * Same trait, multiple implementations for different types.
+
+
+
+
+* Use associated types when a trait has one natural output type per
+  implementation.
 
 --------------------------------------------------------------------------------
