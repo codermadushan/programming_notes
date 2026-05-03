@@ -3473,6 +3473,30 @@ fn main() {
     plain = Cheesesteak::Topping(String::from("Mushroom"));
 }
 
+
+
+
+---------- (Generics Short Note) ----------
+
+* Normal generics:
+
+      struct Container<T> {
+            value: T,
+      }
+
+
+* Generics with trait bounds:
+
+      struct Container<T>
+      where
+            T: Trait1 + Trait2 + ...,
+      {
+            value: T,
+      }
+
+      * Same as normal generics except we have to mention traits using "where"
+        clause before {}
+
 --------------------------------------------------------------------------------
 
 
@@ -5026,10 +5050,35 @@ Ex:
   are not same.
 
 
-* Define generic methods for non - generic types ----------------------------------------------------------------------------------
+* We can define generic methods for non generic types:
+
+      struct User {
+            name: String,
+      }
+
+      impl User {
+            // Normal generics
+            fn method1<T>(&self) {
+                  ...
+            }
+
+            // Generics with trait bound
+            fn method2<T>(&self)
+            where
+                  T: Trait,
+            {
+                  ...
+            }
+      }
 
 
 * impl for Generic types ----------------------------------------------------------------------------------------------------------
+
+      with Trait bounds
+
+      use where always
+
+      define methods for only for specific types
 
 --------------------------------------------------------------------------------
 
