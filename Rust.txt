@@ -4990,7 +4990,7 @@ Ex:
 
 
 
----------- Inherent impl Blocks ------------------------------------------------
+---------- Inherent Impl Blocks ------------------------------------------------
 
 * impl block that defines methods or associated functions directly on a type
   itself, not through a trait.
@@ -6221,6 +6221,54 @@ fn main() {
             fn add_two_numbers<T: Add<Output = T>>(a: T, b: T) -> T {
                   a + b
             }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Traits Short Note ---------------------------------------------------
+
+* Same as inherent impl blocks except we can enforce to implement following
+  items using the trait:
+
+      * Methods
+
+      * Associated methods
+      * Associated types
+      * Associated constants
+
+  or, can provide default implementations for them.
+
+
+
+
+* Inside the impl block:
+
+      Self -> Implemented type
+
+      self -> Calling instance of the implemented type
+
+
+
+
+* Traits as function parameters and return types (short form):
+
+      fn function(a: impl Trait1 + Trait2 + ...) -> impl Trait3 + Trait4 + ... {
+            ...
+      }
+
+
+
+
+* Trait Objects:
+
+      lkjlj
+
+
+
+
+* klj
 
 --------------------------------------------------------------------------------
 
