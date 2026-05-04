@@ -5065,20 +5065,50 @@ Ex:
             // Generics with trait bound
             fn method2<T>(&self)
             where
-                  T: Trait,
+                  T: Trait1 + Trait2,
             {
                   ...
             }
       }
 
 
-* impl for Generic types ----------------------------------------------------------------------------------------------------------
+---------- (Define methods for generic types) ----------
 
-      with Trait bounds
+* Define methods for all generic types:
 
-      use where always
+      struct Container<T> {
+            value: T,
+      }
 
-      define methods for only for specific types
+      impl<T> Container<T> {
+            fn new(value: T) -> Self {
+                  Self { value: value }
+            }
+      }
+
+
+* Define methods only for specific generic types:
+
+      struct Container<T> {
+            value: T,
+      }
+
+      impl<T> Container<T>
+      where
+            T: Copy,
+      {
+            /*
+                  Methods in this block are available only for instances of type
+                  Container<T> where T implements Copy trait.
+            */
+      }
+
+      impl Container<String> {
+            /*
+                  Methods in this block are available only for instances of type
+                  Container<String>.
+            */
+      }
 
 --------------------------------------------------------------------------------
 
