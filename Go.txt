@@ -6242,7 +6242,8 @@ type Context interface {
 
             If stopped == false:
 
-                <-timer.C is already accessed.
+                1. <-timer.C is already accessed. or,
+                2. timer.Stop() is already executed.
 
 
       * <-timer.C is always active (blocking) forever even after timer.Stop().
@@ -6309,7 +6310,8 @@ Ex: Scheduling a delayed operation:
 
           stopped == false:
 
-              Function is already triggered.
+              1. Function is already triggered. or,
+              2. timer.Stop() is already executed
 
 
 * Reset:
@@ -6327,8 +6329,6 @@ Ex: Scheduling a delayed operation:
 
                 1. Function is already triggered, or
                 2. timer.Stop() is already executed
-
-
 
 
 Ex:
@@ -6357,7 +6357,7 @@ Ex:
 
 ---------- (time.After) ----------
 
-* Returns a read-only channel.
+* Returns a read-only unbuffered channel.
 
 
 * The channel receives current time after the duration.
