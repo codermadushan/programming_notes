@@ -5093,6 +5093,13 @@ Ex:
             value: T,
       }
 
+      impl<T> Container<T> {
+            /*
+                  Methods in this block are available for all instances of
+                  Container type.
+            */
+      }
+
       impl<T> Container<T>
       where
             T: Copy,
@@ -6318,54 +6325,6 @@ fn main() {
 
 
 
----------- Traits Short Note ---------------------------------------------------
-
-* Same as inherent impl blocks except we can enforce to implement following
-  items using the trait:
-
-      * Methods
-
-      * Associated methods
-      * Associated types
-      * Associated constants
-
-  or, can provide default implementations for them.
-
-
-
-
-* Inside the impl block:
-
-      Self -> Implemented type
-
-      self -> Calling instance of the implemented type
-
-
-
-
-* Traits as function parameters and return types (short form):
-
-      fn function(a: impl Trait1 + Trait2 + ...) -> impl Trait3 + Trait4 + ... {
-            ...
-      }
-
-
-
-
-* Trait Objects:
-
-      lkjlj
-
-
-
-
-* klj
-
---------------------------------------------------------------------------------
-
-
-
-
 ---------- Generics vs Associated Types ----------------------------------------
 
 * Use generics when a type/trait should work with many possible types, chosen at
@@ -6413,5 +6372,46 @@ fn main() {
 
 * Use associated types when a trait has one natural output type per
   implementation.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Traits Short Note ---------------------------------------------------
+
+* Same as inherent impl blocks except we can enforce to implement following
+  items using the trait:
+
+      * Methods
+
+      * Associated methods
+      * Associated types
+      * Associated constants
+
+  or, can provide default implementations for them.
+
+
+
+
+* Inside the impl block:
+
+      Self -> Implemented type
+
+      self -> Calling instance of the implemented type
+
+
+
+
+* Traits as function parameters and return types (short form):
+
+      fn function(a: impl Trait1 + Trait2 + ...) -> impl Trait3 + Trait4 + ... {
+            ...
+      }
+
+
+
+
+* jlj
 
 --------------------------------------------------------------------------------
