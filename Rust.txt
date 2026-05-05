@@ -5410,26 +5410,117 @@ impl<T: Trait> Hotel<T> {
 
 ---------- (Trait Objects) ----------
 
-* A trait object is an instance of a type that implements a particular trait
-  whose methods will be accessed at runtime using a feature called dynamic
-  dispatch.
+* A trait object in Rust is a way to  use dynamic dispatch to work with values
+  whose concrete type is not known at compile time, but that all implement a
+  common trait.
 
 
-* Allowed only for references because of dynamic nature.
+* Static dispatch vs Dynamic dispatch:
+
+      * Generics (impl Trait / <T: Trait>):
+
+            * Static dispatch.
+            * Monomorphization (Compiler generates concrete versions per type).
+            * Calls are resolved at compile time.
+            * Usually faster (inlined, no indirection).
+
+            * Use generics when:
+
+                  * Types are known at compile time.
+                  * You don't need mixed types.
+
+            * Ex:
+
+                  fn speak<T>(animal: T)
+                  where
+                        T: Animal,
+                  {
+                        animal.speak(); // static dispatch
+                  }
 
 
-* For immutable references:
+      * Trait objects (dyn Trait):
 
-      let values: Vec<&dyn Trait> = vec![&value1, &value2, ...];
+            * Dynamic dispatch.
+            * Uses a vtable at runtime.
+            * One compiled version, works with any type implementing the trait.
+            * Slight overhead (Pointer + vtable lookup).
+
+            * Use trait objects when:
+
+                  * You need heterogeneous collections.
+                  * You need runtime polymorphism.
+                  * You want to hide concrete types.
+
+            * Ex:
+
+                  fn speak(animal: &dyn Animal) {
+                        animal.speak(); // dynamic dispath
+                  }
 
 
-* For mutable references:
+* Rust requires all values (except behind pointers) to have a statically known
+  size (Sized). Therefore to work with an unsized type, you have to wrap it in
+  a pointer.
 
-      let values: Vec<&mut dyn Trait> = vec![&mut value1, &mut value2, ...];
+      &dyn Animal     : borrowed
+      Box<dyn Animal> : owned (heap)
+      Rc<dyn Animal>  : shared ownership
+      Arc<dyn Animal> : thread-safe shared
 
 
-* In this case values vector can contains any references of objects which
-  implement "Trait" trait.
+* Ex 1 (Heterogeneous collections):
+
+      trait Animal {
+            fn eat(&self);
+      }
+
+      struct Dog;
+
+      impl Animal for Dog {
+            fn eat(&self) {
+                  println!("Dog is eating");
+            }
+      }
+
+      struct Cat;
+
+      impl Animal for Cat {
+            fn eat(&self) {
+                  println!("Cat is eating");
+            }
+      }
+
+      fn main() {
+            let dog = Dog;
+            let cat = Cat;
+
+            let animals: Vec<T> = vec![dog, cat]; // wrong: T must be one concrete type
+
+            let animals: Vec<&dyn Animal> = vec![&dog, &cat]; // correct
+      }
+
+
+* Ex 2 (Return different types conditionally):
+
+      // Wrong
+      fn get_animal(choice: bool) -> impl Animal {
+            if choice {
+                  Dog;
+            } else {
+                  Cat;
+            }
+      }
+
+
+      // Correct
+      fn get_animal(choice: bool) -> Box<dyn Animal> {
+            if choice {
+                  return Box::new(Dog);
+            }
+
+            return Box::new(Cat);
+      }
 
 
 

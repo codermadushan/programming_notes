@@ -6220,7 +6220,7 @@ type Context interface {
 
 * timer.C:
 
-      * It is a receive only unbuffered channel:
+      * It is a receive-only unbuffered channel:
 
             <-timer.C
 
