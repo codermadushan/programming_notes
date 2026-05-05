@@ -43,7 +43,18 @@ t---------- Fixes --------------------------------------------------------------
 
 
 
----------- Clean AndroidStudio -------------------------------------------------
+---------- Clean Disk Space -------------------------------------------------
+
+---------- (ArchLinux) ----------
+
+* To clean package caches:
+
+      sudo pacman -Scc
+
+
+
+
+---------- (Android Studio) ----------
 
 * Delete following folders to remove unused versions:
 
