@@ -6327,51 +6327,75 @@ fn main() {
 
 ---------- Generics vs Associated Types ----------------------------------------
 
-* Use generics when a type/trait should work with many possible types, chosen at
-  usage time.
+* Use generics when a trait can be implemented multiple times for the same
+  type (struct, enum, etc), with different type parameters.
 
 
-* Ex:
+Ex:
 
-      trait Add<T> {
-            fn add(&self, rhs: T) -> Self;
+      trait Converter<T> {
+            fn convert(&self) -> T;
       }
 
-      #[derive(Debug)]
-      struct Point(i32);
+      struct Number;
 
-      impl Add<i32> for Point {
-            fn add(&self, rhs: i32) -> Self {
-                  Point(self.0 + rhs)
+      impl Converter<i32> for Number {
+            fn convert(&self) -> i32 {
+                  42
             }
       }
 
-      impl Add<Point> for Point {
-            fn add(&self, rhs: Point) -> Self {
-                  Point(self.0 + rhs.0)
+      impl Converter<String> for Number {
+            fn convert(&self) -> String {
+                  "forty-two".to_string()
             }
       }
 
       fn main() {
-            let one = Point(10);
-            let two = Point(20);
+            let n = Number;
 
-            let addition1 = one.add(10);
-            let addition2 = one.add(two);
+            let value1: i32 = n.convert();
+            println!("{}", value1);
 
-            // Usage time
-            println!("{:?}", addition1); // Point(20)
-            println!("{:?}", addition2); // Point(30)
+            let value2: String = n.convert();
+            println!("{}", value2);
       }
 
 
-      * Same trait, multiple implementations for different types.
 
 
+* Use associated types when a trait logically has one output type per a
+  type (struct, enum, etc).
 
 
-* Use associated types when a trait has one natural output type per
-  implementation.
+Ex:
+
+      trait MyIterator {
+            type Item;
+
+            fn next(&mut self) -> Option<Self::Item>;
+      }
+
+      struct Counter;
+
+      impl MyIterator for Counter {
+            type Item = i32;
+
+            fn next(&mut self) -> Option<Self::Item> {
+                  Some(1)
+            }
+      }
+
+      fn main() {
+            let mut c = Counter;
+
+            println!("{:?}", c.next());
+            println!("{:?}", c.next());
+      }
+
+
+      * Iterators should yield a single consistent type. Associated types
+        enforce that.
 
 --------------------------------------------------------------------------------
 
@@ -6381,7 +6405,7 @@ fn main() {
 ---------- Traits Short Note ---------------------------------------------------
 
 * Same as inherent impl blocks except we can enforce to implement following
-  items using the trait:
+  items using a trait:
 
       * Methods
 
