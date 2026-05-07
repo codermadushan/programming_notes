@@ -6436,6 +6436,207 @@ Ex:
 
 
 
-* jlj
+---------- (Provide Implementations For Associated Types In Traits) ----------
+
+use std::ops::Add;
+
+struct Container<T> {
+      value: T,
+}
+
+impl<T> Add for Container<T>
+where
+    T: Add<Output = T>,
+{
+      type Output = Container<T>;
+
+      fn add(self, rhs: Self) -> Self::Output {
+            Container {
+                  value: self.value + rhs.value,
+            }
+      }
+}
+
+
+* Inside "add" function we perform addition operation for "T" type instances.
+
+
+* To perform addition operation, the type "T" must implements "Add" trait.
+
+
+* That's why we mention that "T: Add<Output = T>" inside the where clause.
+
+
+* The meaning of T: Add<Output = T> is:
+
+      * Type T implements Add trait.
+      * The return type of the operation is also T (Output = T).
+
+
+* Inside the impl block we define "add" method to define the behavior of
+  addition operation for Container<T> type instances.
+
+
+* Using "Output" type, we define the return type of addition operation when we
+  add 2 Container<T> types.
+
+
+
+
+---------- (How To Think About Trait Impl Blocks) ----------
+
+* Methods in this impl block are available for all Container types:
+
+      trait Trait {}
+
+      struct Container<T> {
+            value: T,
+      }
+
+      impl<T> Trait for Container<T> {
+            ...
+      }
+
+
+
+
+* Define methods for specific types:
+
+      * Methods in this impl block are available only for Container<String>
+        types:
+
+            trait Trait {}
+
+            struct Container<T> {
+                  value: T,
+            }
+
+            impl Trait for Container<String> {
+                  ...
+            }
+
+
+      * Methods in this impl block are available only for Container<T> types,
+        where T implements Display trait.
+
+            use std::fmt::Display;
+
+            trait Trait {}
+
+            struct Container<T> {
+                  value: T,
+            }
+
+            impl<T> Trait for Container<T>
+            where
+                  T: Display,
+            {
+                  ...
+            }
+
+
+* We can define generic traits to add some abstractions for items defined inside
+  the trait. But types of these generics do not limit methods for specific
+  implemented types.
+
+
+* Generic traits:
+
+      * We can implement a type with a generic trait with a Concrete type:
+
+            trait Trait<T> {
+                  fn test(&self, value: T) -> T;
+            }
+
+            struct Container<T> {
+                  value: T,
+            }
+
+            impl<T> Trait<String> for Container<T> {
+                  fn test(&self, value: String) -> String {
+                        value
+                  }
+            }
+
+
+      * We can implement a type with a generic trait with a generic type also:
+
+            trait Trait<T> {
+                  fn test(&self, value: T) -> T;
+            }
+
+            struct Container<T> {
+                  value: T,
+            }
+
+            impl<T, U> Trait<T> for Container<U> {
+                  fn test(&self, value: T) -> T {
+                        value
+                  }
+            }
+
+
+      * But we cannot implement a type with a generic trait with 2 different
+        types because it is a conflicting implementation:
+
+            trait Trait<T> {
+                  fn test(&self, value: T) -> T;
+            }
+
+            struct Container<T> {
+                  value: T,
+            }
+
+            impl<T, U> Trait<T> for Container<U> {
+                  fn test(&self, value: T) -> T {
+                        value
+                  }
+            }
+
+            impl<T> Trait<String> for Container<T> {
+                  fn test(&self, value: String) -> String {
+                        value
+                  }
+            }
+
+
+* Super Traits:
+
+      trait SuperTrait<T> {
+            ...
+      }
+
+      trait SubTrait: SuperTrait<X> {
+            ...
+      }
+
+
+      * If any type implements SubTrait, It must implements SuperTrait<X> also.
+
+
+      * With a concrete type:
+
+            trait SuperTrait<T> {}
+            trait SubTrait: SuperTrait<String> {}
+
+
+      * With a generic type:
+
+            trait SuperTrait<T> {}
+            trait SubTrait<T>: SuperTrait<T> {}
+
+
+      * With trait bounds:
+
+            use std::fmt::Display;
+
+            trait SuperTrait<T> {}
+
+            trait SubTrait<T>: SuperTrait<T>
+            where
+                  T: Display,
+            {
+                  ...
+            }
 
 --------------------------------------------------------------------------------
