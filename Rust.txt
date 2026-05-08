@@ -6730,3 +6730,90 @@ where
             }
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Lifetimes -----------------------------------------------------------
+
+* The lifetime of a value refers to how long it is valid within the code.
+
+
+---------- (Concrete lifetimes for values) ----------
+
+fn main() {
+      let a = 1; // lifetime of "a" starts here
+
+      {
+            let b = 2; // lifetime of "b" starts here
+      } // lifetime of "b" ends here
+
+      let c = String::from("John Cena"); // lifetime of "c" starts here
+
+      let d = c; // lifetime of "c" ends here because of move
+} // lifetime of "a" ends here
+
+
+
+
+---------- (Concrete lifetimes for references) ----------
+
+* A reference represents a memory address of another value.
+
+
+* Lifetime of a reference <= lifetime of the owner
+
+
+* The borrow checker is the part of the rust compiler that validates that all
+  borrows (references) are valid.
+
+
+* Non-Lexical lifetimes:
+
+      Lexical means lasting until the end of the block. Non-Lexical means not
+      lasting until the end of the block.
+
+
+* A reference has a non-lexical lifetime.
+
+
+* The borrow checker treats the end of a reference's lifetime as the last place
+  it is used.
+
+
+
+
+---------- (Invalid Lifetimes) ----------
+
+* Dangling references:
+
+      A reference to data that no longer exists.
+
+
+      Ex 1:
+            fn main() {
+                  let some_city = {
+                        let city = String::from("New-York");
+                        &city
+                  };
+
+                  println!("{}", some_city);
+            }
+
+
+      Ex 2:
+
+            fn main() {
+                  let city = String::from("Sydney");
+
+                  let some_city = &city;
+
+                  let new_city = city;
+
+                  println!("{}", some_city);
+            }
+
+            * The reason is some_city reference lives longer than the city (the
+              owner of the original value).
+
+--------------------------------------------------------------------------------
