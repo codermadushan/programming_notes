@@ -6535,6 +6535,8 @@ where
             }
 
 
+
+
 * We can define generic traits to add some abstractions for items defined inside
   the trait. But types of these generics do not limit methods for specific
   implemented types.
@@ -6598,6 +6600,94 @@ where
                         value
                   }
             }
+
+
+            * Because Trait<T> already covers Trait<String>.
+
+
+
+
+* method overloading:
+
+      * Inherent methods cannot be overloaded by parameter types:
+
+            struct Printer;
+
+            impl Printer {
+                  fn print(x: i32) {}
+            }
+
+            impl Printer {
+                  fn print(x: &str) {}
+            }
+
+            * This is illegal
+
+
+      * But traits are different. You can implement the same trait multiple
+        times for different type parameters.
+
+            trait Print<T> {
+                  fn print(value: T);
+            }
+
+            struct Printer;
+
+            impl Print<i32> for Printer {
+                  fn print(value: i32) {
+                        println!("integer: {}", value);
+                  }
+            }
+
+            impl Print<&str> for Printer {
+                  fn print(value: &str) {
+                        println!("string: {}", value);
+                  }
+            }
+
+            fn main() {
+                  Printer::print(10);
+                  Printer::print("Hello");
+            }
+
+
+            * Conceptually, this is closer to:
+
+                  impl Printer {
+                        fn print_i32(...) {}
+                        fn print_str(...) {}
+                  }
+
+
+      * But there is an important limitation: Conflicting Implementations.
+
+            trait Print<T> {
+                  fn print(value: T);
+            }
+
+            struct Printer;
+
+            impl<T> Print<T> for Printer {
+                  fn print(value: T) {
+                        println!("integer: {}", value);
+                  }
+            }
+
+            impl Print<i32> for Printer {
+                  fn print(value: i32) {
+                        println!("integer: {}", value);
+                  }
+            }
+
+
+            * This is not allowed.
+
+            * Because the generic implementation already includes i32, so Rust
+              sees overlap.
+
+            * This is called a coherence/conflicting implementation error.
+
+
 
 
 * Super Traits:
