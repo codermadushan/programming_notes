@@ -6816,4 +6816,30 @@ fn main() {
             * The reason is some_city reference lives longer than the city (the
               owner of the original value).
 
+
+
+
+* Functions cannot return references to owned values or parameters:
+
+      Ex 1:
+
+            fn create_reference() -> &String {
+                  let name = String::from("John Cena");
+                  &name
+            }
+
+
+      Ex 2:
+
+            fn create_reference(number: i32) -> &i32 {
+                  &number
+            }
+
+
+
+
+---------- (References As Function Parameters) ----------
+
+* jj
+
 --------------------------------------------------------------------------------
