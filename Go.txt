@@ -9614,6 +9614,8 @@ Ex:
 
 * Basic middleware structure:
 
+      * Get a handler (next), return a handler.
+
       func <middleware_name>(next http.Handler) http.Handler {
         return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -9853,6 +9855,9 @@ Ex:
 
 
 * Efficient middleware chaining:
+
+      * Get multiple middlewares, returns a middleware.
+
 
       type middleware func(http.Handler) http.Handler
 
