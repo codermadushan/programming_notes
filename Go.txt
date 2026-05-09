@@ -8473,6 +8473,16 @@ Ex:
 
                   Browser sets default: Lax
 
+
+* For general use:
+
+      * Name
+      * Value
+      * Path
+      * MaxAge
+      * Secure
+      * HttpOnly
+
 --------------------------------------------------------------------------------
 
 

@@ -851,6 +851,13 @@ Ex:
             * No ownership transfers.
 
 
+* What happens when we return a value from a function:
+
+      * If value is Copy: A new copy will be created.
+
+      * If value is Move: ownership will be transfered.
+
+
 
 
 ---------- (Short note) ----------
@@ -6739,6 +6746,11 @@ where
 * The lifetime of a value refers to how long it is valid within the code.
 
 
+* We can use "drop" function to end the lifetime of a value explicitly.
+
+
+
+
 ---------- (Concrete lifetimes for values) ----------
 
 fn main() {
@@ -6840,6 +6852,33 @@ fn main() {
 
 ---------- (References As Function Parameters) ----------
 
-* jj
+* In Rust, a returned reference must be tied to some data that already exists
+  outside the function call.
+
+
+* In practice, that usually means:
+
+      1. it comes from a parameter
+      2. or from "self"
+      3. or from 'static data
+
+
+* Ex:
+
+      fn select_first_two_elements(items: &[String]) -> &[String] {
+            &items[0..2]
+      }
+
+      fn main() {
+            let cities = vec![
+                  String::from("London"),
+                  String::from("New York"),
+                  String::from("Barcelona"),
+            ];
+            select_first_two_elements(&cities);
+
+            let coffees = [String::from("Latte"), String::from("Mocha")];
+            select_first_two_elements(&coffees);
+      }
 
 --------------------------------------------------------------------------------
