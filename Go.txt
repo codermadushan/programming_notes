@@ -10440,6 +10440,36 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
         fmt.Println(data)
       }
 
+
+
+
+---------- (Compare Hashed Passwords) ----------
+
+* Step 1: Read encoded string from database
+
+
+* Step 2: Hash given password with the data in encoded string
+
+
+* Step 3: Then compare hashes as follows:
+
+        if len(hashedPassword) != len(hash) {
+          ...
+        }
+
+        if subtle.ConstantTimeCompare(hashedPassword, hash) != 1 {
+          ...
+        }
+
+
+* if following parameters are same, argon2id always generates the same hash:
+
+      1. salt
+      2. key length
+      3. time
+      4. threads
+      5. memory
+
 --------------------------------------------------------------------------------
 
 
@@ -10516,5 +10546,14 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
       server.ListenAndServe()
     }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Authentication ------------------------------------------------------
+
+* jkj
 
 --------------------------------------------------------------------------------
