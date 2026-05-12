@@ -3008,6 +3008,22 @@ Ex:
 
                 length := float64(speed) * duration.Seconds()
 
+
+* To convert a string duration to time.Duration:
+
+      h  -> hours
+      m  -> minutes
+      s  -> seconds
+      ms -> milliseconds
+
+
+      * Allowed formats: 30h, 30ms, 1h30m, ... (spaces are not allowed)
+
+
+      * Conversion:
+
+            duration, err := time.ParseDuration("")
+
 --------------------------------------------------------------------------------
 
 
@@ -10644,6 +10660,59 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 ---------- (JWT) ----------
 
-* jkj
+* Generate a jwt token:
+
+      func SignToken(userID string) (string, error) {
+        jwtSecret, err := base64.StdEncoding.DecodeString(os.Getenv("JWT_SECRET"))
+        if err != nil {
+          return "", err
+        }
+
+        jwtExpiresIn, err := time.ParseDuration(os.Getenv("JWT_EXPIRES_IN"))
+        if err != nil {
+          return "", err
+        }
+
+        now := time.Now()
+
+        claims := jwt.MapClaims{
+          "sub": userID,
+          "iat": now.Unix(),
+          "exp": now.Add(jwtExpiresIn).Unix(),
+        }
+
+        token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+        return token.SignedString(jwtSecret)
+      }
+
+
+      * Recommended content in payload:
+
+            sub -> subject of the token (usually user ID)
+            iat -> issued at
+            exp -> expired at
+
+
+* Verify a jwt token:
+
+
+
+
+---------- (Logout) ----------
+
+* Step 1: Delete token from store (Redis/DB/Memory) if exists.
+
+
+* Step 2: Delete cookie on client:
+
+      http.SetCookie(w, &http.Cookie{
+        Name:     "Bearer",
+        Value:    "",
+        Path:     "/",
+        MaxAge:   -1,
+        HttpOnly: true,
+        Secure:   true,
+      })
 
 --------------------------------------------------------------------------------

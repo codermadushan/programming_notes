@@ -787,6 +787,11 @@ Ex: Remove all permission for a file for group and others and allow only read
 
             echo -n <encoded_string> | base64 -d
 
+
+* Generate given number of random bytes and convert them in to a base64 string:
+
+      openssl rand -base64 <number_of_bytes>
+
 --------------------------------------------------------------------------------
 
 
