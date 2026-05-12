@@ -8359,9 +8359,27 @@ Ex:
   that server.
 
 
-* Set a cookie:
+* A cookie is also a header.
+
+
+* Send cookies to client from the server:
 
       http.SetCookie(w, &http.Cookie{...})
+
+      * Cookies are sent to client with header: "set-cookie".
+      * Single response can contains multiple "set-cookie" headers.
+
+
+* Access cookies come from clients in the server:
+
+      cookie, err := r.Cookie(<cookie_name>)
+      if err != nil {
+        fmt.Println("cookie not found")
+      } else {
+        fmt.Println(cookie.Value)
+      }
+
+      * All cookies are come from the client with single header: "Cookie".
 
 
 * Properties:
@@ -10589,6 +10607,42 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 
 ---------- Authentication ------------------------------------------------------
+
+---------- (Cookies) ----------
+
+* A cookie is also a header.
+
+
+* Send cookies to client from the server:
+
+      http.SetCookie(w, &http.Cookie{
+        Name:     "Bearer",
+        Value:    "abc",
+        Path:     "/",
+        MaxAge:   10,
+        HttpOnly: true,
+        Secure:   true,
+      })
+
+      * Cookies are sent to client with header: "set-cookie".
+      * Single response can contain multiple "set-cookie" headers.
+
+
+* Access cookies come from clients in the server:
+
+      cookie, err := r.Cookie(<cookie_name>)
+      if err != nil {
+        fmt.Println("cookie not found")
+      } else {
+        fmt.Println(cookie.Value)
+      }
+
+      * All cookies are come from the client (browser) with single header: "Cookie".
+
+
+
+
+---------- (JWT) ----------
 
 * jkj
 
