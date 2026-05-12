@@ -6852,8 +6852,8 @@ fn main() {
 
 ---------- (References As Function Parameters) ----------
 
-* In Rust, a returned reference must be tied to some data that already exists
-  outside the function call.
+* In Rust, a returned reference of a function must be tied to some data that
+  already exists outside the function call.
 
 
 * In practice, that usually means:
@@ -6880,5 +6880,21 @@ fn main() {
             let coffees = [String::from("Latte"), String::from("Mocha")];
             select_first_two_elements(&coffees);
       }
+
+
+
+
+---------- (Generic Lifetimes) ----------
+
+* A concrete lifetime is the region of code that a value exists in the program
+  (the time it lives in its memory address).
+
+
+* A generic lifetime is more abstract. It is a hypothetical lifetime, a
+  non-specific lifetime, a future lifetime that can vary.
+
+
+* We can annotate generic lifetimes in our code. This enables functions that are
+  flexible enough to handle varying lifetimes.
 
 --------------------------------------------------------------------------------

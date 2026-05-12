@@ -9515,16 +9515,32 @@ Ex:
 
       * This malicious site executes following code in your browser:
 
-            fetch("https://bank.com/users")
+            fetch("https://bank.com/users", {
+              method: "PUT",
+              headers: {
+                "Authorization": "Bearer ..."
+              }
+            })
 
-      * Now cookies are automatically included by the browser and request is
-        authenticated.
+      * Now the browser sends preflight request with following informations:
 
-      * When the browser gets the response back, it checks
-        Access-Control-Allow-Origin header.
+            OPTIONS /users HTTP/1.1
+            Origin: https://evil.com
+            Access-Control-Request-Method: PUT
+            Access-Control-Request-Headers: Authorization
 
-      * If this header is not set or it does not contain https://evil.com,
-        browser blocks the response.
+
+            * Actual PUT request is not sent yet.
+            * No sensitive action yets.
+            * Browser is checking permission first.
+
+      * If following informations are included in server response, the browser
+        allows to make the actual request. If not browser blocks the actual
+        request.
+
+            * Access-Control-Allow-Origin: https://evil.com
+            * Access-Control-Allow-Methods: PUT
+            * Access-Control-Allow-Headers: Authorization
 
 
 * Sample CORS middleware:
@@ -9876,9 +9892,14 @@ Ex:
 
             middlewareChain := ChainMiddlewares(middleware1, middleware2)
 
+            mainMux := http.NewServeMux()
+
+            ...
+
             server := &http.Server{
               ...
-              Handler: middlewareChain(mux),
+
+              Handler: middlewareChain(mainMux),
             }
 
 --------------------------------------------------------------------------------
