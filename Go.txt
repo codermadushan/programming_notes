@@ -2523,7 +2523,7 @@ Ex:
 
 ---------- Errors --------------------------------------------------------------
 
-* In Go errors are also values (struct).
+* In Go errors are also values.
 
 
 Ex:
@@ -9097,24 +9097,40 @@ Ex:
 * Sample internal/config/config.go:
 
       type Config struct {
-        Port        string
-        DatabaseURL string
-        TLSCertFile string
-        TLSKeyFile  string
+        Port         string
+        LogFile      string
+        TLSCertFile  string
+        TLSKeyFile   string
+        DatabaseURL  string
+        JWTSecret    []byte
+        JWTExpiresIn time.Duration
       }
 
 
 
 
-* Sample internal/config/loader.go:
+* Sample internal/config/load.go:
 
-      func Load() *Config {
-        return &Config{
-          Port:        os.Getenv("PORT"),
-          DatabaseURL: os.Getenv("DATABASE_URL"),
-          TLSCertFile: os.Getenv("TLS_CERT_FILE"),
-          TLSKeyFile:  os.Getenv("TLS_KEY_FILE"),
+      func Load() (*Config, error) {
+        jwtSecret, err := base64.StdEncoding.DecodeString(os.Getenv("JWT_SECRET"))
+        if err != nil {
+          return nil, err
         }
+
+        jwtExpiresIn, err := time.ParseDuration(os.Getenv("JWT_EXPIRES_IN"))
+        if err != nil {
+          return nil, err
+        }
+
+        return &Config{
+          Port:         os.Getenv("PORT"),
+          LogFile:      os.Getenv("LOG_FILE"),
+          TLSCertFile:  os.Getenv("TLS_CERT_FILE"),
+          TLSKeyFile:   os.Getenv("TLS_KEY_FILE"),
+          DatabaseURL:  os.Getenv("DATABASE_URL"),
+          JWTSecret:    jwtSecret,
+          JWTExpiresIn: jwtExpiresIn,
+        }, nil
       }
 
 
@@ -9123,7 +9139,10 @@ Ex:
 * Sample cmd/api/server.go:
 
       func main() {
-        config := config.Load()
+        config, err := config.Load()
+        if err != nil {
+          log.Fatalln("Failed to load configs:", err)
+        }
 
         // Initialize the pool
         ctx := context.Background()
@@ -9143,19 +9162,25 @@ Ex:
         // users
         userRepository := users.NewUserRepository(pool)
         userService := users.NewUserService(userRepository)
-        userHandler := users.NewUserHandler(userService, logger)
+        usersHandler := users.NewUserHandler(userService, logger)
 
         mainMux := http.NewServeMux()
 
-        api.RegisterRoutes(mainMux, userHandler)
+        routes.RegisterRoutes(mainMux, usersHandler, ...)
 
         tlsConfig := &tls.Config{
           MinVersion: tls.VersionTLS12,
         }
 
+        middlewareChain := middlewares.Chain(
+          middlewares.Cors,
+          middlewares.Compression,
+          ...
+        )
+
         server := http.Server{
           Addr:      fmt.Sprintf(":%s", config.Port),
-          Handler:   mainMux,
+          Handler:   middlewareChain(mainMux),
           TLSConfig: tlsConfig,
         }
 
@@ -9909,6 +9934,9 @@ Ex:
       * Get multiple middlewares, returns a middleware.
 
 
+      * Place inside internal/api/middlewares.
+
+
       type middleware func(http.Handler) http.Handler
 
       func ChainMiddlewares(middlewares ...middleware) middleware {
@@ -10632,10 +10660,10 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 * Send cookies to client from the server:
 
       http.SetCookie(w, &http.Cookie{
-        Name:     "Bearer",
-        Value:    "abc",
+        Name:     "access_token",
+        Value:    token,
         Path:     "/",
-        MaxAge:   10,
+        MaxAge:   24 * 60 * 60,
         HttpOnly: true,
         Secure:   true,
       })
@@ -10646,7 +10674,7 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 * Access cookies come from clients in the server:
 
-      cookie, err := r.Cookie(<cookie_name>)
+      cookie, err := r.Cookie("access_token")
       if err != nil {
         fmt.Println("cookie not found")
       } else {
@@ -10660,32 +10688,24 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 ---------- (JWT) ----------
 
+* We usually generate the jwt inside the service layer of auth feature.
+
+
 * Generate a jwt token:
 
-      func SignToken(userID string) (string, error) {
-        jwtSecret, err := base64.StdEncoding.DecodeString(os.Getenv("JWT_SECRET"))
-        if err != nil {
-          return "", err
-        }
-
-        jwtExpiresIn, err := time.ParseDuration(os.Getenv("JWT_EXPIRES_IN"))
-        if err != nil {
-          return "", err
-        }
-
+      func SignToken(userID string, JWTSecret []byte, JWTExpiresIn time.Duration) (string, error) {
         now := time.Now()
 
         claims := jwt.MapClaims{
           "sub": userID,
           "iat": now.Unix(),
-          "exp": now.Add(jwtExpiresIn).Unix(),
+          "exp": now.Add(JWTExpiresIn).Unix(),
         }
 
         token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-        return token.SignedString(jwtSecret)
+        return token.SignedString(JWTSecret)
       }
-
 
       * Recommended content in payload:
 
@@ -10699,15 +10719,30 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ---------- (Logout) ----------
 
-* Step 1: Delete token from store (Redis/DB/Memory) if exists.
+* Step 1: Delete the token from store (Redis / DB / Memory) if exists.
 
 
 * Step 2: Delete cookie on client:
 
       http.SetCookie(w, &http.Cookie{
-        Name:     "Bearer",
+        Name:     "access_token",
         Value:    "",
         Path:     "/",
         MaxAge:   -1,
