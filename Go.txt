@@ -8190,6 +8190,68 @@ Ex:
 
 
 
+---------- Dependency Injection ------------------------------------------------
+
+* Inject dependencies to a function:
+
+      * Method 1:
+
+            func wrapperFunction(dep1 int, dep2 string) func(int, string) {
+              return func(param1 int, param2 string) {
+                fmt.Println(dep1, dep2)
+                fmt.Println(param1, param2)
+              }
+            }
+
+            func main() {
+              originalFunction := wrapperFunction(10, "Apple")
+              originalFunction(20, "Orange")
+            }
+
+
+            * Create a wrapper function to get dependencies as parameters and
+              return the original function from that wrapper function.
+
+
+
+
+      * Method 2:
+
+            type Function struct {
+              dep1 int
+              dep2 string
+            }
+
+            func (f *Function) originalFunction(param1 int, param2 string) {
+              fmt.Println(f.dep1, f.dep2)
+              fmt.Println(param1, param2)
+            }
+
+            func NewFunction(dep1 int, dep2 string) *Function {
+              return &Function{
+                dep1: dep1,
+                dep2: dep2,
+              }
+            }
+
+            func main() {
+              f := NewFunction(10, "Apple")
+              f.originalFunction(20, "Orange")
+            }
+
+
+            * Create a struct with fields as dependencies.
+
+            * Define the original function as a method of that struct.
+
+            * Create a new function with "New" prefix to create an instance of
+              the struct.
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- How Internet Works --------------------------------------------------
 
 * Internet:
@@ -10669,7 +10731,11 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
       })
 
       * Cookies are sent to client with header: "set-cookie".
+
       * Single response can contain multiple "set-cookie" headers.
+
+      * If your backend is used by mobile users, then send the token in the json
+        response also.
 
 
 * Access cookies come from clients in the server:
@@ -10682,6 +10748,10 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
       }
 
       * All cookies are come from the client (browser) with single header: "Cookie".
+
+      * To send the token from a mobile client, use "Authorization" header:
+
+            Authorization: Bearer <token>
 
 
 
