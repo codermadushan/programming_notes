@@ -10774,8 +10774,6 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
         return token.SignedString(JWTSecret)
       }
 
-      * Placed in internal/shared/auth/
-
       * We usually generate the jwt inside the service layer of auth feature.
 
       * Recommended content in payload:
@@ -10807,8 +10805,6 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
         return claims, nil
       }
-
-      * Placed in internal/shared/auth/
 
 
 
