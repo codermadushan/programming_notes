@@ -6886,6 +6886,15 @@ fn main() {
 
 ---------- (Generic Lifetimes) ----------
 
+* A generic is a placeholder for a future type.
+
+
+* Generics add flexibility by not hardcoding an exact type.
+
+
+* Code can use a variety of types in place of the generic.
+
+
 * A concrete lifetime is the region of code that a value exists in the program
   (the time it lives in its memory address).
 
@@ -6896,5 +6905,16 @@ fn main() {
 
 * We can annotate generic lifetimes in our code. This enables functions that are
   flexible enough to handle varying lifetimes.
+
+
+* A lifetime annotation is a name or label for a lifetime.
+
+
+* Lifetime annotations don't change the reference's lifetime. They don't effect
+  the logic in any way.
+
+
+* A lifetime annotation is a piece of metadata that we provide to the borrow
+  checker so that it can validate that references are valid.
 
 --------------------------------------------------------------------------------

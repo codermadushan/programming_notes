@@ -10758,9 +10758,6 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 ---------- (JWT) ----------
 
-* We usually generate the jwt inside the service layer of auth feature.
-
-
 * Generate a jwt token:
 
       func SignToken(userID string, JWTSecret []byte, JWTExpiresIn time.Duration) (string, error) {
@@ -10777,6 +10774,8 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
         return token.SignedString(JWTSecret)
       }
 
+      * We usually generate the jwt inside the service layer of auth feature.
+
       * Recommended content in payload:
 
             sub -> subject of the token (usually user ID)
@@ -10786,20 +10785,26 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 * Verify a jwt token:
 
+      func VerifyToken(tokenString string, JWTSecret []byte) (jwt.MapClaims, error) {
+        token, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
+          _, ok := t.Method.(*jwt.SigningMethodHMAC)
+          if !ok {
+            return nil, errors.New("unexpected signing method")
+          }
 
+          return JWTSecret, nil
+        })
+        if err != nil {
+          return nil, err
+        }
 
+        claims, ok := token.Claims.(jwt.MapClaims)
+        if !ok {
+          return nil, errors.New("invalid token")
+        }
 
-
-
-
-
-
-
-
-
-
-
-
+        return claims, nil
+      }
 
 
 
