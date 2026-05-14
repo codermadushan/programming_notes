@@ -10725,7 +10725,7 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
         Name:     "access_token",
         Value:    token,
         Path:     "/",
-        MaxAge:   24 * 60 * 60,
+        MaxAge:   int(h.JWTExpiresIn.Seconds()),
         HttpOnly: true,
         Secure:   true,
       })
@@ -10774,6 +10774,8 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
         return token.SignedString(JWTSecret)
       }
 
+      * Placed in internal/shared/auth/
+
       * We usually generate the jwt inside the service layer of auth feature.
 
       * Recommended content in payload:
@@ -10799,12 +10801,14 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
         }
 
         claims, ok := token.Claims.(jwt.MapClaims)
-        if !ok {
+        if !ok || !token.Valid {
           return nil, errors.New("invalid token")
         }
 
         return claims, nil
       }
+
+      * Placed in internal/shared/auth/
 
 
 
