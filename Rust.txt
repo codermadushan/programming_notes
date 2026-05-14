@@ -6746,7 +6746,10 @@ where
 * The lifetime of a value refers to how long it is valid within the code.
 
 
-* We can use "drop" function to end the lifetime of a value explicitly.
+* We can use "drop" function to end the lifetime of a owned value explicitly. It
+  does not work for references.
+
+      drop(<owned_value>);
 
 
 
@@ -6792,60 +6795,63 @@ fn main() {
 * The borrow checker treats the end of a reference's lifetime as the last place
   it is used.
 
+      fn main() {
+            let mut data = vec!['a', 'b', 'c', 'd', 'e'];
+
+            let slice = &mut data[0..=2];
+            println!("{:?}", slice); // the lifetime of the "slice" reference ends here
+
+            data.push('f');
+            data.push('g');
+            data.push('h');
+            println!("{:?}", data);
+      }
 
 
+* Some of invalid lifetimes:
 
----------- (Invalid Lifetimes) ----------
+      * Dangling references:
 
-* Dangling references:
-
-      A reference to data that no longer exists.
-
-
-      Ex 1:
-            fn main() {
-                  let some_city = {
-                        let city = String::from("New-York");
-                        &city
-                  };
-
-                  println!("{}", some_city);
-            }
+            * A reference to data that no longer exists.
 
 
-      Ex 2:
+            Ex 1:
+                  fn main() {
+                        let some_city = {
+                              let city = String::from("New-York");
+                              &city
+                        };
 
-            fn main() {
-                  let city = String::from("Sydney");
-
-                  let some_city = &city;
-
-                  let new_city = city;
-
-                  println!("{}", some_city);
-            }
-
-            * The reason is some_city reference lives longer than the city (the
-              owner of the original value).
+                        println!("{}", some_city);
+                  }
 
 
+            Ex 2:
+
+                  fn main() {
+                        let city = String::from("Sydney");
+
+                        let some_city = &city;
+
+                        let new_city = city;
+
+                        println!("{}", some_city);
+                  }
 
 
-* Functions cannot return references to owned values or parameters:
+            Ex 3:
 
-      Ex 1:
-
-            fn create_reference() -> &String {
-                  let name = String::from("John Cena");
-                  &name
-            }
+                  fn create_reference() -> &String {
+                        let name = String::from("John Cena");
+                        &name
+                  }
 
 
-      Ex 2:
+            Ex 4:
 
-            fn create_reference(number: i32) -> &i32 {
-                  &number
-            }
+                  fn create_reference(number: i32) -> &i32 {
+                        &number
+                  }
 
 
 
@@ -6916,5 +6922,72 @@ fn main() {
 
 * A lifetime annotation is a piece of metadata that we provide to the borrow
   checker so that it can validate that references are valid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+* Lifetime elision:
+
+      * Lifetime elision is Rust's rule system for automatically inserting
+        lifetimes when they are obvious.
+
+
+      * Rule 1: Each input reference gets its own lifetime
+
+            fn foo(a: &str, b: &str) -----> fn foo<`a, `b>(a: &`a str, b: &`b str)
+
+
+      * Rule 2: If there is exactly one input lifetime, output gets that lifetime
+
+            fn foo(a: &str) -> &str -----> fn foo<`a>(a: &`a str) -> &`a str
+
+
+      * Rule 3: Methods use "self" lifetime for output
+
+            impl Person {
+                  fn name(&self) -> &str {
+                        &self.name
+                  }
+            }
+
+            becomes,
+
+            fn name<`a>(&`a self) -> &`a str
+
+
+      * Now look at this:
+
+            fn longest(a: &str, b: &str) -> &str {
+                  if a.len() > b.len() {
+                        a
+                  } else {
+                        b
+                  }
+            }
+
+            * Apply rule 1: fn longest<`a, `b>(a: &`a str, b: &`b str) -> &str {...}
+
+            * Now rust tries output rules:
+
+                  * Multiple input lifetimes exist
+                  * No "self"
+
+                  * So rust cannot infer output lifetime.
+                  * Lifetime elision fails.
+                  * You must write:
+
+                        fn longest<`a>(a: &`a str, b: &`a str) -> &`a str {...}
 
 --------------------------------------------------------------------------------
