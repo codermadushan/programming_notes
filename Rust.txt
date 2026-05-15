@@ -6924,18 +6924,22 @@ fn main() {
   checker so that it can validate that references are valid.
 
 
+* Consider the following function:
 
+      fn get_reference<'a>(item: &'a str) -> &'a str {
+            item
+      }
 
+      * 'a is a future lifetime that we don't know yet.
 
+      * By using 'a, we declare that the returned reference cannot outlive the
+        owner of the data which "item" is referenced to.
 
+      * To remember:
 
+            1. Using 'a we mark that where the returned reference comes from.
 
-
-
-
-
-
-
+            2. Returned reference cannot outlive the owner of reference parameter
 
 
 * Lifetime elision:
@@ -6946,12 +6950,12 @@ fn main() {
 
       * Rule 1: Each input reference gets its own lifetime
 
-            fn foo(a: &str, b: &str) -----> fn foo<`a, `b>(a: &`a str, b: &`b str)
+            fn foo(a: &str, b: &str) -----> fn foo<'a, 'b>(a: &'a str, b: &'b str)
 
 
       * Rule 2: If there is exactly one input lifetime, output gets that lifetime
 
-            fn foo(a: &str) -> &str -----> fn foo<`a>(a: &`a str) -> &`a str
+            fn foo(a: &str) -> &str -----> fn foo<'a>(a: &'a str) -> &'a str
 
 
       * Rule 3: Methods use "self" lifetime for output
@@ -6964,7 +6968,7 @@ fn main() {
 
             becomes,
 
-            fn name<`a>(&`a self) -> &`a str
+            fn name<'a>(&'a self) -> &'a str
 
 
       * Now look at this:
@@ -6977,7 +6981,7 @@ fn main() {
                   }
             }
 
-            * Apply rule 1: fn longest<`a, `b>(a: &`a str, b: &`b str) -> &str {...}
+            * Apply rule 1: fn longest<'a, 'b>(a: &'a str, b: &'b str) -> &str {...}
 
             * Now rust tries output rules:
 
@@ -6988,6 +6992,6 @@ fn main() {
                   * Lifetime elision fails.
                   * You must write:
 
-                        fn longest<`a>(a: &`a str, b: &`a str) -> &`a str {...}
+                        fn longest<'a>(a: &'a str, b: &'a str) -> &'a str {...}
 
 --------------------------------------------------------------------------------
