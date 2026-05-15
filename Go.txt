@@ -9009,6 +9009,14 @@ Ex:
                 postgres.go
 
     /pkg
+        /token
+        /hash
+        /validate
+        /response
+        /types
+            strings.go
+            functions.go
+            enums.go
 
     /certs
 
@@ -10774,6 +10782,8 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
         return token.SignedString(JWTSecret)
       }
 
+      * Place insdie pkg/token/
+
       * We usually generate the jwt inside the service layer of auth feature.
 
       * Recommended content in payload:
@@ -10806,6 +10816,7 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
         return claims, nil
       }
 
+      * Place insdie pkg/token/
 
       * Authentication middleware:
 
