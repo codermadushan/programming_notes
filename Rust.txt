@@ -6935,11 +6935,17 @@ fn main() {
       * By using 'a, we declare that the returned reference cannot outlive the
         owner of the data which "item" is referenced to.
 
+      * We should mark all references that are related to the returned reference
+        with same lifetime annotation.
+
       * To remember:
 
             1. Using 'a we mark that where the returned reference comes from.
 
             2. Returned reference cannot outlive the owner of reference parameter
+
+
+* You can think a lifetime as the block of the reference owner.
 
 
 * Lifetime elision:
@@ -6960,15 +6966,13 @@ fn main() {
 
       * Rule 3: Methods use "self" lifetime for output
 
-            impl Person {
-                  fn name(&self) -> &str {
-                        &self.name
-                  }
+            fn name(&self, ...) -> &str {
+                  &self.name
             }
 
             becomes,
 
-            fn name<'a>(&'a self) -> &'a str
+            fn name<'a>(&'a self, ...) -> &'a str
 
 
       * Now look at this:
@@ -6993,5 +6997,134 @@ fn main() {
                   * You must write:
 
                         fn longest<'a>(a: &'a str, b: &'a str) -> &'a str {...}
+
+
+
+
+---------- (Lifetimes In Structs) ----------
+
+* The following code won't compile:
+
+      struct TrainSystem {
+            name: &str, // missing lifetime specifier
+      }
+
+
+* We can fix it as follows:
+
+      struct TrainSystem<'a> {
+            name: &'a str,
+      }
+
+      * To remember:
+
+            * A struct cannot outlive the shortest lifetime of the references it
+              contains.
+
+
+* Multiple references:
+
+      #[derive(Debug)]
+      struct TravelPlan<'a> {
+            from: &'a str,
+            to: &'a str,
+      }
+
+      fn main() {
+            let from = String::from("Portland");
+
+            let plan = {
+                  let to = String::from("Bangor");
+
+                  let travel_plan = TravelPlan {
+                        from: &from,
+                        to: &to, // 'to' does not live long enough
+                  };
+
+                  travel_plan.from
+            };
+
+            println!("{}", plan);
+      }
+
+      * Even this code is valid, rust does not compile it.
+
+      * Rust must choose one lifetime 'a for the whole struct.
+
+      * But:
+
+            &from -> has a long lifetime
+            &to   -> has a short lifetime
+
+      * Since both fields use the same 'a, Rust chooses the shorter one.
+
+      * So now both fields are treated as valid only until the end of the inner
+        block.
+
+      * Then this line returns the reference out of the block:
+
+            travel_plan.from
+
+      * Now "plan" would contain a reference rust considers expired.
+
+      * We can fix this as follows:
+
+            #[derive(Debug)]
+            struct TravelPlan<'a, 'b> {
+                  from: &'a str,
+                  to: &'b str,
+            }
+
+            fn main() {
+                  let from = String::from("Portland");
+
+                  let plan = {
+                        let to = String::from("Bangor");
+
+                        let travel_plan = TravelPlan {
+                              from: &from,
+                              to: &to,
+                        };
+
+                        travel_plan.from
+                  };
+
+                  println!("{}", plan);
+            }
+
+
+
+
+---------- (Lifetimes Short Note) ----------
+
+* We use lowercase alphabets for lifetime annotations:
+
+      'a, 'b, 'c, 'd, ...
+
+
+* Lifetime annotations:
+
+      Immutable reference: &'a <data_type>
+
+      Mutable reference  : &'a mut <data_type>
+
+
+* How to think about a lifetime:
+
+      param: &'a <data_type>
+
+      * 'a is the code block of the owner of provided reference to the param.
+
+
+* Lifetimes with functions:
+
+      1. Using lifetime annotations we mark that where the returned reference comes from.
+
+      2. Returned reference cannot outlive the owner of each same lifetime references.
+
+
+* Lifetimes with structs:
+
+      * A struct cannot outlive the owner of the reference which has the shortest lifetime.
 
 --------------------------------------------------------------------------------
