@@ -7120,11 +7120,11 @@ fn main() {
 
       1. Using lifetime annotations we mark that where the returned reference comes from.
 
-      2. Returned reference cannot outlive the owner of each same lifetime references.
+      2. Returned reference cannot outlive each same lifetime reference owners.
 
 
 * Lifetimes with structs:
 
-      * A struct cannot outlive the owner of the reference which has the shortest lifetime.
+      1. A struct cannot outlive the shortest lifetime reference owner.
 
 --------------------------------------------------------------------------------
