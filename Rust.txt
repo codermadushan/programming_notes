@@ -7093,6 +7093,29 @@ fn main() {
             }
 
 
+* Static lifetimes:
+
+      * The referenced data is valid for the entire duration of the program.
+
+
+      * For string slices:
+
+            fn say_hello() -> &'static str {
+                  "hello"
+            }
+
+            let a: &str = "hello"  ---internally--->  let a: &'static str = "hello"
+
+
+      * For constants:
+
+            const CONSTANT_VALUE: i32 = 10;
+
+            fn get_value() -> &'static i32 {
+                  &CONSTANT_VALUE
+            }
+
+
 
 
 ---------- (Lifetimes Short Note) ----------
@@ -7126,5 +7149,8 @@ fn main() {
 * Lifetimes with structs:
 
       1. A struct cannot outlive the shortest lifetime reference owner.
+
+      2. Some individual reference fields are still valid if their owners are
+         valid even the struct becomes invalid.
 
 --------------------------------------------------------------------------------
