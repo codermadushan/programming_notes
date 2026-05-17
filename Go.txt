@@ -10037,12 +10037,12 @@ Ex:
       func ExcludeRoutes(middleware types.Middleware, excludedRoutes ...string) types.Middleware {
         return func(next http.Handler) http.Handler {
           return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-            requestedRoute := r.URL.Path
+            currentRoute := r.URL.Path
 
             excluded := false
 
             for _, path := range excludedRoutes {
-              if strings.HasPrefix(requestedRoute, path) {
+              if strings.HasPrefix(currentRoute, path) {
                 excluded = true
                 break
               }
@@ -10062,12 +10062,12 @@ Ex:
 
 * General order of middlewares:
 
-      1. Cors
-      2. RateLimiter
-      3. ResponseTime
-      4. SecurityHeaders
+      1. SecurityHeaders
+      2. Cors
+      3. RateLimiter
+      4. HPP
       5. Compression
-      6. HPP
+      6. Auth
 
 
 

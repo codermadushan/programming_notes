@@ -7154,3 +7154,27 @@ fn main() {
          valid even the struct becomes invalid.
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Closures ------------------------------------------------------------
+
+* A closure is a function without a name. It is sometimes called an anonymous
+  function or a lambda function.
+
+
+* Inner functions do not have access to their containing environment.
+
+      fn main() {
+            let multiplier = 5;
+
+            fn multiply_by(value: i32) -> i32 {
+                  value * multiplier
+            }
+      }
+
+
+* To fix these kind of issues, we have to use closures.
+
+--------------------------------------------------------------------------------
