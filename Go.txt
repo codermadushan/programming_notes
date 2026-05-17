@@ -9759,6 +9759,16 @@ Ex:
 
 * Basic middleware structure:
 
+      * A middleware is also a handler (http.HandlerFunc type function).
+
+      * But we need to call the next middleware inside a middleware.
+
+      * Therefore we have to wrap the middleware handler with a wrapper function
+        to get the next middleware handler as a dependency.
+
+      * Therefore the wrapper function expects a handler and it's return type is
+        also a handler.
+
       * Get a handler (next), return a handler.
 
       func <middleware_name>(next http.Handler) http.Handler {
