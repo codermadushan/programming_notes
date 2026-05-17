@@ -9761,10 +9761,10 @@ Ex:
 
       * A middleware is also a handler (http.HandlerFunc type function).
 
-      * But we need to call the next middleware inside a middleware.
+      * But we need to call to the ServeHTTP method of next handler inside a middleware.
 
       * Therefore we have to wrap the middleware handler with a wrapper function
-        to get the next middleware handler as a dependency.
+        to get the next handler as a dependency.
 
       * Therefore the wrapper function expects a handler and it's return type is
         also a handler.
@@ -9992,6 +9992,69 @@ Ex:
         go rl.reset()
 
         return rl
+      }
+
+
+
+
+* Auth middleware:
+
+      func Auth(JWTSecret []byte, JWTExpiresIn time.Duration) Middleware {
+        return func(next http.Handler) http.Handler {
+          return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+            accessToken, err := r.Cookie("access_token")
+            if err != nil {
+              http.Error(w, "Token not found", http.StatusUnauthorized)
+              return
+            }
+
+            claims, err := utils.VerifyToken(accessToken.Value, JWTSecret)
+            if err != nil {
+              http.Error(w, "Invalid token", http.StatusUnauthorized)
+              return
+            }
+
+            userID, err := claims.GetSubject()
+            if err != nil {
+              http.Error(w, "user id not found", http.StatusUnauthorized)
+              return
+            }
+
+            ctx := context.WithValue(r.Context(), ContextKey("userID"), userID)
+
+            next.ServeHTTP(w, r.WithContext(ctx))
+          })
+        }
+      }
+
+
+
+
+* ExcludeRoutes middleware:
+
+      * To exclude a given middleware to given routes.
+
+      func ExcludeRoutes(middleware types.Middleware, excludedRoutes ...string) types.Middleware {
+        return func(next http.Handler) http.Handler {
+          return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+            requestedRoute := r.URL.Path
+
+            excluded := false
+
+            for _, path := range excludedRoutes {
+              if strings.HasPrefix(requestedRoute, path) {
+                excluded = true
+                break
+              }
+            }
+
+            if excluded {
+              next.ServeHTTP(w, r)
+            } else {
+              middleware(next).ServeHTTP(w, r)
+            }
+          })
+        }
       }
 
 
