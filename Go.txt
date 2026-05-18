@@ -10034,6 +10034,8 @@ Ex:
 
       * To exclude a given middleware to given routes.
 
+      * Do not use "/" at the end for excludedRoutes arguments.
+
       func ExcludeRoutes(middleware types.Middleware, excludedRoutes ...string) types.Middleware {
         return func(next http.Handler) http.Handler {
           return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -10939,5 +10941,88 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
         HttpOnly: true,
         Secure:   true,
       })
+
+
+
+
+---------- (Forgot Password) ----------
+
+* Get the email from the client.
+
+
+* Get the user data related to that email from the database.
+
+      Following 2 fields must be contained in user data:
+
+          1. reset_token_hash       -> TEXT
+          2. reset_token_expires_at -> TIMESTAMPZ
+
+
+* Process:
+
+      {
+        resetToken := make([]byte, 32)
+
+        _, err := rand.Read(resetToken)
+        if err != nil {
+          log.Fatalln(err)
+        }
+
+        resetTokenHash := sha256.Sum256(resetToken)
+        resetTokenHashString := base64.URLEncoding.EncodeToString(resetTokenHash[:])
+
+        /*
+
+          query := `
+            UPDATE users
+            SET
+              reset_token_hash = $1,
+              reset_token_expires_in = $2
+            WHERE id = $3
+          `
+
+          _,err := pool.Exec(ctx, query, resetTokenHashString, time.Now().Add(config.ResetTokenExpiresIn), userID)
+        */
+
+        resetTokenString := base64.URLEncoding.EncodeToString(resetToken) // Send this token to the client
+
+        // Send resetTokenString to the client's email
+      }
+
+
+
+
+---------- (Reset Password) ----------
+
+* jklj
+
+
+* Process:
+
+      {
+        resetTokenString := "oLVVLbTc9zymfg5kbWLnbfp40IpN6D4EL4pHI2vv4rE="
+        resetTokenHashStringDB := "hpQhXcBxX0YoSSkt_NffNAYuheBIlwIkQ6Ql4V8J8UE="
+
+        resetToken, err := base64.URLEncoding.DecodeString(resetTokenString)
+        if err != nil {
+          log.Fatalln(err)
+        }
+
+        resetTokenHash := sha256.Sum256(resetToken)
+
+        resetTokenHashDB, err := base64.URLEncoding.DecodeString(resetTokenHashStringDB)
+        if err != nil {
+          log.Fatalln(err)
+        }
+
+        if subtle.ConstantTimeCompare(resetTokenHash[:], resetTokenHashDB) == 1 {
+          fmt.Println("A valid user")
+        } else {
+          fmt.Println("Not a valid user")
+        }
+      }
+
+
+      ---- this is wrong, need to add expiration time comparison ---------------
 
 --------------------------------------------------------------------------------
