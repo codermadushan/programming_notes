@@ -10137,7 +10137,7 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 
 
----------- pgxpool -------------------------------------------------------------
+---------- PGX Pool -------------------------------------------------------------
 
 * Installation:
 
@@ -10977,7 +10977,7 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
             UPDATE users
             SET
               reset_token_hash = $1,
-              reset_token_expires_in = $2
+              reset_token_expires_at = $2
             WHERE id = $3
           `
 
@@ -10994,35 +10994,39 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 ---------- (Reset Password) ----------
 
-* jklj
-
-
 * Process:
 
       {
+        // Inputs
         resetTokenString := "oLVVLbTc9zymfg5kbWLnbfp40IpN6D4EL4pHI2vv4rE="
-        resetTokenHashStringDB := "hpQhXcBxX0YoSSkt_NffNAYuheBIlwIkQ6Ql4V8J8UE="
+        newPassword := "newPassword"
+        confirmPassword := "newPassword"
+
+        err := validator.Password(newPassword)
+        if err != nil {
+          log.Fatalln("Not a valid password")
+        }
+
+        if newPassword != confirmPassword {
+          log.Fatalln("Password mismatch")
+        }
 
         resetToken, err := base64.URLEncoding.DecodeString(resetTokenString)
         if err != nil {
-          log.Fatalln(err)
+          log.Fatalln("Invalid reset token")
         }
 
         resetTokenHash := sha256.Sum256(resetToken)
+        resetTokenHashString := base64.URLEncoding.EncodeToString(resetTokenHash[:])
 
-        resetTokenHashDB, err := base64.URLEncoding.DecodeString(resetTokenHashStringDB)
-        if err != nil {
-          log.Fatalln(err)
-        }
+        // Now search in database for this resetTokenHashString and expiration
+        query := `
+        SELECT id, email
+        FROM users
+        WHERE reset_token_hash = $1 AND reset_token_expires_at > $2
+        `
 
-        if subtle.ConstantTimeCompare(resetTokenHash[:], resetTokenHashDB) == 1 {
-          fmt.Println("A valid user")
-        } else {
-          fmt.Println("Not a valid user")
-        }
+        // If exists, the hash the new password and store in database
       }
-
-
-      ---- this is wrong, need to add expiration time comparison ---------------
 
 --------------------------------------------------------------------------------
