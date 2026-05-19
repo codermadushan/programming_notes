@@ -10068,8 +10068,9 @@ Ex:
       2. Cors
       3. RateLimiter
       4. HPP
-      5. Compression
-      6. Auth
+      5. Auth
+      6. XSS
+      7. Compression
 
 
 
@@ -11028,5 +11029,36 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
         // If exists, the hash the new password and store in database
       }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Pagination ----------------------------------------------------------
+
+* Url: ...?page=1&limit=25
+
+
+* Access limit and page query params from url:
+
+      * Place inside internal/features/<feature>/helpers.go
+
+      func getPaginationInfo(queryParams url.Values) (int, int) {
+        limit, err := strconv.Atoi(queryParams.Get("limit"))
+        if err != nil {
+          limit = 25
+        }
+
+        page, err := strconv.Atoi(queryParams.Get("page"))
+        if err != nil {
+          page = 1
+        }
+
+        return limit, page
+      }
+
+
+* query := `... LIMIT = $1 OFFSET = $2`
 
 --------------------------------------------------------------------------------
