@@ -7175,6 +7175,8 @@ fn main() {
       }
 
 
+
+
 * To fix these kind of issues, we have to use closures.
 
       fn main() {
@@ -7184,6 +7186,8 @@ fn main() {
 
             println!("{}", multiply_by(2));
       }
+
+
 
 
 * Closure shortcuts:
@@ -7201,5 +7205,128 @@ fn main() {
       * If the closure body has only one line, no need {}:
 
             let multiply_by = |value: i32| value * multiplier;
+
+
+      * Data types of the parameters are not required, they will be inferred
+        based on first usage:
+
+            fn main() {
+                  let multiplier = 10;
+
+                  let multiply_by = |value| value * multiplier;
+
+                  println!("{}", multiply_by(2 as u8));
+            }
+
+
+
+
+* Trait hierarchy:
+
+      * FnOnce <--- FnMut <--- Fn
+
+
+      * FnOnce:
+
+            * Closure captures values by move (transferring ownership).
+
+            * Closure will be invoked once.
+
+
+      * FnMut:
+
+            * Captures values by mutable reference.
+
+            * Closure can be invoked multiple times.
+
+
+      * Fn:
+
+            * Captures values by immutable reference (read-only) or doesn't
+              capture anything at all.
+
+            * Closure can be invoked multiple times.
+
+
+
+
+* Closures that capture immutable references:
+
+      fn main() {
+            let numbers = vec![1, 2, 3, 4, 5];
+
+            let print_numbers = || println!("{:?}", numbers); // In this case "numbers" is an immutable reference
+
+            print_numbers();
+            print_numbers();
+            print_numbers();
+
+            println!("{:?}", numbers); // "numbers" is still valid
+      }
+
+
+
+
+* Closures that capture mutable references:
+
+      fn main() {
+            let mut numbers = vec![1, 2, 3, 4, 5];
+
+            let mut add_number = || numbers.push(100);
+
+            println!("{:?}", numbers); // error: it is already borrowed as immutable
+
+            add_number();
+            add_number();
+
+            println!("{:?}", numbers); // valid
+      }
+
+      * We have do define the "add_number" closure as a mutable variable because
+        of it contains a mutable reference.
+
+      * You can think that we have to define the "add_number" closure as a
+        mutable variable because when we push values to the "numbers", the
+        memory need to be re-allocated for "numbers" and therefore "add_number"
+        also need to be re-built.
+
+
+
+
+* Closures with ownership:
+
+      fn main() {
+            let number = 10;
+
+            let capture_number = || number; // impl Fn() -> i32
+
+            let a = capture_number();
+            let b = capture_number();
+
+            println!("{}", a);
+            println!("{}", b);
+
+            println!("{}", number);
+      }
+
+      * In this case, because of the type of "number" implements the Copy trait,
+        "capture_number" closure always returns a new copy of "number".
+
+
+      fn main() {
+            let name = String::from("John");
+
+            let capture_string = || name; // impl FnOnce() -> String
+
+            let owner = capture_string(); // correct
+            let name1 = capture_string(); // error: use of moved value (cannot run more than once)
+
+            println!("{}", name); // error: borrow of moved value
+      }
+
+      * In this case the owner of "name" is transferred to the caller of
+        "capture_string" closure.
+
+      * Therefore we can call it only once.
 
 --------------------------------------------------------------------------------

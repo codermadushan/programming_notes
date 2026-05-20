@@ -11093,3 +11093,27 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
       }
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Protocol Buffers ----------------------------------------------------
+
+* protocol Buffers (often called protobuf) are a language and platform-neutral
+  way of serializing structured data, developed by Google.
+
+
+* Think of them as a more efficient alternative to formats like JSON or XML for
+  sending or storing data.
+
+
+* Protobuf encodes data into a compact binary format, which makes it:
+
+      * Faster to serialize/deserialize
+      * Smaller in size
+      * Strongly typed (strict structure)
+
+
+* jkj
+
+--------------------------------------------------------------------------------
