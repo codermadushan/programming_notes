@@ -10020,7 +10020,10 @@ Ex:
               return
             }
 
+            // Check the user exists in the database and active
+
             ctx := context.WithValue(r.Context(), ContextKey("userID"), userID)
+            ctx = context.WithValue(ctx, types.ContextKey("role"), userRole)
 
             next.ServeHTTP(w, r.WithContext(ctx))
           })
@@ -11060,5 +11063,33 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 
 * query := `... LIMIT = $1 OFFSET = $2`
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Authorization -------------------------------------------------------
+
+* Define a field called "role" in users table in the database to handle
+  authorizations.
+
+
+* You can access the role as follows:
+
+      r.Context().Value("role")
+
+      * It comes from Auth middleware.
+
+
+* Define following function to check the authorization:
+
+      func isAuthorizedUser(userRole string, allowedRoles ...string) error {
+        if slices.Contains(allowedRoles, userRole) {
+          return nil
+        }
+
+        return errors.New("not authorized")
+      }
 
 --------------------------------------------------------------------------------

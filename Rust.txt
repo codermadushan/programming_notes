@@ -7170,11 +7170,36 @@ fn main() {
             let multiplier = 5;
 
             fn multiply_by(value: i32) -> i32 {
-                  value * multiplier
+                  value * multiplier // error
             }
       }
 
 
 * To fix these kind of issues, we have to use closures.
+
+      fn main() {
+            let multiplier = 10;
+
+            let multiply_by = |value: i32| -> i32 { value * multiplier };
+
+            println!("{}", multiply_by(2));
+      }
+
+
+* Closure shortcuts:
+
+      * Consider this closure:
+
+            let multiply_by = |value: i32| -> i32 { value * multiplier };
+
+
+      * Return type is inferred automatically for closures:
+
+            let multiply_by = |value: i32| { value * multiplier };
+
+
+      * If the closure body has only one line, no need {}:
+
+            let multiply_by = |value: i32| value * multiplier;
 
 --------------------------------------------------------------------------------
