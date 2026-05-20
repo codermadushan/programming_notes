@@ -11114,6 +11114,65 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
       * Strongly typed (strict structure)
 
 
-* jkj
+
+
+---------- (Structure Of A .proto File) ----------
+
+syntax = "proto<version>";
+
+package <service_name>.<version>;
+
+message <MessageName> {
+  <field_type> <field_name> = <field_number>;
+  ...
+}
+
+
+* syntax:
+
+      Ex: syntax = "proto3";
+
+      * Defines protobuf version.
+      * Today almost everything uses: proto3
+
+
+* package:
+
+      Ex: package auth.v1;
+
+      * Namespace for generated code.
+
+
+* message:
+
+      Ex:
+        message User {
+          string id = 1;
+          string name = 2;
+        }
+
+      * Messages are like structs/classes.
+
+      * Nested messages are allowed.
+
+      * Message fields:
+
+            * By default all fields are optional.
+
+            * Field numbers:
+
+                  * Use positive integers.
+                  * Avoid zero.
+                  * Unique within a message.
+                  * Small numbers: For frequently used fields.
+                  * Large numbers: For less common fields.
+
+            * Basic field types:
+
+                  int32, int64, uint32, uint64
+                  float, double
+                  bool
+                  string
+                  bytes
 
 --------------------------------------------------------------------------------
