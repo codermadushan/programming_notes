@@ -11161,6 +11161,8 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
       * To import another .proto file.
 
+      * Do not start with ./
+
       * When we import a .proto file, we specify path of the file which we want
         to import related to the directory passed via "protoc -I".
 
@@ -11327,7 +11329,7 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
       package user;
 
-      option go_package = "gen/user;userpb";
+      option go_package = "./user;userpb";
 
       message User {
         string id = 1;
@@ -11350,7 +11352,7 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
       package auth;
 
-      option go_package = "gen/auth;authpb";
+      option go_package = "./auth;authpb";
 
       import "user/user.proto";
 
@@ -11376,7 +11378,7 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 * Before compile, we need to add following line to the .proto file. It
   defines the path & package of generated .pb.go file.
 
-      option go_package = "<relative_path_to_go_out_or_go-grpc_out>;<package_name>";
+      option go_package = "./<relative_path_to_go_out_or_go-grpc_out>;<package_name>"; // Always start with ./
 
 
 * Command:
