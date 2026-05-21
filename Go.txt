@@ -9411,6 +9411,37 @@ Ex:
 
             mux.Handle(<pattern>, http.HandlerFunc(<func>))
 
+
+
+
+---------- (Common Response Codes) ----------
+
+* Success:
+
+      1. Ok         (200)
+      2. Created    (201)
+      3. No Content (204)
+
+
+* Client error:
+
+      1. Bad Request            (400)
+      2. Unauthorized           (401)
+      3. Forbidden              (403)
+      4. Not Found              (404)
+      5. Method Not Allowed     (405)
+      6. Conflict               (409)
+      7. Gone                   (410)
+      8. Payload Too Large      (413)
+      9. Unsupported Media Type (415)
+      10. Unprocessable Entity  (422)
+      11. Too Many Request      (429)
+
+
+* Server error:
+
+      1. Internal Server Error (500)
+
 --------------------------------------------------------------------------------
 
 
@@ -11383,7 +11414,7 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 * Command:
 
-      protoc -I=proto --go_out=. --go-grpc_out=. proto/auth/*.proto proto/user/*.proto
+      protoc -I=proto --go_out=gen --go-grpc_out=gen proto/auth/*.proto proto/user/*.proto
 
 
       * -I:
