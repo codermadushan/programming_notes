@@ -11118,14 +11118,27 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 ---------- (Structure Of A .proto File) ----------
 
-syntax = "proto<version>";
+* Structure:
 
-package <service_name>.<version>;
+      syntax = "proto<version>";
 
-message <MessageName> {
-  <field_type> <field_name> = <field_number>;
-  ...
-}
+      package <service_name>.<version>;
+
+      import "<another_proto_file>";
+
+      enum <EnumName> {
+        <enum_value> = <value_number>;
+        ...
+      }
+
+      message <MessageName> {
+        <field_type> <field_name> = <field_number>;
+        ...
+      }
+
+      service <ServiceName> {
+        rpc <MethodName> (<request_message>) returns (<response_message>);
+      }
 
 
 * syntax:
@@ -11133,6 +11146,7 @@ message <MessageName> {
       Ex: syntax = "proto3";
 
       * Defines protobuf version.
+
       * Today almost everything uses: proto3
 
 
@@ -11141,6 +11155,39 @@ message <MessageName> {
       Ex: package auth.v1;
 
       * Namespace for generated code.
+
+
+* import:
+
+      * To import another .proto file.
+
+      * When we import a .proto file, we specify path of the file which we want
+        to import related to the directory passed via "protoc -I".
+
+      * We use package names of imported files to access their members.
+
+      * You still must import a .proto file even if it uses the same package, as
+        long as you want to reference types defined in another file.
+
+
+* enum:
+
+      Ex:
+        enum Status {
+          STATUS_UNSPECIFIED = 0;
+          STATUS_PENDING = 1;
+          STATUS_RUNNING = 2;
+          STATUS_COMPLETED = 3;
+        }
+
+      * In protobuf enums, values can technically start from any integer, but in
+        proto3 the first enum value should be 0.
+
+            * In proto3, enum fields default to 0.
+
+            * If the sender does not set the field, protobuf uses the enum value with number 0.
+
+            * So 0 should represent something like UNSPECIFIED, UNKNOWN, or DEFAULT.
 
 
 * message:
@@ -11169,10 +11216,197 @@ message <MessageName> {
 
             * Basic field types:
 
-                  int32, int64, uint32, uint64
-                  float, double
-                  bool
-                  string
-                  bytes
+                  int32, int64, uint32, uint64 (default value: 0)
+                  float, double                (default value: 0.0)
+                  bool                         (default value: false)
+                  string                       (default value: "")
+                  bytes                        (default value: empty bytes / [])
+                  <enum>                       (default value: default first enum value (usually 0))
+
+            * Special keywords:
+
+                  1. repeated:
+
+                      * To define a list.
+
+                      * Ex:
+                            repeated string emails = 2;
+
+                  2. reserved:
+
+                      * To prevent reuse of field numbers and field names.
+
+                      * Ex:
+                            message User {
+                              reserved 2, 3, 10 to 20;
+                              reserved "email", "username";
+                            }
+
+
+* service:
+
+      * To define an RPC interface.
+
+      * It describes methods.
+
+
+
+
+---------- (Serialization / Deserialization) ----------
+
+* Serialization:
+
+      Converting structured data into protobuf binary format.
+
+
+* Deserialization:
+
+      Converting protobuf binary back into objects/structs.
+
+
+
+
+---------- (RPC) ----------
+
+* RPC: Remote Procedure Call
+
+      It’s a way for one program to ask another program (often on a different
+      computer) to run a function or method as if it were local.
+
+
+* How RPC works:
+
+      1. Client calls a function
+      2. RPC system packages the request
+      3. Request is sent over the network
+      4. Server runs the function
+      5. Result is returned to client
+
+
+* Common RPC technologies:
+
+      * gRPC     - high-performance RPC framework by Google
+      * JSON-RPC - lightweight RPC using JSON
+      * XML-RPC  - older XML-based RPC
+      * SOAP     - enterprise protocol using XML
+
+
+
+
+---------- (Installing Protoc Compiler) ----------
+
+* Installation     : sudo pacman -S protobuf --needed
+* Check the version: protoc --version
+
+
+* Install go specific packages:
+
+      1. go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+      2. go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+      (Can find from official gRPC website)
+
+
+
+
+---------- (Organize .proto files) ----------
+
+* Folder structure:
+
+      /proto
+          /auth
+              auth.proto
+
+          /users
+              user.proto
+
+
+* user.proto:
+
+      syntax = "proto3";
+
+      package user;
+
+      option go_package = "gen/user;userpb";
+
+      message User {
+        string id = 1;
+        string name = 2;
+        string email = 3;
+      }
+
+      message GetUserRequest {
+        string id = 1;
+      }
+
+      service UserService {
+        rpc GetUser(GetUserRequest) returns (User);
+      }
+
+
+* auth.proto:
+
+      syntax = "proto3";
+
+      package auth;
+
+      option go_package = "gen/auth;authpb";
+
+      import "user/user.proto";
+
+      message LoginRequest {
+        string email = 1;
+        string password = 2;
+      }
+
+      message LoginResponse {
+        string token = 1;
+        user.User user = 2;
+      }
+
+      service AuthService {
+        rpc Login(LoginRequest) returns (LoginResponse);
+      }
+
+
+
+
+---------- (Compile .proto Files) ----------
+
+* Before compile, we need to add following line to the .proto file. It
+  defines the path & package of generated .pb.go file.
+
+      option go_package = "<relative_path_to_go_out_or_go-grpc_out>;<package_name>";
+
+
+* Command:
+
+      protoc -I=proto --go_out=. --go-grpc_out=. proto/auth/*.proto proto/user/*.proto
+
+
+      * -I:
+
+          * It tells the compiler where to look for .proto files when resolving
+            imports.
+
+
+      * --go_out=
+
+          * Generated file format: <file_name>.pb.go
+
+          * It includes:
+                1. Struct definitions for messages.
+                2. Serialization / Deserialization.
+                3. Protobuf helpers.
+
+
+      * --go-grpc_out=
+
+          * Generated file format: <file_name>_grpc.pb.go
+
+          * It includes:
+                1. gRPC server interface.
+                2. gRPC client stubs.
+                3. Service registration helpers.
 
 --------------------------------------------------------------------------------
