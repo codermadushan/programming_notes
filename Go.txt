@@ -11128,6 +11128,65 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 
 
+---------- HTTP Polling --------------------------------------------------------
+
+* HTTP Polling is a technique where a client repeatedly sends HTTP requests to a
+  server at fixed intervals to check for new data or updates.
+
+
+* Types of polling:
+
+      1. Short polling:
+
+          Client requests at intervals regardless of server state.
+
+
+      2. Long polling:
+
+          Client requests, and server holds the request open until new data
+          arrives or timeout happens.
+
+
+Ex (Long Polling):
+
+      func main() {
+        mux := http.NewServeMux()
+
+        mux.HandleFunc("GET /long-polling", func(w http.ResponseWriter, r *http.Request) {
+          ch := make(chan string)
+
+          go func() {
+            time.Sleep(4 * time.Second)
+
+            ch <- "data"
+          }()
+
+          select {
+          case value := <-ch:
+            w.WriteHeader(http.StatusOK)
+            fmt.Fprint(w, value)
+
+          case <-time.After(5 * time.Second):
+            w.WriteHeader(http.StatusRequestTimeout)
+          }
+        })
+
+        port := "3000"
+
+        server := http.Server{
+          Addr:    fmt.Sprintf(":%s", port),
+          Handler: mux,
+        }
+
+        fmt.Println("Server is running on port:", port)
+        server.ListenAndServe()
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Protocol Buffers ----------------------------------------------------
 
 * protocol Buffers (often called protobuf) are a language and platform-neutral
