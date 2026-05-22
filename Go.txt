@@ -11187,6 +11187,8 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
       * Namespace for generated code.
 
+      * Define relatively to the -I option.
+
 
 * import:
 
@@ -11376,7 +11378,7 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
       package users.v1;
 
-      option go_package = "./user/v1;userpb";
+      option go_package = "mytestapp/gen/users/v1;userspb";
 
       message User {
         string id = 1;
@@ -11395,9 +11397,9 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
       package auth.v1;
 
-      option go_package = "./auth/v1;authpb";
-
       import "users/v1/users.proto";
+
+      option go_package = "mytestapp/gen/auth/v1;authpb";
 
       message LoginRequest {
         string email = 1;
@@ -11421,12 +11423,12 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 * Before compile, we need to add following line to the .proto file. It
   defines the path & package of generated .pb.go file.
 
-      option go_package = "./<relative_path_to_go_out_or_go-grpc_out>;<package_name>"; // Always start with ./
+      option go_package = "<your_go_module_name>/<generated_file_relative_path>;<package_name>pb";
 
 
 * Command:
 
-      protoc -I=proto --go_out=gen --go-grpc_out=gen proto/*/v1/*.proto
+      protoc -I=proto --go_out=gen --go_opt=paths=source_relative --go-grpc_out=gen --go-grpc_opt=paths=source_relative proto/*/v1/*.proto
 
 
       * -I:
@@ -11453,5 +11455,11 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
                 1. gRPC server interface.
                 2. gRPC client stubs.
                 3. Service registration helpers.
+
+
+      * <...>_opt=paths=source_relative
+
+          * Generate output files using the same relative path as the input
+            .proto file.
 
 --------------------------------------------------------------------------------
