@@ -853,6 +853,8 @@ Ex:
 
 * What happens when we return a value from a function:
 
+      * If value is a reference: The reference itself is copied. Not the underline data.
+
       * If value is Copy: A new copy will be created.
 
       * If value is Move: ownership will be transfered.
@@ -874,7 +876,7 @@ Ex:
 
       1. If immutable: Both immutable and mutable references are allowed.
       2. If mutable: Only mutable references are allowed.
-      3. No new copies.
+      3. The reference itself is copied.
       4. No ownership transfers.
 
 --------------------------------------------------------------------------------
