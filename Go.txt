@@ -11522,3 +11522,53 @@ Ex (Long Polling):
             .proto file.
 
 --------------------------------------------------------------------------------
+
+
+
+
+----------gRPC -----------------------------------------------------------------
+
+* A high-performance framework for communication between applications and
+  services, especially in distributed systems and microservices.
+
+
+
+
+---------- (Stubs) ----------
+
+* A stub is a piece of code used to stand in for some other programming
+  functionality.
+
+
+* In programming, a stub can be used for various purposes:
+
+      * Testing
+      * Prototyping
+      * Remote Procedure Calls (RPC)
+
+
+* Stub in RPC context:
+
+      * Client-Side Stub
+
+      * Server-Side Stub
+
+
+
+
+---------- (Services) ----------
+
+* Collection of remote methods that can be called by clients.
+
+
+* Essential for structuring applications in a modular way.
+
+
+* Structure:
+
+      service <ServiceName> {
+        rpc <MethodName>(<MethodName>Request) returns (<MethodName>Response);
+        ...
+      }
+
+--------------------------------------------------------------------------------

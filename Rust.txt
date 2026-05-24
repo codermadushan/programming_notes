@@ -7331,4 +7331,54 @@ fn main() {
 
       * Therefore we can call it only once.
 
+
+
+
+---------- (move Keyword) ----------
+
+* Capture variables by value instead of by reference.
+
+
+* If the type of the variable:
+
+      * Implements Copy    : A new copy will be created
+
+      * Not implements Copy: Ownership will be transferred
+
+
+* Without move:
+
+      fn main() {
+            let s = String::from("hello");
+            let i = 10;
+
+            let print = || {
+                  println!("{}", s); // captured as an immutable reference
+                  println!("{}", i); // captured as an immutable reference
+            };
+
+            print();
+
+            println!("{}", s); // correct
+            println!("{}", i); // correct
+      }
+
+
+* With move:
+
+      fn main() {
+            let s = String::from("hello");
+            let i = 10;
+
+            let print = move || {
+                  println!("{}", s); // Ownership is transferred
+                  println!("{}", i); // A new copy of "i"
+            };
+
+            print();
+
+            println!("{}", s); // borrow of moved value
+            println!("{}", i); // correct
+      }
+
 --------------------------------------------------------------------------------
