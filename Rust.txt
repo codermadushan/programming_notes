@@ -3487,11 +3487,32 @@ fn main() {
 
 ---------- (Generics Short Note) ----------
 
+* How to think about generics:
+
+      struct Container<T> {
+            value: T,
+      }
+
+      impl<T> Container<T> {
+            //
+      }
+
+      * In this case "T" in Container struct and "T" in impl block are not same.
+
+      * "T" in the struct like a type placeholder.
+
+      * "T" in the impl block is a provided concrete type for that placeholder.
+
+
+
+
 * Normal generics:
 
       struct Container<T> {
             value: T,
       }
+
+
 
 
 * Generics with trait bounds:
@@ -7145,7 +7166,7 @@ fn main() {
 
       1. Using lifetime annotations we mark that where the returned reference comes from.
 
-      2. Returned reference cannot outlive each same lifetime reference owners.
+      2. Returned reference cannot outlive shortest same lifetime reference owner.
 
 
 * Lifetimes with structs:
@@ -7379,6 +7400,232 @@ fn main() {
 
             println!("{}", s); // borrow of moved value
             println!("{}", i); // correct
+      }
+
+
+
+
+---------- (unwrap_or_else Method) ----------
+
+* unwrap_or_else is a method on Option<T> and Result<T, E> that lets you lazily
+  compute a fallback value only when needed.
+
+
+* With an Option enum variant:
+
+      fn main() {
+            let option = Some(10);
+
+            let value = option.unwrap_or_else(|| 20);
+
+            println!("{}", value);
+      }
+
+
+* With a Result enum variant:
+
+      * The closure receives associated value of the error.
+
+      fn main() {
+            let result: Result<i32, &str> = Err("failed");
+
+            let value = result.unwrap_or_else(|err| {
+                  println!("error: {}", err);
+                  0
+            });
+
+            println!("{}", value);
+      }
+
+
+
+
+---------- (<String>.retain Method) ----------
+
+* It iterates through each character in the string:
+
+      * If the closure returns true  -> character is kept
+      * If the closure returns false -> character is removed
+
+
+* Ex:
+
+      fn main() {
+            let mut s = String::from("hello123world");
+
+            s.retain(|c| c.is_alphabetic());
+
+            println!("{}", s); // helloworld
+      }
+
+
+* Why <String>.retain(...) expects a FnMut closure?:
+
+      fn main() {
+            let mut s = String::from("hello123world");
+
+            let mut deleted_characters = String::new();
+
+            s.retain(|c| {
+                  let is_alphabetic = c.is_alphabetic();
+
+                  if !is_alphabetic {
+                        deleted_characters.push(c);
+                  }
+
+                  is_alphabetic
+            });
+
+            println!("{}", s); // helloworld
+            println!("{}", deleted_characters); // 123
+      }
+
+
+
+
+---------- (Defining A Method That Accepts A Closure) ----------
+
+* FnOnce:
+
+      #[derive(Debug)]
+      struct Vault {
+            password: String,
+            treasure: String,
+      }
+
+      impl Vault {
+            fn unlock<F>(self, procedure: F) -> Option<String>
+            where
+                  F: FnOnce() -> String,
+            {
+                  let password = procedure();
+
+                  if password == self.password {
+                        Some(self.treasure)
+                  } else {
+                        None
+                  }
+            }
+      }
+
+      fn main() {
+            let vault = Vault {
+                  password: String::from("topsecret"),
+                  treasure: String::from("Gold"),
+            };
+
+            let option = vault.unlock(|| String::from("topsecret"));
+
+            println!("{:?}", option);
+      }
+
+
+
+
+* FnMut:
+
+      * A FnMut parameter must be marked as mutable.
+
+
+      #[derive(Debug)]
+      struct Location {
+            name: String,
+            treasures: u32,
+      }
+
+      struct Map<'a> {
+            locations: &'a [Location],
+      }
+
+      impl<'a> Map<'a> {
+            fn explore<F>(&self, mut action: F)
+            where
+                  F: FnMut(&Location),
+            {
+                  let final_index = self.locations.len() - 1;
+                  let mut current_index = 0;
+
+                  while current_index <= final_index {
+                        let current_location = &self.locations[current_index];
+                        action(current_location);
+
+                        current_index += 1;
+                  }
+            }
+      }
+
+      fn main() {
+            let locations = [
+                  Location {
+                        name: String::from("Sri Lanka"),
+                        treasures: 5,
+                  },
+                  Location {
+                        name: String::from("India"),
+                        treasures: 3,
+                  },
+                  Location {
+                        name: String::from("Australia"),
+                        treasures: 6,
+                  },
+            ];
+
+            let map = Map {
+                  locations: &locations,
+            };
+
+            let mut total_treasures = 0;
+
+            map.explore(|location| {
+                  total_treasures += location.treasures;
+            });
+
+            println!("Total treasures collected: {}", total_treasures);
+      }
+
+
+
+
+* Fn:
+
+      fn execute_thrice<F>(procedure: F)
+      where
+            F: Fn(),
+      {
+            procedure();
+            procedure();
+            procedure();
+      }
+
+      fn main() {
+            let closure = || println!("I'm the boss");
+
+            execute_thrice(closure);
+      }
+
+
+
+
+* We can pass a normal function also as a closure:
+
+      * A normal function is considered as Fn().
+
+
+      fn execute_thrice<F>(procedure: F)
+      where
+            F: Fn(),
+      {
+            procedure();
+            procedure();
+            procedure();
+      }
+
+      fn bake_cake() {
+            println!("bake cake");
+      }
+
+      fn main() {
+            execute_thrice(bake_cake);
       }
 
 --------------------------------------------------------------------------------
