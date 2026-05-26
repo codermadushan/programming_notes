@@ -7778,4 +7778,158 @@ pub trait IntoIterator {
 
       * Therefore we can call the "next" method on "IntoIter" struct instances.
 
+
+
+
+---------- (Exhausting The Iterator) ----------
+
+* An iterator is exhausted when it has no more items to produce.
+
+
+* Ex:
+
+      fn main() {
+            let numbers = vec![4, 8, 15, 16, 23, 42];
+
+            let mut numbers_iterator = numbers.into_iter();
+
+            println!("{:?}", numbers_iterator.next()); // 4
+            println!("{:?}", numbers_iterator.next()); // 8
+            println!("{:?}", numbers_iterator.next()); // 15
+            println!("{:?}", numbers_iterator.next()); // 16
+            println!("{:?}", numbers_iterator.next()); // 23
+            println!("{:?}", numbers_iterator.next()); // 42
+            println!("{:?}", numbers_iterator.next()); // None
+      }
+
+
+
+
+---------- (The for Loop With Iterators) ----------
+
+for <item> in <collection> {
+      ...
+}
+
+
+* When we pass a collection to the for loop, it calls "into_iter" method of that
+  collection internally and iterate over each item by calling the "next" method.
+
+
+* The for loop consumes the collection:
+
+      fn main() {
+            let numbers = vec![4, 8, 15, 16, 23, 42];
+
+            for number in numbers {
+                  println!("{}", number);
+            }
+
+            println!("{:?}", numbers); // borrow of moved value
+      }
+
+
+
+
+---------- (Why A Iterator Can Be Mutable) ----------
+
+* Ex 1:
+
+      fn main() {
+            let my_vector = vec![1, 2, 3];
+
+            let my_iterator = my_vector.into_iter();
+
+            println!("{:?}", my_iterator.next()); // cannot borrow 'my_iterator' as mutable
+      }
+
+
+      * In this case we must define "my_iterator" as mutable. Because the "next"
+        method expects "&mut self".
+
+
+
+
+* Ex 2:
+
+      fn main() {
+            let my_vector = vec![1, 2, 3];
+
+            let my_iterator = my_vector.into_iter();
+
+            for number in my_iterator {
+                  println!("Current number: {}", number);
+            }
+      }
+
+
+      * In this case no need to define "my_iterator" as mutable. Because the for
+        loop acquires the ownership of "my_iterator" as mutable internally.
+
+
+      * Internally:
+
+            let my_vector = vec![1, 2, 3];
+            let my_iterator = my_vector.into_iter();
+
+            let mut for_loop_iterator = my_iterator; // ownership is transferred
+
+
+
+
+---------- (iter Method) ----------
+
+* The "iter" method will create an iterator that yields immutable references to
+  the collection's elements.
+
+
+* It does not consume the collection.
+
+
+* Ex:
+
+      fn main() {
+            let my_vector = vec![1, 2, 3];
+
+            for number in my_vector.iter() {
+                  println!("Current number: {}", number);
+            }
+
+            println!("{:?}", my_vector); // Still valid
+      }
+
+
+* Shortcut:
+
+      for <item> in <collection>.iter() ---> for <item> in &<collection>
+
+
+
+
+---------- (iter_mut Method) ----------
+
+* The "iter_mut" method will create an iterator that yields mutable references
+  to the collection's elements.
+
+
+* It does not consume the collection.
+
+
+* Ex:
+
+      fn main() {
+            let mut numbers = [1, 2, 3];
+
+            for number in &mut numbers {
+                  *number += 10;
+            }
+
+            println!("{:?}", numbers);
+      }
+
+
+* Shortcut:
+
+      for <item> in <collection>.iter_mut() ---> for <item> in &mut <collection>
+
 --------------------------------------------------------------------------------
