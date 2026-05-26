@@ -7932,4 +7932,71 @@ for <item> in <collection> {
 
       for <item> in <collection>.iter_mut() ---> for <item> in &mut <collection>
 
+
+
+
+---------- (HashMap Iteration) ----------
+
+fn main() {
+      let mut todos = HashMap::new();
+
+      todos.insert("Pick up groceries", false);
+      todos.insert("Study Rust", true);
+      todos.insert("Sleep", false);
+
+      // iter()
+      for (k, v) in &todos {
+            println!("{}: {}", k, v);
+      }
+      println!("{:?}", todos); // correct
+
+      // iter_mut()
+      for (k, v) in &mut todos {
+            println!("{}: {}", k, v);
+      }
+      println!("{:?}", todos); // correct
+
+      // into_iter()
+      for (k, v) in todos {
+            println!("{}: {}", k, v);
+      }
+
+      println!("{:?}", todos); // borrow of moved value
+}
+
+
+
+
+---------- (String Iteration) ----------
+
+* The "chars" method returns an iterator of the Unicode characters:
+
+      for c in <String>.chars() {
+            println!("Current value: {}", c);
+      }
+
+
+      * To get number of characters:
+
+            <String>.chars().count()
+
+
+
+
+* The "bytes" method returns an iterator of the raw bytes:
+
+      for c in <String>.bytes() {
+            println!("Current value: {}", c);
+      }
+
+
+      * To get number of bytes:
+
+            <String>.bytes().len()
+
+
+
+
+* They do not consume the string.
+
 --------------------------------------------------------------------------------
