@@ -7629,3 +7629,153 @@ fn main() {
       }
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Iterators -----------------------------------------------------------
+
+* Iterate:
+
+      repeating a set of instructions multiple times until a certain
+      condition is met.
+
+
+
+
+---------- (loop) ----------
+
+* The "loop" keyword continually executes a block until we force termination
+  with the "break" keyword.
+
+
+* Ex:
+
+      fn main() {
+            let numbers = vec![4, 8, 15, 16, 23, 42];
+
+            let mut current_index = 0;
+            let final_index = numbers.len() - 1;
+
+            loop {
+                  if current_index > final_index {
+                        break;
+                  }
+
+                  let current_value = numbers[current_index];
+                  println!("Current value: {}", current_value);
+
+                  current_index += 1;
+            }
+      }
+
+
+
+
+---------- (while) ----------
+
+* Ex:
+
+      fn main() {
+            let numbers = vec![4, 8, 15, 16, 23, 42];
+
+            let mut current_index = 0;
+            let final_index = numbers.len() - 1;
+
+            while current_index <= final_index {
+                  let current_value = numbers[current_index];
+                  println!("Current value: {}", current_value);
+
+                  current_index += 1;
+            }
+      }
+
+
+
+
+---------- (for) ----------
+
+* Ex:
+
+      fn main() {
+            let numbers = vec![4, 8, 15, 16, 23, 42];
+
+            for number in numbers {
+                  println!("Current number: {}", number);
+            }
+      }
+
+
+
+
+---------- (Iterator Trait) ----------
+
+pub trait Iterator {
+      type Item;
+
+
+      // required method
+      fn next(&mut self) -> Option<Self::Item>;
+
+
+      // provided methods (75)
+      ...
+}
+
+
+* Associated types:
+
+      * Item: The type of the elements being iterated over.
+
+
+
+
+---------- (IntoIterator Trait) ----------
+
+pub trait IntoIterator {
+      type Item;
+      type IntoIter: Iterator<Item = Self::Item>;
+
+      // Required method
+      fn into_iter(self) -> Self::IntoIter;
+}
+
+
+* By implementing IntoIterator for a type, you define how it will be converted
+  to an iterator. This is common for types which describe a collection of some
+  kind.
+
+
+* Associated types:
+
+      * Item    : The type of the elements being iterated over.
+
+      * IntoIter: Which kind of iterator are we turning this into?
+
+
+
+
+---------- (IntoIterator And Iterator Traits In Action) ----------
+
+* Consider this vector:
+
+      let numbers: Vec<i32> = vec![4, 8, 15, 16, 23, 42];
+
+
+* The "Vec" type implements the IntoIterator trait. Therefore we can call
+  "into_iter" method on it's instances:
+
+      let numbers_iterator: IntoIter<i32> = numbers.into_iter();
+
+
+      * It returns "IntoIter<T>" struct type instance which is defined in
+        std::vec::IntoIter;
+
+
+      * For every type which implements the IntoIterator trait has it's own
+        struct called "IntoIter" which implements the Iterator trait.
+
+
+      * Therefore we can call the "next" method on "IntoIter" struct instances.
+
+--------------------------------------------------------------------------------
