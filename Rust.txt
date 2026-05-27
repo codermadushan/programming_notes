@@ -8015,13 +8015,13 @@ fn main() {
 * A simillar approach for the "for" loop.
 
 
-* Access items:
+* for <item> in <collection> {...}       ==  <collection>.into_iter().for_each(|<item>| {...})
 
-      <collection>.into_iter().for_each(|<item>| {...}) : Consumes the collection and gives owned values
 
-      <collection>.iter().for_each(|<item>| {...})      : Don't consumes the collection and gives immutable references
+* for <item> in &<collection> {...}      ==  <collection>.iter().for_each(|<item>| {...})
 
-      <collection>.iter_mut().for_each(|<item>| {...})  : Don't consumes the collection and gives mutable references
+
+* for <item> in &mut <collection> {...}  ==  <collection>.iter_mut().for_each(|<item>| {...})
 
 
 
@@ -8035,27 +8035,13 @@ fn main() {
 * It takes a closure and lazily applies it to every element.
 
 
-* To convert a collection to an iterator to call "map" method, we use:
+* Ex:
 
-      1. iter()      : Don't consume the collection and gives immutable references.
+      1. <collection>.into_iter().map(|<owned_value>| {...})
 
-      2. into_iter() : Consumes the collection and gives owned values.
+      2. <collection>.iter().map(|<immutable_reference>| {...})
 
-      * No need to use iter_mut().
-
-
-* Ex 1:
-
-      for <item> in <collection>.iter().map(|<item>| {...}) {
-            ...
-      }
-
-
-* Ex 2:
-
-      for <item> in <collection>.into_iter().map(|<item>| {...}) {
-            ...
-      }
+      3. <collection>.iter_mut().map(|<mutable_reference>| {...})
 
 
 
@@ -8072,12 +8058,12 @@ fn main() {
 
 * Ex:
 
-      let mut numbers = [4, 8, 15, 16, 23, 42];
+      let numbers = vec![1, 2, 3];
 
-            * let new_numbers: Vec<i32> = numbers.into_iter().collect();
+            * let new_numbers: Vec<i32> = numbers.into_iter().map(|number| number * 2).collect();
 
-            * let new_numbers: Vec<&i32> = numbers.iter().collect();
+            * let new_numbers: Vec<i32> = numbers.iter().map(|number| number * 2).collect();
 
-            * let new_numbers: Vec<&mut i32> = numbers.iter_mut().collect();
+            * let new_numbers: Vec<i32> = numbers.iter_mut().map(|number| *number * 2).collect();
 
 --------------------------------------------------------------------------------
