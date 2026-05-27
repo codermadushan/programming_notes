@@ -2541,6 +2541,29 @@ class _TodosPageState extends State<TodosPage> {
         This is called encapsulation.
 
 
+* Ex:
+
+    class Car {
+      final String _id; // non-nullable required
+      final int _numberOfWheels; // non-nullable optional
+      final String? _country; // nullable
+
+      final DateTime _createdAt; // non-const non-nullable optional
+
+      Car({
+        required this._id,
+        this._numberOfWheels = 4,
+        this._country,
+
+        DateTime? createdAt,
+      }) : _createdAt = createdAt ?? DateTime.now();
+
+      // Getters
+      String get id => _id;
+      int get numberOfWheels => _numberOfWheels;
+      String? get country => _country;
+      DateTime get createdAt => _createdAt;
+    }
 
 
 ---------- (final classes) ----------
@@ -2556,13 +2579,7 @@ Ex: final class Person {}
 
 ---------- Create a model class ------------------------------------------------
 
-* By this model class we can,
-
-    1. Send data to database.
-    2. Get data from database.
-
-
-* For a model class we define all constructor arguments as named arguments.
+* By this model class we get data from database.
 
 
 * There are 4 types of instance variable fields,
@@ -2619,6 +2636,15 @@ class UserEntity {
 * toMap is a instance method. Inherited to sub classes.
 
 * fromMap is a factory constructor. Not inherited to sub classes.
+
+
+
+
+---------- (In Clean Architecture) ----------
+
+* We define the "fromMap" factory constructor inside the Model class.
+
+* No need any "toMap" instance method.
 
 --------------------------------------------------------------------------------
 

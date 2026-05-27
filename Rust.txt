@@ -7768,6 +7768,10 @@ pub trait IntoIterator {
       let numbers_iterator: IntoIter<i32> = numbers.into_iter();
 
 
+      * If the collection type is Copy, into_iter() gets a new copy of the
+        collection. Otherwise it consumes the collection.
+
+
       * It returns "IntoIter<T>" struct type instance which is defined in
         std::vec::IntoIter;
 
@@ -7784,6 +7788,10 @@ pub trait IntoIterator {
 ---------- (Exhausting The Iterator) ----------
 
 * An iterator is exhausted when it has no more items to produce.
+
+
+* In Rust, most iterators are stateful and one-way. Once an iterator is
+  exhausted, it stays exhausted.
 
 
 * Ex:
@@ -7998,5 +8006,78 @@ fn main() {
 
 
 * They do not consume the string.
+
+
+
+
+---------- (for_each Method) ----------
+
+* A simillar approach for the "for" loop.
+
+
+* Access items:
+
+      <collection>.into_iter().for_each(|<item>| {...}) : Consumes the collection and gives owned values
+
+      <collection>.iter().for_each(|<item>| {...})      : Don't consumes the collection and gives immutable references
+
+      <collection>.iter_mut().for_each(|<item>| {...})  : Don't consumes the collection and gives mutable references
+
+
+
+
+---------- (map Method) ----------
+
+* An adapter method is one that transforms an iterator into another iterator
+  based on some logic.
+
+
+* It takes a closure and lazily applies it to every element.
+
+
+* To convert a collection to an iterator to call "map" method, we use:
+
+      1. iter()      : Don't consume the collection and gives immutable references.
+
+      2. into_iter() : Consumes the collection and gives owned values.
+
+      * No need to use iter_mut().
+
+
+* Ex 1:
+
+      for <item> in <collection>.iter().map(|<item>| {...}) {
+            ...
+      }
+
+
+* Ex 2:
+
+      for <item> in <collection>.into_iter().map(|<item>| {...}) {
+            ...
+      }
+
+
+
+
+---------- (collect Method) ----------
+
+* The collect method exhausts the iterator and gathers the resulting values in a
+  new collection type.
+
+
+* "collect" usually needs type information because it can collect into many
+  possible collection types.
+
+
+* Ex:
+
+      let mut numbers = [4, 8, 15, 16, 23, 42];
+
+            * let new_numbers: Vec<i32> = numbers.into_iter().collect();
+
+            * let new_numbers: Vec<&i32> = numbers.iter().collect();
+
+            * let new_numbers: Vec<&mut i32> = numbers.iter_mut().collect();
 
 --------------------------------------------------------------------------------
