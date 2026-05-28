@@ -8127,8 +8127,17 @@ fn main() {
 
 ---------- (Convert A Iterator With &T Values To Iterator With T) ----------
 
-* When you have an iterator over '&T', but you need an iterator over 'T', use
-  "copied" method. But this works only for types which implement the Copy trait.
+* The Copy trait is a subtrait of Clone.
+
+      * Clone Means this type can be explicitly duplicated.
+
+      * Copy Means this type can be duplicated implicitly by simple bitwise copying.
+
+      * Because implicit copying should always also support explicit cloning,
+        Copy requires Clone.
+
+
+* If the type implements Copy trait, then use "copied" method:
 
       fn main() {
             let numbers = vec![4, 8, 15, 16, 23, 42];
@@ -8136,14 +8145,14 @@ fn main() {
             let evens = numbers
                   .iter()
                   .filter(|number| *number % 2 == 0)
-                  .copied()
+                  .copied() // cloned() also works here
                   .collect::<Vec<i32>>();
 
             println!("{:?}", evens);
       }
 
 
-* If the type does not implements Copy trait, then use "cloned" method:
+* If the type implements Clone trait, then use "cloned" method:
 
       fn main() {
             let animals = vec![
@@ -8174,5 +8183,112 @@ fn main() {
 
 
 * Returns an Option enum.
+
+
+
+
+---------- (all & any Methods) ----------
+
+* all: Returns true if all elements satisfy the condition.
+
+
+* any: Returns true if at least one element satisty the condition.
+
+
+Ex:
+
+      fn main() {
+            let numbers = [4, 8, 15, 16, 23, 42];
+
+            let are_all_even = numbers.iter().all(|number| number % 2 == 0);
+            println!("{}", are_all_even);
+
+            let is_ther_any_even = numbers.iter().any(|number| number % 2 == 0);
+            println!("{}", is_ther_any_even);
+      }
+
+
+
+
+---------- (filter_map Methods) ----------
+
+* A shortcut for: <iterator>.filer(...).map(...)
+
+
+* Ex:
+
+      fn main() {
+            let stocks = ["nvda", "", "aapl", "", "msft", "goog"];
+
+            // Without filter_map
+            let capitalized_stocks = stocks
+                  .iter()
+                  .filter(|stock| !stock.is_empty())
+                  .map(|stock| stock.to_uppercase())
+                  .collect::<Vec<String>>();
+
+            // with filter_map
+            let capitalized_stocks = stocks
+                  .iter()
+                  .filter_map(|stock| {
+                        if stock.is_empty() {
+                              None
+                        } else {
+                              Some(stock.to_uppercase())
+                        }
+                  })
+                  .collect::<Vec<String>>();
+      }
+
+
+
+
+---------- (flatten Methods) ----------
+
+* Creates an iterator that flattens nested structure.
+
+
+* Ex:
+
+      let spreadsheet = vec![
+            vec![100, 200, 300],
+            vec![123, 456],
+            vec![987, 654, 321],
+      ];
+
+      let values = spreadsheet.into_iter().flatten().collect::<Vec<i32>>();
+
+
+
+
+---------- (flat_map Methods) ----------
+
+* A shortcut for: .map(...).flatten()
+
+
+* Ex:
+
+      fn main() {
+            let attendees = [
+                  "Bob, Mary, Kevin",
+                  "Mike, Robbie, Mat, Austin",
+                  "Piers, Liam",
+            ];
+
+            // without flat_map
+            let attendees = attendees
+                  .iter()
+                  .map(|group| group.split(", "))
+                  .flatten()
+                  .collect::<Vec<&str>>();
+
+            // with flat_map
+            let attendees = attendees
+                  .iter()
+                  .flat_map(|group| group.split(", "))
+                  .collect::<Vec<&str>>();
+
+            println!("{:?}", attendees);
+      }
 
 --------------------------------------------------------------------------------
