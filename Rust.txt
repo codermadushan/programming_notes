@@ -8210,7 +8210,7 @@ Ex:
 
 
 
----------- (filter_map Methods) ----------
+---------- (filter_map Method) ----------
 
 * A shortcut for: <iterator>.filer(...).map(...)
 
@@ -8243,7 +8243,7 @@ Ex:
 
 
 
----------- (flatten Methods) ----------
+---------- (flatten Method) ----------
 
 * Creates an iterator that flattens nested structure.
 
@@ -8261,7 +8261,7 @@ Ex:
 
 
 
----------- (flat_map Methods) ----------
+---------- (flat_map Method) ----------
 
 * A shortcut for: .map(...).flatten()
 
@@ -8290,5 +8290,188 @@ Ex:
 
             println!("{:?}", attendees);
       }
+
+
+
+
+---------- (enumerate Method) ----------
+
+* The enumerate adapter transforms an iterator so that it yields the index
+  position along with the current element.
+
+
+* Ex:
+
+      fn main() {
+            let numbers = [4, 8, 15, 16, 23, 42];
+
+            numbers.iter().enumerate().for_each(|(index, value)| {
+                  println!("Current index: {} | Current value: {}", index, value);
+            });
+      }
+
+
+* We can use "map" method to remove the index part if needed.
+
+
+
+
+---------- (partition Method) ----------
+
+* The partition method groups the values in an iterator into two groups.
+
+
+* It is required the return type informations.
+
+
+* Ex:
+      fn main() {
+            let numbers = [4, 8, 15, 16, 23, 42];
+
+            let (evens, odds): (Vec<i32>, Vec<i32>) = numbers.iter().partition(|number| *number % 2 == 0);
+
+            println!("{:?}", evens);
+            println!("{:?}", odds);
+      }
+
+
+
+
+---------- (zip Method) ----------
+
+* To combine values of 2 iterators.
+
+
+* If lengths are not same, Shortest length is considered.
+
+
+* Ex:
+
+      fn main() {
+            let first_names = ["Casey", "Robert", "Cargo"];
+            let last_names = ["Johnson", "Smith", "Rustman"];
+
+            let full_names = first_names
+                  .into_iter()
+                  .zip(last_names)
+                  .map(|(first_name, last_name)| format!("{} {}", first_name, last_name))
+                  .collect::<Vec<String>>();
+
+            println!("{:?}", full_names);
+      }
+
+
+
+
+---------- (fold Method) ----------
+
+* The fold method exhausts an iterator to build up and produce a single value
+  at the end of iteration.
+
+      .fold(<start_value>, |<accumulator>, <current_value>| {
+            ...
+
+            // returns the currently accumulated value
+      });
+
+
+* Ex:
+
+      fn main() {
+            let numbers = [4, 8, 15, 16, 23, 42];
+
+            let total = numbers.iter().fold(0, |total, current| total + current);
+
+            println!("{}", total);
+      }
+
+
+
+
+---------- (reduce Method) ----------
+
+* Similar to fold but it supplies the iterator's first element as the starter
+  value.
+
+
+* It returns an Option enum to account for the possibility of an empty iterator.
+
+
+* Ex:
+
+      fn main() {
+            let numbers: Vec<i32> = vec![1, 2, 3, 4, 5];
+
+            let sum = numbers.into_iter().reduce(|total, current| total + current);
+
+            println!("{:?}", sum);
+      }
+
+
+
+
+---------- (sum, product, min, max, count Methods) ----------
+
+fn main() {
+      let numbers: Vec<i32> = vec![1, 2, 3, 4, 5];
+
+      let sum: i32 = numbers.iter().sum(); // type help is required
+      let product: i32 = numbers.iter().product(); // type help is required
+
+      let min = numbers.iter().min();
+      let max = numbers.iter().max();
+
+      let count = numbers.iter().count();
+}
+
+
+
+
+---------- (last, nth, nth_back, position Methods) ----------
+
+fn main() {
+      let numbers: Vec<i32> = vec![1, 2, 3, 4, 5];
+
+      let last = numbers.iter().last();
+      println!("{:?}", last);
+
+      let second = numbers.iter().nth(1);
+      println!("{:?}", second);
+
+      let third_from_right = numbers.iter().nth_back(2);
+      println!("{:?}", third_from_right);
+
+      let target_index = numbers.iter().position(|element| *element == 4);
+      println!("{:?}", target_index);
+}
+
+
+
+
+---------- (take, rev, skip, step_by Methods) ----------
+
+fn main() {
+      let numbers = [1, 2, 3, 4, 5];
+
+      // take first n elements from an iterator
+      numbers.iter().take(2).for_each(|element| {
+            println!("{}", element);
+      });
+
+      // revers an iterator
+      numbers.iter().rev().for_each(|element| {
+            println!("{}", element);
+      });
+
+      // skip first n elements in an iterator
+      numbers.iter().skip(2).for_each(|element| {
+            println!("{}", element);
+      });
+
+      // access values n by n in an iterator
+      numbers.iter().step_by(2).for_each(|element| {
+            println!("{}", element);
+      });
+}
 
 --------------------------------------------------------------------------------
