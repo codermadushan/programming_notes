@@ -8035,6 +8035,10 @@ fn main() {
 * It takes a closure and lazily applies it to every element.
 
 
+* The contained value type of returned iterator is decided on returned value of
+  the closure.
+
+
 * Ex:
 
       1. <collection>.into_iter().map(|<owned_value>| {...})
@@ -8053,17 +8057,98 @@ fn main() {
 
 
 * "collect" usually needs type information because it can collect into many
-  possible collection types.
+  possible collection types:
+
+      <iterator>.collect::<collection_type>()
+
+
+* The type of the the contained values are same as the contained value type of
+  previous iterator.
 
 
 * Ex:
 
       let numbers = vec![1, 2, 3];
 
-            * let new_numbers: Vec<i32> = numbers.into_iter().map(|number| number * 2).collect();
+            * let new_numbers = numbers.into_iter().collect::<Vec<i32>>();
 
-            * let new_numbers: Vec<i32> = numbers.iter().map(|number| number * 2).collect();
+            * let new_numbers = numbers.iter().collect::<Vec<&i32>>();
 
-            * let new_numbers: Vec<i32> = numbers.iter_mut().map(|number| *number * 2).collect();
+            * let new_numbers = numbers.iter_mut().collect::<Vec<&mut i32>>();
+
+
+
+
+---------- (filter Method) ----------
+
+* We use the filter method to select items from a collection based on a
+  condition.
+
+      * If closure returns true  -> select the item
+
+      * If closure returns false -> discard the item
+
+
+* It always gets a reference to the each item in called iterator.
+
+
+* It always creates a reference iterator of called iterator values.
+
+
+* Ex 1:
+
+      fn main() {
+            let numbers = vec![4, 8, 15, 16, 23, 42];
+
+            let evens = numbers
+                  .into_iter()
+                  .filter(|number| number % 2 == 0)
+                  .collect::<Vec<i32>>();
+
+            println!("{:?}", evens);
+      }
+
+
+* Ex 2:
+
+      fn main() {
+            let numbers = vec![4, 8, 15, 16, 23, 42];
+
+            let evens = numbers
+                  .iter()
+                  .filter(|number| *number % 2 == 0)
+                  .collect::<Vec<&i32>>();
+
+            println!("{:?}", evens);
+      }
+
+
+* When you have an iterator over '&T', but you need an iterator over 'T', use
+  "copied" method. But this works only for types which implement the Copy trait.
+
+      fn main() {
+            let numbers = vec![4, 8, 15, 16, 23, 42];
+
+            let evens = numbers
+                  .iter()
+                  .filter(|number| *number % 2 == 0)
+                  .copied()
+                  .collect::<Vec<i32>>();
+
+            println!("{:?}", evens);
+      }
+
+
+
+
+---------- (find & rfind Methods) ----------
+
+* find -> to find the first match from left to right.
+
+
+* rfind -> to find the first match from right to left.
+
+
+* Returns an Option enum.
 
 --------------------------------------------------------------------------------
