@@ -8139,6 +8139,26 @@ fn main() {
       }
 
 
+      * If the type does not implements Copy trait, then use "cloned" method:
+
+            fn main() {
+                  let animals = vec![
+                        String::from("Dog"),
+                        String::from("Cat"),
+                        String::from("Parrot"),
+                        String::from("Snake"),
+                  ];
+
+                  let result = animals
+                        .iter()
+                        .filter(|a| a.contains("r"))
+                        .cloned()
+                        .collect::<Vec<String>>();
+
+                  println!("{:?}", result);
+            }
+
+
 
 
 ---------- (find & rfind Methods) ----------
