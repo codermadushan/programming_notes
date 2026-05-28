@@ -8123,6 +8123,10 @@ fn main() {
       }
 
 
+
+
+---------- (Convert A Iterator With &T Values To Iterator With T) ----------
+
 * When you have an iterator over '&T', but you need an iterator over 'T', use
   "copied" method. But this works only for types which implement the Copy trait.
 
@@ -8139,24 +8143,24 @@ fn main() {
       }
 
 
-      * If the type does not implements Copy trait, then use "cloned" method:
+* If the type does not implements Copy trait, then use "cloned" method:
 
-            fn main() {
-                  let animals = vec![
-                        String::from("Dog"),
-                        String::from("Cat"),
-                        String::from("Parrot"),
-                        String::from("Snake"),
-                  ];
+      fn main() {
+            let animals = vec![
+                  String::from("Dog"),
+                  String::from("Cat"),
+                  String::from("Parrot"),
+                  String::from("Snake"),
+            ];
 
-                  let result = animals
-                        .iter()
-                        .filter(|a| a.contains("r"))
-                        .cloned()
-                        .collect::<Vec<String>>();
+            let result = animals
+                  .iter()
+                  .filter(|a| a.contains("r"))
+                  .cloned()
+                  .collect::<Vec<String>>();
 
-                  println!("{:?}", result);
-            }
+            println!("{:?}", result);
+      }
 
 
 
