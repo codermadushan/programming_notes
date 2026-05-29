@@ -8703,3 +8703,96 @@ pub trait FromIterator<A>: Sized {
       }
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Smart Pointers ------------------------------------------------------
+
+---------- (Raw Pointers) ----------
+
+* A raw pointer is a variable that stores a memory address without any safety
+  checks.
+
+
+* A raw pointer may point to valid data but it can also point to deallocated
+  memory.
+
+
+* Raw pointers are common in languages like C and C++. Developers still call
+  them "references" even though they lack the safety guarantees of Rust's
+  references.
+
+
+* Rust supports raw pointers too but references are safer and recommended.
+
+
+* Ex:
+
+      fn main() {
+            let mut s = String::from("s");
+
+            let immutable_raw_pointer = &raw const s;
+
+            let mutable_raw_pointer = &raw mut s;
+
+            unsafe {
+                  println!("{}", *immutable_raw_pointer);
+                  println!("{}", *mutable_raw_pointer);
+            }
+      }
+
+
+* To dereference a raw pointer, we must use an unsafe block.
+
+
+
+
+---------- (Smart Pointers) ----------
+
+* A smart pointer is a type that behaves like a pointer.
+
+
+* A smart pointer can store additional information and perform more actions
+  compared to a plain pointer/reference.
+
+
+* Most smart pointers are built with structs. Structs grant the capacity to
+  store more data.
+
+
+* References like &T borrow data.
+
+
+* References are not responsible for deallocating the data; the original owner
+  is responsible for deallocation.
+
+
+* Smart pointers often own and manage their own data, typically on the heap.
+
+
+* The advantage is that smart pointers behave like pointers but can be treated
+  like owned types.
+
+
+* A String is a smart pointer:
+
+      * A String stores a pointer to the heap memory where the text data is
+        located.
+
+      * A String also stores extra metadata like the length and capacity of the
+        text.
+
+      * The String smart pointer handles the complexity of the pointer/reference
+        behind the scenes.
+
+      * We treat the String like a regular owned type.
+
+
+
+
+---------- (Box Smart Pointer) ----------
+
+* jklj
+
+--------------------------------------------------------------------------------
