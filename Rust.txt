@@ -8474,4 +8474,232 @@ fn main() {
       });
 }
 
+
+
+
+---------- (sort, reverse, sort_by_key Methods) ----------
+
+* sort & reverse & sort_by_key are not iterator methods. They are methods on
+  collections/slices, mainly:
+
+      * Arrays
+      * Slices
+      * Vectors
+
+
+* Sort is different because:
+
+      * Sorting needs random access to all elements.
+      * it must rearrange items in place.
+      * iterators may not even contain all items in memory at once.
+
+
+* <collection>.sort()    --> Short in ASC order.
+
+
+* <collection>.reverse() --> Sort in DESC order.
+
+
+* <collection>.is_sorted() --> is sorted in ASC order or not
+
+
+* <collection>.sort_by_key(|element|{...}):
+
+      fn main() {
+            let mut stations = [
+                  GasStation {
+                        snack_count: 100,
+                        manager: String::from("Meg Mobil"),
+                        employee_count: 3,
+                  },
+                  GasStation {
+                        snack_count: 130,
+                        manager: String::from("Eric Exxon"),
+                        employee_count: 4,
+                  },
+                  GasStation {
+                        snack_count: 50,
+                        manager: String::from("Shane Shell"),
+                        employee_count: 2,
+                  },
+            ];
+
+            stations.sort_by_key(|station| station.snack_count); // ASC order
+            println!("{:?}", stations);
+
+            stations.sort_by_key(|station| -(station.snack_count as i32)); // DESC order
+            println!("{:?}", stations);
+      }
+
+
+
+
+---------- (lines Method) ----------
+
+* Returns an iterator of the string's individual lines.
+
+
+* Ex:
+
+      fn main() {
+            let contents = fs::read_to_string("story.txt").unwrap();
+
+            contents.lines().enumerate().for_each(|(index, line)| {
+                  println!("Line {}: {}", index + 1, line);
+            });
+      }
+
+
+
+
+---------- (Collecting Command Line Arguments) ----------
+
+* let args = env::args();
+
+
+* This is an iterator struct.
+
+
+* To provide command line arguments:
+
+      cargo run -- <arg1> <arg2> ...
+
+      * -- is used to prevent considering command line arguments for cargo.
+
+
+* First command line argument is always the binary path.
+
+
+* Ex: Video player application:
+
+      * Command line arguments:
+
+            1. Video file name // required
+            2. Subtitles       // optional
+            3. High Definition // optional
+
+      * Ex:
+
+            use std::{env, process};
+
+            #[derive(Debug)]
+            struct Settings {
+                  video_file: String,
+                  subtitles: bool,
+                  high_definition: bool,
+            }
+
+            fn collect_settings() -> Settings {
+                  let mut args = env::args().skip(1).take(3);
+
+                  let video_file = args.next().unwrap_or_else(|| {
+                        eprintln!("No video file specified!");
+                        process::exit(1);
+                  });
+
+                  let mut settings = args.map(|arg| arg.parse::<bool>().unwrap_or(false));
+
+                  let subtitles = settings.next().unwrap_or(false);
+                  let high_definition = settings.next().unwrap_or(false);
+
+                  Settings {
+                        video_file,
+                        subtitles,
+                        high_definition,
+                  }
+            }
+
+            fn main() {
+                  let settings = collect_settings();
+
+                  println!("Settings: {:?}", settings);
+            }
+
+
+
+
+---------- (Read A Directory) ----------
+
+fn read_directory(path: &str) -> io::Result<()> {
+      let directory = fs::read_dir(path)?;
+
+      for entry in directory {
+            let path = entry?.path();
+            let metadata = fs::metadata(&path)?;
+
+            if metadata.is_file() {
+                  println!("File     : {:?}", path);
+            } else if metadata.is_dir() {
+                  println!("Directory: {:?}", path);
+            }
+      }
+
+      Ok(())
+}
+
+
+
+
+---------- (FromIterator Trait) ----------
+
+pub trait FromIterator<A>: Sized {
+
+      // Required method
+      fn from_iter<T>(iter: T) -> Self
+            where T: IntoIterator<Item = A>;
+}
+
+
+* By implementing FromIterator for a type, you define how it will be created
+  from an iterator. This is common for types which describe a collection of some
+  kind.
+
+
+* <iterator>.collect::<CollectionType>() == <CollectionType>::from_iter(<iterator>)
+
+      fn main() {
+            let fifty_numbers = 1..=50;
+
+            let vec1 = Vec::from_iter(fifty_numbers.clone());
+
+            let vec2 = fifty_numbers.collect::<Vec<i32>>();
+      }
+
+
+* A custom implementation:
+
+      #[derive(Debug)]
+      struct Playlist {
+            songs: Vec<String>,
+            users: HashSet<String>,
+      }
+
+      impl FromIterator<(String, String)> for Playlist {
+            fn from_iter<T: IntoIterator<Item = (String, String)>>(iter: T) -> Self {
+                  let mut songs = Vec::new();
+                  let mut users = HashSet::new();
+
+                  for (song, user) in iter {
+                        songs.push(song);
+                        users.insert(user);
+                  }
+
+                  Self { songs, users }
+            }
+      }
+
+      fn main() {
+            let values = [
+                  (String::from("song1"), String::from("user1")),
+                  (String::from("song2"), String::from("user2")),
+                  (String::from("song3"), String::from("user3")),
+                  (String::from("song4"), String::from("user4")),
+                  (String::from("song5"), String::from("user5")),
+            ];
+
+            let result = Playlist::from_iter(values.clone());
+
+            let result = values.into_iter().collect::<Playlist>();
+      }
+
 --------------------------------------------------------------------------------
