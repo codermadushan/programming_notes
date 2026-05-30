@@ -8990,4 +8990,141 @@ fn main() {
       println!("{}", tree.contains(21));
 }
 
+
+
+
+---------- (Deref Trait) ----------
+
+* Used for immutable dereferencing operations, like *v.
+
+
+pub trait Deref {
+      type Target: ?Sized;
+
+      // Required method
+      fn deref(&self) -> &Self::Target;
+}
+
+
+* Ex:
+
+      use std::ops::Deref;
+
+      #[derive(Debug)]
+      struct CustomBox<T> {
+            data: T,
+      }
+
+      impl<T> CustomBox<T> {
+            fn new(data: T) -> Self {
+                  Self { data }
+            }
+      }
+
+      impl<T> Deref for CustomBox<T> {
+            type Target = T;
+
+            fn deref(&self) -> &Self::Target {
+                  &self.data
+            }
+      }
+
+      fn main() {
+            let custom_box = CustomBox::new(10);
+
+            println!("{:?}", *custom_box);
+
+            // *custom_box = *(custom_box.deref())
+      }
+
+
+
+
+---------- (DerefMut Trait) ----------
+
+* Used for mutable dereferencing operations, like in *v = 1;.
+
+
+* For DerefMut, Deref is required.
+
+
+pub trait DerefMut: Deref {
+      // Required method
+      fn deref_mut(&mut self) -> &mut Self::Target;
+}
+
+
+* Ex:
+
+      use std::ops::{Deref, DerefMut};
+
+      #[derive(Debug)]
+      struct CustomBox<T> {
+            data: T,
+      }
+
+      impl<T> CustomBox<T> {
+            fn new(data: T) -> Self {
+                  Self { data }
+            }
+      }
+
+      impl<T> Deref for CustomBox<T> {
+            type Target = T;
+
+            fn deref(&self) -> &Self::Target {
+                  &self.data
+            }
+      }
+
+      impl<T> DerefMut for CustomBox<T> {
+            fn deref_mut(&mut self) -> &mut Self::Target {
+                  &mut self.data
+            }
+      }
+
+      fn main() {
+            let mut custom_box = CustomBox::new(10);
+
+            *custom_box = 20; // *custom_box = 20 -----> *(custom_box.deref_mut()) = 20
+
+            println!("{:?}", *custom_box); // *custom_box -----> *(custom_box.deref())
+      }
+
+
+
+
+---------- (Drop Trait) ----------
+
+* Custom code within the destructor.
+
+
+* When you implement the Drop trait, you are not replacing Rust's normal
+  destruction behavior. You are adding custom code that runs before Rust
+  automatically drops the fields.
+
+
+pub trait Drop {
+    // Required method
+    fn drop(&mut self);
+}
+
+
+* Ex:
+
+      struct File {
+            name: String,
+      }
+
+      impl Drop for File {
+            fn drop(&mut self) {
+                  println!("Closing file: {}", self.name);
+            }
+      }
+      fn main() {
+            let file = File {
+                  name: String::from("rust.rs"),
+            };
+      }
+
 --------------------------------------------------------------------------------
