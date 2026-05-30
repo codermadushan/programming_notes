@@ -8793,6 +8793,134 @@ pub trait FromIterator<A>: Sized {
 
 ---------- (Box Smart Pointer) ----------
 
-* jklj
+* The Box smart pointer stores a piece of data on the heap.
+
+
+* The Box is an owned type that is a container around the raw pointer that holds
+  the memory address of the allocated heap data.
+
+      let x = Box::new(10);
+
+            * x (the Box<i32> value) is on the stack.
+
+            * The actual 10 (i32) is on the heap.
+
+            * The Box contains a pointer to the heap allocation.
+
+
+* It does not implements the Copy trait.
+
+
+
+
+---------- (Recursive Data Structures) ----------
+
+* A recursive data structure is a type that contains itself, directly or
+  indirectly.
+
+
+* Ex:
+
+      struct Node {
+            value: i32,
+            next: Node,
+      }
+
+      * Error: Recursive type 'Node' has infinite size
+
+
+* This does not compile:
+
+      * To calculate the size of Node, Rust needs:
+
+            size_of(Node) = size_of(i32) + size_of(Node)
+
+      * But size_of(Node) itself depends on another Node.
+
+      * There is no finite size, so the compiler reports an error.
+
+
+* The solution is to store a pointer to the next node.
+
+
+
+
+---------- (Creating A LinkedList) ----------
+
+#[derive(Debug)]
+enum LinkedList {
+      Empty,
+      Node { value: i32, next: Box<LinkedList> },
+}
+
+fn main() {
+      let list = LinkedList::Node {
+            value: 1,
+            next: Box::new(LinkedList::Node {
+                  value: 2,
+                  next: Box::new(LinkedList::Node {
+                  value: 3,
+                  next: Box::new(LinkedList::Empty),
+                  }),
+            }),
+      };
+
+      println!("{:#?}", list);
+}
+
+
+
+
+---------- (Box vs Regular References) ----------
+
+* A linked list with regular references:
+
+      #[derive(Debug)]
+      enum LinkedList<'a> {
+            Empty,
+            Node {
+                  value: i32,
+                  next: &'a LinkedList<'a>,
+            },
+      }
+
+      fn main() {
+            let list = LinkedList::Node {
+                  value: 1,
+                  next: &LinkedList::Node {
+                        value: 2,
+                        next: &LinkedList::Node {
+                        value: 3,
+                        next: &LinkedList::Empty,
+                        },
+                  },
+            };
+
+            println!("{:#?}", list);
+      }
+
+
+
+
+---------- (Vectors) ----------
+
+* A vector is also a smart pointer.
+
+
+* Ex:
+
+      enum FileSystemEntity {
+            File {
+                  name: String,
+            },
+            Folder {
+                  name: String,
+                  content: Vec<FileSystemEntity>,
+            },
+      }
+
+      * If the "Vec" is not a smart pointer, FileSystemEntity becomes a
+        recursive data structure.
+
 
 --------------------------------------------------------------------------------
