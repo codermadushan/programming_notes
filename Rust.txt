@@ -6350,6 +6350,31 @@ fn main() {
                   a + b
             }
 
+
+
+
+---------- (Create A Custom Error) ----------
+
+* Create a struct and implement following traits:
+
+      1. Debug
+      2. Display (std::fmt::Display)
+      3. Error   (std::error::Error)
+
+
+* Ex:
+
+      #[derive(Debug)]
+      struct CustomError;
+
+      impl Display for CustomError {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                  write!(f, "This is a custom error")
+            }
+      }
+
+      impl Error for CustomError {}
+
 --------------------------------------------------------------------------------
 
 
@@ -9239,5 +9264,16 @@ pub trait Drop {
 
 
 * Handling multiple errors:
+
+      use std::error::Error;
+      use std::fs;
+
+      fn read_number_from_file(file_name: &str) -> Result<i32, Box<dyn Error>> {
+            let content = fs::read_to_string(file_name)?;
+
+            let number = content.parse::<i32>()?;
+
+            Ok(number)
+      }
 
 --------------------------------------------------------------------------------
