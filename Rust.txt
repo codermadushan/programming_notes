@@ -9183,4 +9183,61 @@ pub trait Drop {
             let result2 = (result1).deref();
             show_output(result2);
 
+
+
+
+---------- (Trait Objects) ----------
+
+* A trait object is an instance of some type that implements a specific trait.
+
+
+* Ex:
+
+      trait Wearable {
+            fn wear(&self) -> String;
+      }
+
+      struct Pant {
+            fabric: String,
+            waist_size: u32,
+      }
+
+      impl Wearable for Pant {
+            fn wear(&self) -> String {
+                  format!("{} {} pant", self.waist_size, self.fabric)
+            }
+      }
+
+      struct Tie {
+            color: String,
+      }
+
+      impl Wearable for Tie {
+            fn wear(&self) -> String {
+                  format!("{} tie", self.color)
+            }
+      }
+
+      fn main() {
+            let pant = Pant {
+                  fabric: "Cotton".to_string(),
+                  waist_size: 32,
+            };
+
+            let tie = Tie {
+                  color: "Red".to_string(),
+            };
+
+            // Without Box pointers
+            let outfit: Vec<&dyn Wearable> = vec![&pant, &tie];
+
+            // With Box pointers
+            let outfit: Vec<Box<dyn Wearable>> = vec![Box::new(pant), Box::new(tie)]; // Ownerships of pant and tie are moved to the outfit
+      }
+
+
+
+
+* Handling multiple errors:
+
 --------------------------------------------------------------------------------
