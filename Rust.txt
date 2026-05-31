@@ -9276,4 +9276,44 @@ pub trait Drop {
             Ok(number)
       }
 
+
+
+
+* &dyn <Trait>:
+
+      * Use when you only need to borrow the value.
+
+      * The object is owned elsewhere.
+
+      * No heap allocation
+
+      * No ownership transfer.
+
+      * Usually used with function arguments:
+
+            fn process(item: &dyn Trait) {...}
+
+
+
+
+* Box<dyn <Trait>>:
+
+      * Use when you need ownership of the trait object.
+
+      * Memory will be allocated in the heap.
+
+      * Usually used with:
+
+            1. Collections     : Vec<Box<dyn Trait>>
+
+            2. For return types: fn create() -> Box<dyn Trait> {...}
+
+
+
+
+* If ownership is not needed: &dyn Trait
+
+
+* If ownership is needed    : Box<dyn Trait>
+
 --------------------------------------------------------------------------------
