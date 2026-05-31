@@ -9279,6 +9279,8 @@ pub trait Drop {
 
 
 
+---------- (&dyn Trait vs Box<dyn Trait>) ----------
+
 * &dyn <Trait>:
 
       * Use when you only need to borrow the value.
@@ -9294,8 +9296,6 @@ pub trait Drop {
             fn process(item: &dyn Trait) {...}
 
 
-
-
 * Box<dyn <Trait>>:
 
       * Use when you need ownership of the trait object.
@@ -9309,11 +9309,155 @@ pub trait Drop {
             2. For return types: fn create() -> Box<dyn Trait> {...}
 
 
-
-
 * If ownership is not needed: &dyn Trait
 
 
 * If ownership is needed    : Box<dyn Trait>
+
+
+
+
+---------- (Interior Mutability) ----------
+
+* A Rust design pattern where a value can mutate its internal state even when
+  accessed through an immutable reference.
+
+
+* Consider the following struct:
+
+      #[derive(Debug)]
+      struct ConcertTicket {
+            section: String,
+            seat: String,
+            scanned: bool,
+      }
+
+
+      * If we create a object as follows, we cannot update any field:
+
+            let ticket = ConcertTicket {...};
+
+
+      * But if we create as follows, we can update all fields:
+
+            let mut ticket = ConcertTicket {...}
+
+
+      * But if you want to update only specific fields, then we have to use
+        "Cell" smart pointer.
+
+
+
+
+---------- (Cell Smart Pointers) ----------
+
+* Modification:
+
+      #[derive(Debug)]
+      struct ConcertTicket {
+            section: String,
+            seat: String,
+            scanned: Cell<bool>,
+      }
+
+
+* Cell pointers can store only Copy implemented values.
+
+
+* Access cell values:
+
+      * Get   : <cell_value>.set(<new_value>)
+
+      * Update: <cell_value>.get()
+
+
+* Ex:
+
+      use std::cell::Cell;
+
+      #[derive(Debug)]
+      struct ConcertTicket {
+            section: String,
+            seat: String,
+            scanned: Cell<bool>,
+      }
+
+      impl ConcertTicket {
+            fn new(section: String, seat: String) -> Self {
+                  Self {
+                        section,
+                        seat,
+                        scanned: Cell::new(false),
+                  }
+            }
+
+            fn admit_attendee(&self) {
+                  self.scanned.set(true);
+            }
+      }
+
+      fn main() {
+            let ticket = ConcertTicket::new(String::from("A"), String::from("3"));
+
+            ticket.admit_attendee();
+
+            println!("{:?}", ticket);
+      }
+
+
+
+
+---------- (RefCell Smart Pointers) ----------
+
+* A smart pointer in Rust that provides interior mutability.
+
+
+* Normally, Rust enforces borrowing rules at compile time:
+
+
+* With RefCell<T>, Rust checks borrowing rules at runtime instead of compile
+  time.
+
+
+* Borrowing:
+
+      * Immutable borrow:
+
+            let r1 = value.borrow();
+            let r2 = value.borrow();
+
+      * Mutable borrow:
+
+            let mut r = value.borrow_mut();
+
+      * Only one mutable borrow is allowed at a time.
+
+
+* Runtime checking:
+
+      * This compiles:
+
+            fn main() {
+                  let value = RefCell::new(5);
+
+                  let r1 = value.borrow_mut();
+                  let r2 = value.borrow_mut();
+            }
+
+
+      * But panics at runtime because RefCell detected two mutable borrows.
+
+
+* Why use it?
+
+      Sometimes Rust's compile-time borrow checker is too conservative, but you
+      know the code is actually safe.
+
+      * Common uses:
+
+            * Mock objects in tests.
+            * Shared mutable data with Rc<T>.
+            * Tree and graph structures.
+            * Other data structures requiring interior mutability.
 
 --------------------------------------------------------------------------------
