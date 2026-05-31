@@ -9127,4 +9127,60 @@ pub trait Drop {
             };
       }
 
+
+
+
+---------- (Deref Coercion) ----------
+
+* When given a reference to a type that implements the Deref trait, Rust will
+  convert it into a reference of another type if necessary.
+
+
+* The deref coercion is performed only on references.
+
+
+* The compiler is allowed to repeatedly apply Deref / DerefMut as long as each
+  step moves closer to the expected type.
+
+
+* Ex 1:
+
+      fn show_output(value: &str) {
+            println!("{}", value);
+      }
+
+      fn main() {
+            let name = String::from("John Cena");
+
+            show_output(&name);
+      }
+
+
+      * In this case show_output(&name) is same as:
+
+            let result = (&name).deref();
+            show_output(result);
+
+
+
+
+* Ex 2:
+
+      fn show_output(value: &str) {
+            println!("{}", value);
+      }
+
+      fn main() {
+            let name = Box::new(String::from("John"));
+
+            show_output(&name);
+      }
+
+
+      * In this case show_output(&name) is same as:
+
+            let result1 = (&name).deref();
+            let result2 = (result1).deref();
+            show_output(result2);
+
 --------------------------------------------------------------------------------
