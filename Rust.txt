@@ -8732,6 +8732,79 @@ pub trait FromIterator<A>: Sized {
 
 
 
+---------- rand Crate ----------------------------------------------------------
+
+* The rand crate is the de facto standard library for randomness in Rust.
+
+
+---------- (Generate A Random Value) ----------
+
+* An integer value:
+
+      let x = rand::random<i128>();
+      let x = rand::random<i64>();
+      let x = rand::random<i32>();
+      let x = rand::random<i16>();
+      let x = rand::random<i8>();
+
+
+      let x = rand::random_range(0..10);
+      let x = rand::random_range(0..=10);
+
+
+* A floating point value:
+
+      * 0 <= x < 1
+
+            let x = rand::random<f32>();
+            let x = rand::random<f64>();
+
+
+      let x = rand::random_range(5.2..7.8);
+      let x = rand::random_range(5.2..=7.8);
+
+
+* A boolian value:
+
+      let x = rand::random_bool(0.5); // 50% chance of true
+      let x = rand::random_bool(0.9); // 90% chance of true
+
+      let x = rand::random_ratio(1, 2); 1/2 chance of true (50%)
+      let x = rand::random_ratio(9, 10); 9/10 chance of true (90%)
+
+
+* Shuffle the values in a collection:
+
+      let mut rng = rng();
+      let mut numbers = [4, 8, 15, 16, 23, 48];
+
+      numbers.shuffle(&mut rng);
+
+
+
+
+---------- (ThreadRng) ----------
+
+* If you want to generate more than one random values, the use a ThreadRng type
+  object.
+
+
+* Ex:
+
+      use rand::{RngExt, rng};
+
+      fn main() {
+            let mut rng = rng();
+
+            let x = rng.random::<i32>();
+            let y = rng.random::<f64>();
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Smart Pointers ------------------------------------------------------
 
 ---------- (Raw Pointers) ----------
