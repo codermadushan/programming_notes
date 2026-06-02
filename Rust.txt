@@ -8805,6 +8805,220 @@ pub trait FromIterator<A>: Sized {
 
 
 
+---------- chrono Crate --------------------------------------------------------
+
+---------- (NaiveDate Struct) ----------
+
+* It represents a calendar date without any time-of-day or timezone information.
+
+
+* Ex:
+
+      use chrono::NaiveDate;
+
+      fn main() {
+            let data1 = NaiveDate::from_ymd_opt(1999, 9, 30);
+            println!("{:?}", data1);
+
+            let date_str = "1999-09-24";
+            let date2 = date_str.parse::<NaiveDate>();
+            println!("{:?}", date2);
+      }
+
+
+
+
+---------- (TimeDelta Struct) ----------
+
+* Represents a duration of time.
+
+
+* Ex:
+
+      fn main() {
+            let five_seconds = TimeDelta::new(5, 0);
+
+            let negative_five_seconds = TimeDelta::new(-5, 0);
+
+            let five_minutes = TimeDelta::minutes(5);
+            let five_hours = TimeDelta::hours(5);
+            let five_days = TimeDelta::days(5);
+            let five_weeks = TimeDelta::weeks(5);
+      }
+
+      * A TimeDelta can be negative.
+
+      * nanos < 1 billion (1 second). Otherwise it is an invalid input.
+
+
+* Access informations from a TimeDelta:
+
+      fn main() {
+            let five_weeks = TimeDelta::weeks(5);
+
+            let microseconds = five_weeks.num_microseconds();
+            let nanoseconds = five_weeks.num_nanoseconds();
+            let milliseconds = five_weeks.num_milliseconds();
+            let seconds = five_weeks.num_seconds();
+            let minutes = five_weeks.num_minutes();
+            let hours = five_weeks.num_hours();
+            let days = five_weeks.num_days();
+            let weeks = five_weeks.num_weeks();
+      }
+
+
+* Addition and subtraction of durations:
+
+      fn main() {
+            let five_seconds = TimeDelta::seconds(5);
+            let negative_two_seconds = TimeDelta::seconds(-2);
+
+            let duration = five_seconds + negative_two_seconds;
+            println!("{:?}", duration); // 3 seconds
+
+            let duration = five_seconds - negative_two_seconds;
+            println!("{:?}", duration); // 7 seconds
+      }
+
+
+
+
+---------- (NaiveTime Struct) ----------
+
+* Just a specific time of the day without date or timezone information.
+
+
+* Ex:
+
+      fn main() {
+            let four_thirty_am = NaiveTime::from_hms_opt(4, 30, 0);
+
+            let four_thirty_pm = NaiveTime::from_hms_opt(16, 30, 0);
+      }
+
+
+
+
+---------- (NaiveDateTime Struct) ----------
+
+* NaiveDate + NaiveTime
+
+
+* Ex:
+
+      fn main() {
+            let day = NaiveDate::from_ymd_opt(1999, 9, 24).unwrap();
+            let time = NaiveTime::from_hms_opt(22, 12, 0).unwrap();
+
+            let datetime = NaiveDateTime::new(day, time);
+            println!("{:?}", datetime);
+      }
+
+
+
+
+---------- (DateTime Struct) ----------
+
+* ISO 8601 combined date and time with timezone.
+
+
+* Structs that return a DateTime struct:
+
+      * Utc  : Specifies the UTC timezone. It is most efficient.
+
+      * Local: Specifies the system local timezone.
+
+      Ex:
+            fn main() {
+                  let local_datetime = Local::now();
+                  println!("{}", local_datetime);
+
+                  let utc_datetime = Utc::now();
+                  println!("{}", utc_datetime);
+            }
+
+
+* Get the offset:
+
+      * Relative to the UTC.
+
+      fn main() {
+            let local_datetime = Local::now();
+
+            let offset = local_datetime.offset();
+
+            println!("{}", offset);
+      }
+
+
+
+
+---------- (Converting Timezones) ----------
+
+* Convert an existing DateTime to UTC:
+
+      let local_datetime = Local::now();
+      let utc_datetime = local_datetime.with_timezone(&Utc);
+
+
+* Convert an existing DateTime to a given timezone:
+
+      use chrono_tz::Asia::Colombo;
+
+      let local_datetime = Utc::now();
+      let utc_datetime = local_datetime.with_timezone(&Colombo);
+
+      * We have to use chrono_tz crate.
+
+
+
+
+---------- (Converting Strings To DateTime) ----------
+
+* Use DateTime::parse_from_str method.
+
+
+* Ex:
+
+      fn main() {
+            let someday = "24-Sep-1999 10:30:29 +0530";
+
+            let dt = DateTime::parse_from_str(someday, "%d-%b-%Y %H:%M:%S %z");
+
+            println!("{:?}", dt);
+      }
+
+
+
+
+---------- (Converting DateTime To Strings) ----------
+
+* Use format method.
+
+
+* Ex:
+
+      fn main() {
+            let local_datetime = Local::now();
+            let datetime_str = local_datetime.format("%m-%d-%Y %z");
+
+            println!("{}", datetime_str);
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Regular Expressions -------------------------------------------------
+
+* jklj
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Smart Pointers ------------------------------------------------------
 
 ---------- (Raw Pointers) ----------
