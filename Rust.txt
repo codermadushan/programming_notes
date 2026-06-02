@@ -9012,7 +9012,57 @@ pub trait FromIterator<A>: Sized {
 
 ---------- Regular Expressions -------------------------------------------------
 
-* jklj
+* A regular expression (regex) is a search pattern for text.
+
+
+* We use regex crate for regular expressions in Rust.
+
+
+* When working with regex in Rust, we have to use raw strings:
+
+      r"<content>"
+
+
+
+
+---------- (Find The First Match) ----------
+
+* Use "find" method.
+
+
+* Ex:
+
+      fn main() {
+            let content = fs::read_to_string("data.txt").unwrap();
+
+            let re = Regex::new(r"[0-9]{10}").unwrap();
+
+            let result = re.find(&content).unwrap();
+
+            println!("Starts at byte: {}", result.start());
+            println!("Ends at byte  : {}", result.end());
+            println!("Value         : {}", result.as_str());
+      }
+
+
+
+
+---------- (Find All Matches) ----------
+
+* Use find_iter" method.
+
+
+* Ex:
+
+      fn main() {
+            let content = fs::read_to_string("data.txt").unwrap();
+
+            let re = Regex::new(r"[0-9]{10}").unwrap();
+
+            for m in re.find_iter(&content) {
+                  println!("{} {} {}", m.start(), m.end(), m.as_str());
+            }
+      }
 
 --------------------------------------------------------------------------------
 
