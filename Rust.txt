@@ -2987,7 +2987,9 @@ Ex:
 
 * No attribute names.
 
-* Cannot define methods or associated function.
+
+* Can define methods and associated functions for them.
+
 
 * Syntax:
 
@@ -3016,7 +3018,7 @@ Ex:
 
 * Structs that do not hold any value.
 
-* But we can still define methods and associated functions for them.
+* Can define methods and associated functions for them.
 
 * Rarely used. But useful for some design patterns.
 
