@@ -4168,7 +4168,9 @@ fn main() {
         make them public explicitly using "pub" keyword.
 
 
-Ex:
+
+
+* Inline modules:
 
       mod inventory {
             const FLOOR_SPACE: i32 = 10000;
@@ -4196,7 +4198,9 @@ Ex:
       }
 
 
-* Module as files:
+
+
+* File modules:
 
       step 1: Create a file with module name (Ex: <module_name>.rs)
 
@@ -4209,53 +4213,38 @@ Ex:
 
 
 
-* Module as folders:
-
-      step 1: Create a folder with module name.
-
-      step 2: Inside the folder, create a file called "mod.rs".
-
-      step 3: Define all items related to that module in that file.
-
-      step 4: Then specify the module as follows where you want to use it:
-
-            mode <module_name>; // In this case the module folder should be inside same directory
-
-
-
-
 * Sub Modules:
 
-      * There are 3 way to create a sub module:
+      * There are 2 ways to create a sub module:
 
-            1. Inside the same <parent_module>.rs or <parent_module>/mod.rs file:
+            1. Inside the parent inline module:
 
-                  pub mod <sub_module> {
+                  pub mod <parent_module> {
                         // items
+
+                        pub mod <sub_module> {
+                              // items
+                        }
                   }
 
                   * If you don't want to use the sub module outside of the
                     parent module, remove pub keyword.
 
 
+            2. For file modules:
+
+                  * Step 1:
+
+                        Create a folder with the same name as file module in the
+                        same directory that file module exists.
 
 
-            2. As a file sub module:
+                  * Step 2:
 
-                  Step 1:
-
-                        Create the <sub_module>.rs file in the same directory
-                        which <parent_module>.rs or <parent_module>/mod.rs file
-                        exists.
+                        Define all sub modules of the file module in that folder.
 
 
-                  Step 2:
-
-                        Then define all items related to that sub module in that
-                        new file.
-
-
-                  Step 3:
+                  * Step 3:
 
                         Now specify the sub module in parent module as follows:
 
@@ -4263,35 +4252,6 @@ Ex:
 
                               * If you don't want to use the sub module outside
                                 of the parent module, remove pub keyword.
-
-
-
-
-            3. As a folder sub module:
-
-                  Step 1:
-
-                        Create the <sub_module>/mod.rs file in the same directory
-                        which <parent_module>.rs or <parent_module>/mod.rs file
-                        exists.
-
-
-                  Step 2:
-
-                        Then define all items related to that sub module in that
-                        new file.
-
-
-                  Step 3:
-
-                        Now specify the sub module in parent module as follows:
-
-                              pub mod <sub_module>;
-
-                              * If you don't want to use the sub module outside
-                                of the parent module, remove pub keyword.
-
-
 
 
       * Access sub modules:
