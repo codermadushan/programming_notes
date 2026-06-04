@@ -11437,7 +11437,7 @@ Ex (Long Polling):
 
       package users.v1;
 
-      option go_package = "mytestapp/gen/users/v1;userspb";
+      option go_package = "mytestapp/gen/users/v1;userspbv1";
 
       message User {
         string id = 1;
@@ -11458,7 +11458,7 @@ Ex (Long Polling):
 
       import "users/v1/users.proto";
 
-      option go_package = "mytestapp/gen/auth/v1;authpb";
+      option go_package = "mytestapp/gen/auth/v1;authpbv1";
 
       message LoginRequest {
         string email = 1;
@@ -11570,5 +11570,130 @@ Ex (Long Polling):
         rpc <MethodName>(<MethodName>Request) returns (<MethodName>Response);
         ...
       }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Create A Simple gRPC Server -----------------------------------------
+
+* Folder structure:
+
+      /cmd
+          /grpc
+              server.go
+
+
+      /gen
+
+
+      /internal
+          /features
+              /<feature1>
+                  /v<number>
+                      repository.go
+
+                      server.go
+
+                      service.go
+
+
+      /proto
+
+
+
+
+* Examples:
+
+      * internal/features/calculator/v1/repository.go:
+
+            package calculatorv1
+
+            type Repository struct {
+              // db *sql.DB
+            }
+
+            func NewRepository() *Repository {
+              return &Repository{}
+            }
+
+            func (repo *Repository) Add(a, b int32) int32 {
+              return a + b
+            }
+
+
+      * internal/features/calculator/v1/service.go:
+
+            package calculatorv1
+
+            type Service struct {
+              repo *Repository
+            }
+
+            func NewService(repo *Repository) *Service {
+              return &Service{repo: repo}
+            }
+
+            func (service *Service) Add(a, b int32) int32 {
+              result := service.repo.Add(a, b)
+
+              // Business rules here
+
+              return result
+            }
+
+
+      * internal/features/calculator/v1/service.go:
+
+            package calculatorv1
+
+            import (
+              "context"
+
+              calculatorpbv1 "myproject/gen/calculator/v1"
+            )
+
+            type Server struct {
+              calculatorpbv1.UnimplementedCalculateServiceServer
+
+              service *Service
+            }
+
+            func NewServer(service *Service) *Server {
+              return &Server{service: service}
+            }
+
+            func (server *Server) Add(ctx context.Context, in *calculatorpbv1.AddRequest) (*calculatorpbv1.AddResponse, error) {
+              sum := server.service.Add(in.A, in.B)
+
+              return &calculatorpbv1.AddResponse{Sum: sum}, nil
+            }
+
+
+      * cmd/grpc/server.go:
+
+            func main() {
+              const port string = "50051"
+
+              lis, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
+              if err != nil {
+                log.Fatalln(err)
+              }
+
+              grpcServer := grpc.NewServer()
+
+              // calculatorv1
+              calculatorV1Repo := calculatorv1.NewRepository()
+              calculatorV1Service := calculatorv1.NewService(calculatorV1Repo)
+              calculatorV1Server := calculatorv1.NewServer(calculatorV1Service)
+              calculatorpbv1.RegisterCalculateServiceServer(grpcServer, calculatorV1Server)
+
+              fmt.Println("Server is running on port:", port)
+              err = grpcServer.Serve(lis)
+              if err != nil {
+                log.Fatalln(err)
+              }
+            }
 
 --------------------------------------------------------------------------------
