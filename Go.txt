@@ -11697,3 +11697,74 @@ Ex (Long Polling):
             }
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Create A Simple gRPC Client -----------------------------------------
+
+* In gRPC, we have to create a seperate client for each service.
+
+
+* grpc.WithTransportCredentials(insecure.NewCredentials()):
+
+      We have to provide this object to NewClient method if we don't use TLS.
+
+
+* Ex:
+
+    func main() {
+      conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+      if err != nil {
+        log.Fatalln(err)
+      }
+      defer conn.Close()
+
+      client := calculatorpbv1.NewCalculateServiceClient(conn)
+
+      ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+      defer cancel()
+      req := &calculatorpbv1.AddRequest{A: 10, B: 20}
+
+      res, err := client.Add(ctx, req)
+      if err != nil {
+        log.Fatalln(err)
+      }
+
+      fmt.Println(res.Sum)
+    }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- gRPC + TLS ----------------------------------------------------------
+
+* Implement TLS for the server:
+
+      const cert string = "certs/localhost.pem"
+      const key string = "certs/localhost-key.pem"
+
+      creds, err := credentials.NewServerTLSFromFile(cert, key)
+      if err != nil {
+        log.Fatalln(err)
+      }
+
+      grpcServer := grpc.NewServer(grpc.Creds(creds))
+
+
+
+
+* Implement TLS for a client:
+
+      const cert string = "certs/localhost.pem"
+
+      creds, err := credentials.NewClientTLSFromFile(cert, "")
+      if err != nil {
+        log.Fatalln(err)
+      }
+
+      conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(creds))
+
+--------------------------------------------------------------------------------
