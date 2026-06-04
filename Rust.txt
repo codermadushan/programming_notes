@@ -3284,7 +3284,29 @@ Ex:
 
 
 
----------- (If Let Construct) ----------
+---------- (while let Construct) ----------
+
+* Syntax:
+
+      while let <hardcoded_enum_variant> = <dynamic_enum_variant> {
+            // continue the loop until the <hardcoded_enum_variant> != <dynamic_enum_variant>
+      }
+
+
+* Ex:
+
+      fn main() {
+            let mut numbers = vec![4, 8, 15, 16, 23, 42];
+
+            while let Some(number) = numbers.pop() {
+                  println!("{}", number);
+            }
+      }
+
+
+
+
+---------- (if let Construct) ----------
 
 * Use if let when you want to conditionally extract associated values from one
   enum variant.
@@ -3361,7 +3383,7 @@ Ex 2:
 
 
 
----------- (Let Else Contruct) ----------
+---------- (let else Construct) ----------
 
 * Use this when you want to early exit if pattern doesn't match.
 
@@ -9758,5 +9780,47 @@ pub trait Drop {
             * Shared mutable data with Rc<T>.
             * Tree and graph structures.
             * Other data structures requiring interior mutability.
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Futures -------------------------------------------------------------
+
+* A Future in Rust represents a value that will be available later.
+
+
+* Future trait:
+
+      pub trait Future {
+            type Output;
+
+            // Required method
+            fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output>;
+      }
+
+
+* Ex:
+
+      async fn foo() -> usize {
+            println!("foo");
+            0
+      }
+
+      Same as,
+
+      fn foo() -> impl Future<Output = usize> {
+            async {
+                  println!("foo");
+                  0
+            }
+      }
+
+
+* <Future>.await:
+
+      * Pause this async task until this future is Completed.
+      * Other tasks can run meanwhile.
 
 --------------------------------------------------------------------------------
