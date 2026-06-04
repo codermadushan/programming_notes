@@ -11602,6 +11602,12 @@ Ex (Long Polling):
       /proto
 
 
+* If a feature contains multiple services, then define a seperate server file
+  for each service.
+
+      <feature1>_server.go
+      <feature2>_server.go
+      ...
 
 
 * Examples:
@@ -11766,5 +11772,25 @@ Ex (Long Polling):
       }
 
       conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(creds))
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- gRPC Streaming ------------------------------------------------------
+
+* Types of streaming:
+
+      1. Server side streaming
+      2. Client side streaming
+      3. Bidirectional streaming
+
+
+
+
+---------- (Server Side Streams) ----------
+
+* jlkj
 
 --------------------------------------------------------------------------------
