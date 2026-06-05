@@ -11791,6 +11791,63 @@ Ex (Long Polling):
 
 ---------- (Server Side Streams) ----------
 
+* Server -----> Client
+
+
+* .proto:
+
+      service CalculatorService {
+        rpc GenerateFibonacci(GenerateFibonacciRequest) returns (stream GenerateFibonacciResponse);
+      }
+
+
+* implementation in server:
+
+      func (server *Server) GenerateFibonacci(in *calculatorpbv1.GenerateFibonacciRequest, stream grpc.ServerStreamingServer[calculatorpbv1.GenerateFibonacciResponse]) error {
+        n := in.N
+
+        a, b := 0, 1
+
+        for i := 0; i < int(n); i++ {
+          err := stream.Send(&calculatorpbv1.GenerateFibonacciResponse{Number: int32(a)})
+          if err != nil {
+            return err
+          }
+          a, b = b, a+b
+
+          time.Sleep(time.Second)
+        }
+
+        return nil
+      }
+
+
+* Access the stream in client:
+
+      stream, err := client.GenerateFibonacci(ctx, req)
+      if err != nil {
+        log.Fatalln(err)
+      }
+
+      for {
+        res, err := stream.Recv()
+        if err == io.EOF {
+          log.Fatalln(err)
+        } else if err != nil {
+          log.Fatalln(err)
+        }
+
+        fmt.Println(res.Number)
+      }
+
+
+
+
+---------- (Client Side Streams) ----------
+
+* Client -----> Server
+
+
 * jlkj
 
 --------------------------------------------------------------------------------
