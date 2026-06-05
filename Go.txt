@@ -11794,14 +11794,22 @@ Ex (Long Polling):
 * Server -----> Client
 
 
-* .proto:
+* In proto file:
+
+      message GenerateFibonacciRequest {
+        int32 n = 1;
+      }
+
+      message GenerateFibonacciResponse {
+        int32 number = 1;
+      }
 
       service CalculatorService {
         rpc GenerateFibonacci(GenerateFibonacciRequest) returns (stream GenerateFibonacciResponse);
       }
 
 
-* implementation in server:
+* Stream data from server to client:
 
       func (server *Server) GenerateFibonacci(in *calculatorpbv1.GenerateFibonacciRequest, stream grpc.ServerStreamingServer[calculatorpbv1.GenerateFibonacciResponse]) error {
         n := in.N
@@ -11832,7 +11840,8 @@ Ex (Long Polling):
       for {
         res, err := stream.Recv()
         if err == io.EOF {
-          log.Fatalln(err)
+          fmt.Println("End Of File")
+          break
         } else if err != nil {
           log.Fatalln(err)
         }
@@ -11848,6 +11857,63 @@ Ex (Long Polling):
 * Client -----> Server
 
 
-* jlkj
+* In proto file:
+
+      message SendNumbersRequest {
+        int32 number = 1;
+      }
+
+      message SendNumbersResponse {
+        int32 sum = 2;
+      }
+
+      service CalculatorService {
+        rpc SendNumbers(stream SendNumbersRequest) returns (SendNumbersResponse);
+      }
+
+
+* Access the stream from server:
+
+      func (server *Server) SendNumbers(recvStream grpc.ClientStreamingServer[calculatorpbv1.SendNumbersRequest, calculatorpbv1.SendNumbersResponse]) error {
+        var sum int32
+
+        for {
+          req, err := recvStream.Recv()
+          if err == io.EOF {
+            resp := &calculatorpbv1.SendNumbersResponse{Sum: sum}
+            return recvStream.SendAndClose(resp)
+          } else if err != nil {
+            return err
+          }
+
+          fmt.Println(req.GetNumber())
+          sum += req.GetNumber()
+        }
+      }
+
+
+* Stream data from client to server:
+
+      sendStream, err := client.SendNumbers(ctx)
+      if err != nil {
+        log.Fatalln(err)
+      }
+
+      for n := range 10 {
+        req := &calculatorpbv1.SendNumbersRequest{Number: int32(n)}
+        err := sendStream.Send(req)
+        if err != nil {
+          log.Fatalln(err)
+        }
+
+        time.Sleep(time.Second)
+      }
+
+      resp, err := sendStream.CloseAndRecv()
+      if err != nil {
+        log.Fatalln(err)
+      }
+
+      println(resp.GetSum())
 
 --------------------------------------------------------------------------------
