@@ -11571,6 +11571,16 @@ Ex (Long Polling):
         ...
       }
 
+
+* If a request or response is empty:
+
+      import "google/protobuf/empty.proto";
+
+      service <ServiceName> {
+        rpc <Method>(google.protobuf.Empty) returns (google.protobuf.Empty);
+        ...
+      }
+
 --------------------------------------------------------------------------------
 
 
@@ -12024,5 +12034,124 @@ Ex (Long Polling):
       })
 
       wg.Wait()
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Compression With gRPC -----------------------------------------------
+
+* In server side:
+
+      Just define following import statement in main server file:
+
+          _ "google.golang.org/grpc/encoding/gzip"
+
+
+
+
+* In client side:
+
+      * To apply for all clients:
+
+            conn, err := grpc.NewClient(..., grpc.WithDefaultCallOptions(grpc.UseCompressor(gzip.Name)))
+
+
+      * To apply only for a specific RPC:
+
+            resp, err := client.<RPCName>(..., grpc.UseCompressor(gzip.Name))
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- MetaData ------------------------------------------------------------
+
+* In grpc, metadata is essentially request/response headers in key-value form
+  that travel along with an RPC call but are not part of your protobuf message.
+
+
+* So metadata is:
+
+      * Key-value pairs.
+      * Sent with requests or responses.
+      * Used for contextual data, not business payload.
+
+
+* Typical uses:
+
+      * Authentication tokens.
+      * Tracing / request IDs
+      * User info (tenant, locale)
+      * Feature flags
+      * Debug info
+
+
+* Access via "google.golang.org/grpc/metadata" package.
+
+
+* Send metadata from client to server:
+
+      * In client:
+
+            md := metadata.Pairs("key1", "value1", "key2", "value2")
+            ctx = metadata.NewOutgoingContext(ctx, md)
+
+            resp, err := client.<RPC>(ctx, ...)
+
+
+      * In server:
+
+            md, ok := metadata.FromIncomingContext(ctx) / md, ok := metadata.FromIncomingContext(<stream>.Context())
+            if ok {
+              value1 := md.Get("key1")
+              value2 := md.Get("key2")
+            }
+
+
+* Send metadata from server to client:
+
+      * In Server:
+
+            md := metadata.Pairs("key1", "value1")
+            err := grpc.SendHeader(ctx, md) / <stream>.SendHeader(md)
+
+
+      * In Client:
+
+            var md metadata.MD
+            resp, err := client.<RPC>(..., grpc.Header(&md))
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Trailers ------------------------------------------------------------
+
+* Trailers are metadata sent after the response body, at the end of an RPC.
+
+
+* Common information in trailers are:
+
+      * grpc-status (Success / error code)
+      * grpc-message (Error description)
+
+
+* Trailers are server to client only.
+
+
+* In server:
+
+      md := metadata.Pairs("key1", "value1")
+      err := grpc.SetTrailer(ctx, md) / <stream>.SetTrailer(md)
+
+
+* In client:
+
+      var trailer metadata.MD
+      resp, err := client.<RPC>(..., grpc.Trailer(&trailer))
 
 --------------------------------------------------------------------------------
