@@ -11811,7 +11811,7 @@ Ex (Long Polling):
 
 * Stream data from server to client:
 
-      func (server *Server) GenerateFibonacci(in *calculatorpbv1.GenerateFibonacciRequest, stream grpc.ServerStreamingServer[calculatorpbv1.GenerateFibonacciResponse]) error {
+      func (server *Server) GenerateFibonacci(in *calculatorpbv1.GenerateFibonacciRequest, stream calculatorpbv1.CalculatorService_GenerateFibonacciServer) error {
         n := in.N
 
         a, b := 0, 1
@@ -11874,7 +11874,7 @@ Ex (Long Polling):
 
 * Access the stream from server:
 
-      func (server *Server) SendNumbers(recvStream grpc.ClientStreamingServer[calculatorpbv1.SendNumbersRequest, calculatorpbv1.SendNumbersResponse]) error {
+      func (server *Server) SendNumbers(recvStream calculatorpbv1.CalculatorService_SendNumbersServer) error {
         var sum int32
 
         for {
@@ -11915,5 +11915,114 @@ Ex (Long Polling):
       }
 
       println(resp.GetSum())
+
+
+
+
+---------- (BiDirectional Streams) ----------
+
+* Server -----> Client & Client -----> Server
+
+
+* In proto file:
+
+      message ChatRequest {
+        string message = 1;
+      }
+
+      message ChatResponse {
+        string message = 1;
+      }
+
+      service CalculatorService {
+        rpc Chat(stream ChatRequest) returns (stream ChatResponse);
+      }
+
+
+* In server:
+
+      func (server *Server) Chat(stream calculatorpbv1.CalculatorService_ChatServer) error {
+        reader := bufio.NewReader(os.Stdin)
+
+        var wg sync.WaitGroup
+
+        // Receiving messages from the client
+        wg.Go(func() {
+          for {
+            req, err := stream.Recv()
+            if err == io.EOF {
+              break
+            } else if err != nil {
+              break
+            }
+
+            fmt.Println("\nReceived message:", req.GetMessage())
+          }
+        })
+
+        // Sending messages to the client
+        wg.Go(func() {
+          for {
+            fmt.Print("Enter the message: ")
+            message, err := reader.ReadString('\n')
+            if err != nil {
+              break
+            }
+            message = strings.TrimSpace(message)
+
+            err = stream.Send(&calculatorpbv1.ChatResponse{Message: message})
+            if err != nil {
+              break
+            }
+          }
+        })
+
+        wg.Wait()
+
+        return nil
+      }
+
+
+* In client:
+
+      stream, err := client.Chat(ctx)
+      if err != nil {
+        log.Fatalln(err)
+      }
+
+      reader := bufio.NewReader(os.Stdin)
+
+      var wg sync.WaitGroup
+
+      wg.Go(func() {
+        for {
+          fmt.Print("Enter the message: ")
+          msg, err := reader.ReadString('\n')
+          if err != nil {
+            break
+          }
+          msg = strings.TrimSpace(msg)
+
+          err = stream.Send(&calculatorpbv1.ChatRequest{Message: msg})
+          if err != nil {
+            break
+          }
+        }
+      })
+
+      wg.Go(func() {
+        for {
+          res, err := stream.Recv()
+          if err == io.EOF {
+            break
+          } else if err != nil {
+            break
+          }
+
+          fmt.Println("\nReceived message:", res.GetMessage())
+        }
+      })
+
+      wg.Wait()
 
 --------------------------------------------------------------------------------
