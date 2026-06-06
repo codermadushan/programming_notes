@@ -12155,3 +12155,32 @@ Ex (Long Polling):
       resp, err := client.<RPC>(..., grpc.Trailer(&trailer))
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- gRPC With Postman ---------------------------------------------------
+
+* Add following line under all registered services in main go file:
+
+      reflection.Register(grpcServer)
+
+      * Only for development
+
+
+* Now open a new grpc request in Postman.
+
+
+* Type the server url:
+
+      Ex: grpc://localhost:50051
+
+
+* Now goto "Service definition" tab and click on "use server reflection". It
+  loads all available services in the server.
+
+
+* Now goto "Message" tab and click on "Use Example Message". It provides sample
+  request messages for testing.
+
+--------------------------------------------------------------------------------
