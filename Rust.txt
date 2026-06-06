@@ -9821,6 +9821,31 @@ pub trait Drop {
 * <Future>.await:
 
       * Pause this async task until this future is Completed.
+
       * Other tasks can run meanwhile.
+
+      * A Rust future is lazy. Creating a future does not start executing it.
+        The executor (such  as Tokio) repeatedly calls "poll()" to drive the
+        future forward.
+
+      * poll() returns:
+
+            Poll::Ready(<value>): When the future is Complete
+
+            Poll::Pending       : When it needs to wait for something
+
+      * When you write:
+
+            let result = <future>.await;
+
+            The compiler roughly transforms it into logic like:
+
+                  loop {
+                        match <future>.poll(...) {
+                              Poll::Ready(value) => break value,
+
+                              Poll::Pending => yield_to_executor(),
+                        }
+                  }
 
 --------------------------------------------------------------------------------
