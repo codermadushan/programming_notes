@@ -8692,7 +8692,12 @@ Ex:
 
 
 
----------- TCP Server + TCP Client ---------------------------------------------
+---------- TCP -----------------------------------------------------------------
+
+* TCP: Transmission Control Protocol
+
+
+
 
 * TCP Server:
 
@@ -9036,6 +9041,38 @@ Ex:
 
             We use them to convert a go object to the binary format and write or
             Read over a network connection.
+
+
+
+
+---------- (TLS + TCP) ----------
+
+* In Server:
+
+      cert, err := tls.LoadX509KeyPair(<cert>, <key>)
+      if err != nil {
+        log.Fatalln(err)
+      }
+
+      lis, err := tls.Listen("tcp", <address>, &tls.Config{Certificates: []tls.Certificate{cert}})
+
+
+* In client:
+
+      func main() {
+        conn, err := tls.Dial("tcp", "localhost:9000", &tls.Config{})
+        if err != nil {
+          log.Fatalln(err)
+        }
+        defer conn.Close()
+
+        conn.Write([]byte("hello from client"))
+
+        state := conn.ConnectionState()
+
+        fmt.Println("tls version        :", state.Version)
+        fmt.Println("handshake completed:", state.HandshakeComplete)
+      }
 
 --------------------------------------------------------------------------------
 
@@ -12523,7 +12560,9 @@ Ex (Long Polling):
 
 * Type the server url:
 
-      Ex: grpc://localhost:50051
+      Ex: https://localhost:50051
+
+      * grpc://localhost:50051 also works
 
 
 * Now goto "Service definition" tab and click on "use server reflection". It
