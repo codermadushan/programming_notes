@@ -9268,6 +9268,88 @@ Ex:
 
 
 
+---------- HTTP + TLS ----------------------------------------------------------
+
+* Server:
+
+      func main() {
+        const port string = "3000"
+
+        const cert string = "certs/cert.pem"
+        const key string = "certs/key.pem"
+
+        mux := http.NewServeMux()
+
+        mux.HandleFunc("GET /test", func(w http.ResponseWriter, r *http.Request) {
+          w.Write([]byte("test handler"))
+        })
+
+        tlsConfig := &tls.Config{
+          MinVersion: tls.VersionTLS12,
+        }
+
+        server := &http.Server{
+          Addr:      fmt.Sprintf(":%s", port),
+          Handler:   mux,
+          TLSConfig: tlsConfig,
+        }
+
+        fmt.Println("server is running on port:", port)
+        err := server.ListenAndServeTLS(cert, key)
+        if err != nil {
+          log.Fatalln(err)
+        }
+      }
+
+
+
+
+* Client:
+
+      func main() {
+        caCert, err := os.ReadFile("certs/rootCA.pem")
+        if err != nil {
+          log.Fatalln(err)
+        }
+
+        caPool := x509.NewCertPool()
+        ok := caPool.AppendCertsFromPEM(caCert)
+        if !ok {
+          log.Fatalln("failed to append CA cert")
+        }
+
+        tlsConfig := &tls.Config{
+          RootCAs:    caPool,
+          MinVersion: tls.VersionTLS12,
+        }
+
+        transport := &http.Transport{
+          TLSClientConfig: tlsConfig,
+        }
+
+        client := &http.Client{
+          Transport: transport,
+        }
+
+        resp, err := client.Get("https://127.0.0.1:3000/test")
+        if err != nil {
+          log.Fatalln(err)
+        }
+
+        defer resp.Body.Close()
+        body, err := io.ReadAll(resp.Body)
+        if err != nil {
+          log.Fatalln(err)
+        }
+
+        fmt.Println(string(body))
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Serialization & Deserialization -------------------------------------
 
 * Serialization: Convert a Go struct into a JSON format string.
