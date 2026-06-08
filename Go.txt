@@ -12236,13 +12236,17 @@ Ex (Long Polling):
 
 * Implement TLS for the server:
 
-      const cert string = "certs/localhost.pem"
-      const key string = "certs/localhost-key.pem"
-
-      creds, err := credentials.NewServerTLSFromFile(cert, key)
+      cert, err := tls.LoadX509KeyPair(<cert>, <key>)
       if err != nil {
         log.Fatalln(err)
       }
+
+      tlsConfig := &tls.Config{
+        Certificates: []tls.Certificate{cert},
+        MinVersion:   tls.VersionTLS12,
+      }
+
+      creds := credentials.NewTLS(tlsConfig)
 
       grpcServer := grpc.NewServer(grpc.Creds(creds))
 
