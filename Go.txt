@@ -12251,14 +12251,25 @@ Ex (Long Polling):
 
 * Implement TLS for a client:
 
-      const cert string = "certs/localhost.pem"
-
-      creds, err := credentials.NewClientTLSFromFile(cert, "")
+      caCert, err := os.ReadFile(<ca_root>)
       if err != nil {
         log.Fatalln(err)
       }
 
-      conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(creds))
+      caPool := x509.NewCertPool()
+      ok := caPool.AppendCertsFromPEM(caCert)
+      if !ok {
+        log.Fatalln("failed to append CA ")
+      }
+
+      tlsConfig := &tls.Config{
+        RootCAs:    caPool,
+        MinVersion: tls.VersionTLS12,
+      }
+
+      creds := credentials.NewTLS(tlsConfig)
+
+      conn, err := grpc.NewClient(<address>, grpc.WithTransportCredentials(creds))
 
 --------------------------------------------------------------------------------
 
