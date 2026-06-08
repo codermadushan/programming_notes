@@ -9054,25 +9054,33 @@ Ex:
         log.Fatalln(err)
       }
 
-      lis, err := tls.Listen("tcp", <address>, &tls.Config{Certificates: []tls.Certificate{cert}})
+      tlsConfig := &tls.Config{
+        Certificates: []tls.Certificate{cert},
+        MinVersion:   tls.VersionTLS12,
+      }
+
+      lis, err := tls.Listen("tcp", <address>, tlsConfig)
 
 
 * In client:
 
-      func main() {
-        conn, err := tls.Dial("tcp", "localhost:9000", &tls.Config{})
-        if err != nil {
-          log.Fatalln(err)
-        }
-        defer conn.Close()
-
-        conn.Write([]byte("hello from client"))
-
-        state := conn.ConnectionState()
-
-        fmt.Println("tls version        :", state.Version)
-        fmt.Println("handshake completed:", state.HandshakeComplete)
+      caCert, err := os.ReadFile(<ca_cert>)
+      if err != nil {
+        log.Fatalln(err)
       }
+
+      caPool := x509.NewCertPool()
+      ok := caPool.AppendCertsFromPEM(caCert)
+      if !ok {
+        log.Fatalln("failed to parse CA certificate")
+      }
+
+      tlsConfig := &tls.Config{
+        RootCAs:    caPool,
+        MinVersion: tls.VersionTLS12,
+      }
+
+      conn, err := tls.Dial("tcp", <address>, tlsConfig)
 
 --------------------------------------------------------------------------------
 
@@ -12560,7 +12568,7 @@ Ex (Long Polling):
 
 * Type the server url:
 
-      Ex: https://localhost:50051
+      Ex: https://localhost:50051 (Because grpc internally use http/2)
 
       * grpc://localhost:50051 also works
 
