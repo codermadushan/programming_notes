@@ -10649,18 +10649,16 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
 
 
 
----------- PGX Pool -------------------------------------------------------------
+---------- PGX Pool ------------------------------------------------------------
 
 * Installation:
 
       go get github.com/jackc/pgx/v5/pgxpool
 
 
-
-
 * Creation:
 
-      (internal/db/pool.go)
+      (internal/platform/db/pool.go)
 
       func NewPool(ctx context.Context, connString string) (*pgxpool.Pool, error) {
         config, err := pgxpool.ParseConfig(connString)
@@ -10916,6 +10914,14 @@ mux.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
                 return []any{t.FirstName, t.LastName, t.Email, t.Class, t.Subject}, nil
               }),
             )
+
+
+
+
+* Note:
+
+      * To access possible null values from the database, use pointer struct
+        fields or pointer variables.
 
 --------------------------------------------------------------------------------
 
