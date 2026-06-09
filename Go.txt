@@ -11670,6 +11670,43 @@ Ex (Long Polling):
 
 
 
+---------- Versioning HTTP APIs ------------------------------------------------
+
+* Create separate folders for each version in each feature:
+
+      /internal
+          /features
+              /<feature>
+                  /v1  -----> package <feature>v1
+                  /v2  -----> package <feature>v2
+                  ...
+
+
+* Create separate router files for each version:
+
+      /internal
+          /api
+              /routers
+                  router_v1.go -----> package routerv1
+                  router_v2.go -----> package routerv2
+                  ...
+
+
+* Ex (router_v1.go):
+
+      func RegisterRoutes(mux *http.ServeMux, authHandler *authv1.Handler) {
+        subMux := http.NewServeMux()
+
+        authv1.RegisterRoutes(subMux, authHandler)
+
+        mux.Handle("/api/v1/", http.StripPrefix("/api/v1", subMux))
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Protocol Buffers ----------------------------------------------------
 
 * protocol Buffers (often called protobuf) are a language and platform-neutral
