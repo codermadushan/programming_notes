@@ -12721,3 +12721,49 @@ Ex (Long Polling):
   request messages for testing.
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Protovalidate -------------------------------------------------------
+
+* Protovalidate is a validation framework for Protocol Buffers. In Go, it lets
+  you define validation rules directly in your .proto files and then validate
+  message instances at runtime.
+
+
+* Steps:
+
+      * Step 1:
+
+            Download the validate.proto file from https://github.com/bufbuild/protovalidate/tree/main/proto/protovalidate/buf/validate
+            and place it in proto/buf/validate/ folder in your project.
+
+
+      * Step 2:
+
+            Install protovalidate go package: buf.build/go/protovalidate
+
+
+* Usage:
+
+      * In proto files:
+
+            import "buf/validate/validate.proto";
+
+            message AddRequest {
+              int32 a = 1 [(buf.validate.field).int32.lte = 20];
+              int32 b = 2 [(buf.validate.field).int32.lte = 20];
+            }
+
+
+      * In internal/features/<feature>/v<version>/service.go:
+
+            err := validator.Validate(req)
+
+
+            * validator, err := protovalidate.New()
+
+            * Provide the validator as a dependency to the service.
+
+--------------------------------------------------------------------------------
