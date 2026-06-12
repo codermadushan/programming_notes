@@ -1,0 +1,48 @@
+---------- C++ -----------------------------------------------------------------
+
+* when to use each variants of basic data types like long and long long etc
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Number Series -------------------------------------------------------
+
+* Print a series:
+
+      1. Get the number of values (n)
+      2. Define all base cases and temp variables (a, b, c, ... / tempA, tempB, tempC, ...)
+      3. Create a for loop that iterates n times
+      4. Inside the for loop print the "a" and update all base cases for the next iteration
+
+
+      * Ex:
+
+            // 0 1 1 2 3 5 8 13 21 34
+
+            void print_fibonacci(int n)
+            {
+              int a = 0, b = 1;
+              int tempA;
+
+              for (int i = 0; i < n; i++)
+              {
+                cout << a << " ";
+
+                tempA = a;
+                a = b;
+                b = tempA + b;
+              }
+            }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Recursion -----------------------------------------------------------
+
+* jlkj
+
+--------------------------------------------------------------------------------
