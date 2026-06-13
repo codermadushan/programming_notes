@@ -43,7 +43,7 @@
 
       1. F(n) -> nth value
       2. Identify the base cases
-      3. Generate an equation that contains only constants and F(x) parameters
+      3. Generate an equation that contains only constants, n and F(x) as parameters
       4. Implement the function
 
 
@@ -200,5 +200,157 @@
 
 
       * Therefore the space complexity is: O(n)
+
+
+
+
+---------- (Indirect Recursion) ----------
+
+* A calls B, B calls A
+
+
+* Ex:
+
+      void function_b(int);
+
+      void function_a(int n)
+      {
+        if (n < 1)
+          return;
+
+        cout << n << " ";
+        function_b(n - 1);
+      }
+
+      void function_b(int n)
+      {
+        if (n < 2)
+          return;
+
+        cout << n << " ";
+        function_a(n / 2);
+      }
+
+      int main()
+      {
+        function_a(20);
+      }
+
+
+
+
+---------- (Nested Recursion) ----------
+
+* Ex:
+
+      int func(int n)
+      {
+        if (n > 100)
+          return n - 10;
+
+        return func(func(n + 11));
+      }
+
+
+
+
+---------- (Sum Of First n Natural Numbers) ----------
+
+* No need to use recursion. We can just simply use: n(n+1)/2
+
+
+* Build the recursion:
+
+      sum(3) = 1 + 2 + 3
+      sum(4) = sum(3) + 4
+      ...
+      sum(n) = sum(n-1) + n
+
+
+* Solution:
+
+      int sum(int n)
+      {
+        if (n == 1)
+          return 1;
+
+        return sum(n - 1) + n;
+      }
+
+
+
+
+---------- (Factorial Of n) ----------
+
+* Build the recursion:
+
+      factorial(3) = 3 * 2 * 1
+      factorial(4) = 4 * factorial(3)
+      ...
+      factorial(n) = n * factorial(n-1)
+
+
+* Solution:
+
+      int factorial(int n)
+      {
+        if (n == 1)
+          return 1;
+
+        return n * factorial(n - 1);
+      }
+
+
+
+
+---------- (nth Power Of m) ----------
+
+* Build the recursion 1:
+
+      m^3 = m * m * m
+      m^4 = m * m * m * m
+      ...
+      m^n = m * m * m * m * ... for n times
+      m^n = m * m * m ... for n-1 times * m
+      m^n = m^(n-1) * m
+
+
+* Solution 1:
+
+      int pow(int m, int n)
+      {
+        if (n == 0)
+          return 1;
+
+        return pow(m, n - 1) * m;
+      }
+
+      * Time : O(n)
+      * Space: O(n)
+
+
+
+
+* Build the recursion 2:
+
+      if n is odd,  m^n = m * (m^2)^(n/2)
+      if n is even, m^n = (m^2)^(n/2)
+
+
+* Solution 2:
+
+      int pow(int m, int n)
+      {
+        if (n == 0)
+          return 1;
+
+        if (n % 2 == 0)
+          return pow(m * m, n / 2);
+
+        return m * pow(m * m, n / 2);
+      }
+
+      * Time : O(log(n))
+      * Space: O(n)
 
 --------------------------------------------------------------------------------
