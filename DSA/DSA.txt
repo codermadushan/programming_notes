@@ -9,6 +9,32 @@
 
 ---------- Number Series -------------------------------------------------------
 
+* Print nth value (Use recursion):
+
+      1. F(n) -> nth value
+      2. Identify the base cases
+      3. Generate an equation that contains only constants, n and F(x) as parameters
+      4. Implement the function
+
+
+      * Ex:
+
+            // 0 1 1 2 3 5 8 13 21 34
+
+            int fibonacci(int n)
+            {
+              if (n == 1)
+                return 0;
+
+              if (n == 2)
+                return 1;
+
+              return fibonacci(n - 2) + fibonacci(n - 1); // F(n) = F(n-2) + F(n-1)
+            }
+
+
+
+
 * Print a series (Use iteration):
 
       1. Get the number of values (n)
@@ -37,30 +63,16 @@
             }
 
 
+      * If one term contains multiple different values, use a, b, c, ... for
+        them to build the term.
 
 
-* Print nth value (Use recursion):
-
-      1. F(n) -> nth value
-      2. Identify the base cases
-      3. Generate an equation that contains only constants, n and F(x) as parameters
-      4. Implement the function
 
 
-      * Ex:
+* Get the sum/product of values (Use iteration):
 
-            // 0 1 1 2 3 5 8 13 21 34
-
-            int fibonacci(int n)
-            {
-              if (n == 1)
-                return 0;
-
-              if (n == 2)
-                return 1;
-
-              return fibonacci(n - 2) + fibonacci(n - 1); // F(n) = F(n-2) + F(n-1)
-            }
+      Same as printing the series. Instead of printing "a", just define an
+      additional variable for sum/product and build the value.
 
 --------------------------------------------------------------------------------
 
@@ -254,6 +266,19 @@
 
 
 
+---------- Recursion Short Note ------------------------------------------------
+
+* To print a number series, always use iterative approach. Use recursive
+  approach for others.
+
+
+* jkl
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- (Sum Of First n Natural Numbers) ----------
 
 * No need to use recursion. We can just simply use: n(n+1)/2
@@ -351,6 +376,15 @@
       }
 
       * Time : O(log(n))
-      * Space: O(n)
+      * Space: O(log(n))
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Arrays --------------------------------------------------------------
+
+* jklj
 
 --------------------------------------------------------------------------------
