@@ -1,0 +1,168 @@
+---------- Basic Data Types ----------------------------------------------------
+
+---------- (Integers) ----------
+
+* -10^9 <= X <= 10^9 ---> int
+
+* Else               ---> long long
+
+
+
+
+---------- (Floating points) ----------
+
+* Always use "double".
+
+* Ex: double pi = 3.14;
+
+* To print a value,
+
+      1. with a given number of precision, or
+      2. without scientific notation,
+
+      cout << fixed << setprecision(8) << <value>;
+
+
+
+
+---------- (Booleans) ----------
+
+* Use "bool".
+
+* Ex: bool completed = false;
+
+
+
+
+---------- (Characters) ----------
+
+* User "char".
+
+* Ex: char c = 'c';
+
+
+
+
+---------- (Strings) ----------
+
+* Use "string".
+
+* Ex: string name = "john";
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Constants -----------------------------------------------------------
+
+---------- (const) ----------
+
+* Read only after initialization (runtime or compile-time).
+
+
+* Ex:
+
+      1. const int x = 10; // ok
+
+      2.
+          int a;
+          cin >> a;
+
+          const int b = a; // ok
+
+
+
+
+---------- (constexpr) ----------
+
+* Guaranteed compile-time constant.
+
+
+* Ex:
+
+      1. const int x = 10; // ok
+
+      2.
+          int a;
+          cin >> a;
+
+          const int b = a; // not allowed
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Collection Types ----------------------------------------------------
+
+* All STL (Standard Template Library) containers are passed by the value.
+  Therefore if you need to modify a container inside a function, then pass it as
+  a reference.
+
+      <collection_type>& arr
+
+
+
+
+---------- (Arrays) ----------
+
+* Create an array:
+
+      * With random values: array<int, 5> arr;
+      * With given values : array<int, 5> arr = {1, 2, 3, 4, 5};
+
+
+* Update a value:
+
+      arr[<index>] = <value>;
+
+
+* Iterating over an array:
+
+      for (int n : arr)
+      {
+        ...
+      }
+
+
+* Methods:
+
+      1. Size of an array:
+
+            arr.size() ---> O(1)
+
+
+      2. Fill all values with a given value:
+
+            arr.fill(-1); ---> O(n)
+
+
+
+
+---------- (Vectors) ----------
+
+* Dynamic arrays with the ability to resize.
+
+
+* Has contiguous memory locations. Therefore indexing is possible.
+
+
+* jjl
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Sorting -------------------------------------------------------------
+
+* Time complexity: O(n * log(n))
+
+
+* ASC : sort(<collection>.begin(),<collection>.end());
+
+
+* DESC: sort(<collection>.begin(),<collection>.end(), greater<value_type>());
+
+--------------------------------------------------------------------------------
