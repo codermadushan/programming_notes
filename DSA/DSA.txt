@@ -679,6 +679,161 @@
 
 ---------- Arrays --------------------------------------------------------------
 
-* jklj
+---------- (LeetCode 1: Two Sum) ----------
+
+class Solution
+{
+public:
+  vector<int> twoSum(vector<int> &nums, int target)
+  {
+    unordered_map<int, int> m;
+
+    int current, diff;
+    for (int i = 0; i < nums.size(); i++)
+    {
+      current = nums[i];
+      diff = target - current;
+
+      if (m.contains(diff))
+      {
+        return {m[diff], i};
+      }
+      else
+      {
+        m[current] = i;
+      }
+    }
+
+    return {};
+  }
+};
+
+* Time: O(n)
+
+* Find 2 values in an unordered list that satisfy a given condition.
+
+* Use an unordered_map to track indices. Otherwise can use an unordered_set.
+
+
+
+
+---------- (LeetCode 121: Best Time to Buy and Sell Stock) ----------
+
+class Solution
+{
+public:
+  int maxProfit(vector<int> &prices)
+  {
+    int buy_at = prices[0];
+    int current_price;
+    int max_profit = 0;
+
+    for (int i = 1; i < prices.size(); i++)
+    {
+      current_price = prices[i];
+
+      if (current_price < buy_at)
+      {
+        buy_at = current_price;
+      }
+
+      int current_profit = current_price - buy_at;
+      if (max_profit < current_profit)
+      {
+        max_profit = current_profit;
+      }
+    }
+
+    return max_profit;
+  }
+};
+
+* Time: O(n)
+
+* Tracking the best value seen so far.
+
+* Generic template:
+
+      best_so_far = initial_value;
+
+      for (each element) {
+            update best_so_far;
+
+            use best_so_far to compute the answer;
+      }
+
+
+
+
+---------- (LeetCode 217: Contains Duplicate) ----------
+
+class Solution
+{
+public:
+  bool containsDuplicate(vector<int> &nums)
+  {
+    unordered_set<int> s;
+
+    for (int current : nums)
+    {
+      if (s.contains(current))
+        return true;
+
+      s.insert(current);
+    }
+
+    return false;
+  }
+};
+
+* Time: O(n)
+
+* To check duplicates in an unordered list.
+
+* If you need to track indices, use an unordered_map.
+
+
+
+
+---------- (LeetCode 219: Contains Duplicate II) ----------
+
+class Solution
+{
+public:
+  bool containsNearbyDuplicate(vector<int> &nums, int k)
+  {
+    unordered_map<int, int> m;
+
+    int current_value;
+
+    for (int i = 0; i < nums.size(); i++)
+    {
+      current_value = nums[i];
+
+      if (m.contains(current_value) && abs(m[current_value] - i) <= k)
+      {
+        return true;
+      }
+      else
+      {
+        m[current_value] = i;
+      }
+    }
+
+    return false;
+  }
+};
+
+* Time : O(n)
+* Space: O(n)
+
+* Use an unordered_map to track both values and indices.
+
+
+
+
+---------- (LeetCode 238: Product of Array Except Self) ----------
+
+* klj
 
 --------------------------------------------------------------------------------
