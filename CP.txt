@@ -1,0 +1,130 @@
+---------- Number Series -------------------------------------------------------
+
+* Use recursion:
+
+      * To calculate the nth value
+
+      * Process:
+
+            1. Identify the base cases
+
+            2. Build the nth value equation
+
+            * Ex:
+
+                  int fibonacci(int n)
+                  {
+                    if (n == 1)
+                      return 0;
+
+                    if (n == 2)
+                      return 1;
+
+                    return fibonacci(n - 2) + fibonacci(n - 1);
+                  }
+
+
+
+
+* Use iteration:
+
+      * To print a given number of terms
+
+            * Process:
+
+                  1. Use a, b, c, ... as first elements or to build the first
+                     element
+
+                  2. Use temp_a, temp_b, temp_c, ... for temporary values
+
+                  3. Define a for loop that iterates n times
+
+                  4. Inside the for loop first print the value and modify the
+                     values for the next iteration
+
+            * Ex:
+
+                  void fibonacci(int n)
+                  {
+                    int a = 0, b = 1;
+                    int temp_a;
+
+                    for (int i = 0; i < n; i++)
+                    {
+                      cout << a << " ";
+
+                      temp_a = a;
+                      a = b;
+                      b = temp_a + b;
+                    }
+                  }
+
+
+
+
+      * To calculate the sum/product of a given number of terms
+
+            * Process:
+
+                  1. Use a, b, c, ... as first elements or to build the first
+                     element
+
+                  2. Use temp_a, temp_b, temp_c, ... for temporary values
+
+                  3. Define a for loop that iterates n times
+
+                  4. Inside the for loop build the sum/product and modify the
+                     values for the next iteration
+
+            * Ex:
+
+                  int fibonacci_sum(int n)
+                  {
+                    int sum = 0;
+
+                    int a = 0, b = 1;
+                    int temp_a;
+
+                    for (int i = 0; i < n; i++)
+                    {
+                      sum += a;
+
+                      temp_a = a;
+                      a = b;
+                      b = temp_a + b;
+                    }
+
+                    return sum;
+                  }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Arrays --------------------------------------------------------------
+
+* To compare 2 elements for a given condition in a non-sorted array:
+
+      * Use an unordered_set to track elements.
+      * Use an unordered_map to track elements with their indices.
+
+
+
+
+* To track the best value seen so far:
+
+      best_so_far = initial_value;
+
+      for (each element) {
+        update best_so_far;
+
+        use best_so_far to compute the answer;
+      }
+
+
+
+
+* jklj
+
+--------------------------------------------------------------------------------
