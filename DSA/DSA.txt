@@ -1,6 +1,300 @@
 ---------- C++ -----------------------------------------------------------------
 
-* when to use each variants of basic data types like long and long long etc
+---------- Basic Data Types ----------
+
+---------- (Integers) ----------
+
+* -10^9 <= X <= 10^9 ---> int
+
+* Else               ---> long long
+
+
+
+
+---------- (Floating points) ----------
+
+* Always use "double".
+
+* Ex: double pi = 3.14;
+
+* To print a value,
+
+      1. with a given number of precision, or
+      2. without scientific notation,
+
+      cout << fixed << setprecision(8) << <value>;
+
+
+
+
+---------- (Booleans) ----------
+
+* Use "bool".
+
+* Ex: bool completed = false;
+
+
+
+
+---------- (Characters) ----------
+
+* User "char".
+
+* Ex: char c = 'c';
+
+
+
+
+---------- (Strings) ----------
+
+* Use "string".
+
+* Ex: string name = "john";
+
+
+
+
+---------- Constants ----------
+
+---------- (const) ----------
+
+* Read only after initialization (runtime or compile-time).
+
+
+* Ex:
+
+      1. const int x = 10; // ok
+
+      2.
+          int a;
+          cin >> a;
+
+          const int b = a; // ok
+
+
+
+
+---------- (constexpr) ----------
+
+* Guaranteed compile-time constant.
+
+
+* Ex:
+
+      1. const int x = 10; // ok
+
+      2.
+          int a;
+          cin >> a;
+
+          const int b = a; // not allowed
+
+
+
+
+---------- Collection Types ----------
+
+* All STL (Standard Template Library) containers are passed by the value.
+  Therefore if you need to modify a container inside a function, then pass it as
+  a reference.
+
+      <collection_type>& arr
+
+
+
+
+---------- (Arrays) ----------
+
+* Create an array:
+
+      * With random values: array<int, 5> arr;
+      * With given values : array<int, 5> arr = {1, 2, 3, 4, 5};
+
+
+* Update a value:
+
+      arr[<index>] = <value>;
+
+
+* Iterating over an array:
+
+      for (int n : arr)
+      {
+        ...
+      }
+
+
+* Methods:
+
+      1. Size of an array:
+
+            arr.size() ---> O(1)
+
+
+      2. Fill all values with a given value:
+
+            arr.fill(-1); ---> O(n)
+
+
+
+
+---------- (Vectors) ----------
+
+* Dynamic arrays with the ability to resize.
+
+
+* Has contiguous memory locations. Therefore indexing is possible.
+
+
+* Creation:
+
+      1. With given values:
+
+            vector<int> v = {...};
+
+
+      2. Filled with a single value:1
+
+            vector<int> v(<size>, <value>);
+
+
+* Access a value:
+
+      v[<index>];
+
+
+* Update a value:
+
+      v[<index>] = <value>;
+
+
+* Methods:
+
+      1. size():
+            To get the length of the vector.
+
+
+      2. push_back(...):
+            Add a value to the end of the vector.
+
+
+      3. pop_back(...):
+            Remove a value from the end of the vector.
+
+
+      4. clear():
+            To remove all the elements.
+
+
+
+
+---------- (Unordered Set) ----------
+
+* Unordered.
+
+* Contains individual values.
+
+* No duplicates.
+
+
+* Creation:
+
+      1. With given values:
+
+            unordered_set<int> s = {...};
+
+
+      2. Empty:
+
+            unordered_set<int> s;
+
+
+* Methods:
+
+      1. Add a value:
+
+            s.insert(...);  ---> O(1)
+
+
+      2. Remove a value:
+
+            s.erase(...);  ---> O(1)
+
+
+      3. Check a value is exist or not:
+
+            s.contains(...);  ---> O(1)
+
+
+      4. To remove all the elements:
+
+            s.clear();  ---> O(n)
+
+
+
+
+---------- (Unordered Map) ----------
+
+* Unordered.
+
+* Contains key value pairs.
+
+* No duplicate keys.
+
+
+* Creation:
+
+      1. With given values:
+
+            unordered_map<string, int> m = {{...}, {...}};
+
+
+      2. Empty:
+
+            unordered_map<string, int> m;
+
+
+* Get a value of a key:
+
+      m[<key>];
+
+      * If key doesn't exist, a new entry will be created with the default value
+        of the value type.
+
+
+* Add a key-value pair:
+
+      m[<key>] = <value>;
+
+
+* Methods:
+
+      1. Check a key is already exist or not:
+
+          m.contains(<key>);  ---> O(1)
+
+
+      2. Remove a key-value pair:
+
+          m.erase(<key>);  ---> O(1)
+
+
+      3. To remove all the elements:
+
+            s.clear();  ---> O(n)
+
+
+
+
+---------- (Sorting) ----------
+
+* Time complexity: O(n * log(n))
+
+
+* ASC : sort(<collection>.begin(),<collection>.end());
+
+
+* DESC: sort(<collection>.begin(),<collection>.end(), greater<value_type>());
 
 --------------------------------------------------------------------------------
 
