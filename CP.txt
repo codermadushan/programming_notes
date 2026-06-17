@@ -127,41 +127,51 @@
 
 * Prefix sum/product:
 
+      * If sum     -> Initial value = 0;
+      * If product -> Initial value = 1;
+
+
       * Ex: Prefix sum without current value:
 
             // nums   -> 1 7 3 9 5
-            // prefix -> 0 1 8 11 20 -> prfix[i] = prefix[i-1] + nums[i-1]
+            // prefix -> 0 1 8 11 20
 
-            vector<int> get_prefix(vector<int> &nums)
+            vector<int> prefix_sum(vector<int> &nums)
             {
-              vector<int> prefix(nums.size());
+              int size = nums.size();
 
-              prefix[0] = 0;
-              for (int i = 1; i < nums.size(); i++)
+              vector<int> prefix_sum(size);
+
+              int prefix = 0;
+              for (int i = 0; i < size; i++)
               {
-                prefix[i] = prefix[i - 1] + nums[i - 1];
+                prefix_sum[i] = prefix;
+                prefix += nums[i]; // update prefix after
               }
 
-              return prefix;
+              return prefix_sum;
             }
 
 
       * Ex: Prefix sum with current value:
 
             // nums   -> 1 7 3 9 5
-            // prefix -> 1 8 11 20 25 -> prfix[i] = prefix[i-1] + nums[i]
+            // prefix -> 1 8 11 20 25
 
-            vector<int> get_prefix(vector<int> &nums)
+            vector<int> prefix_sum(vector<int> &nums)
             {
-              vector<int> prefix(nums.size());
+              int size = nums.size();
 
-              prefix[0] = nums[0];
-              for (int i = 1; i < nums.size(); i++)
+              vector<int> prefix_sum(size);
+
+              int prefix = 0;
+              for (int i = 0; i < size; i++)
               {
-                prefix[i] = prefix[i - 1] + nums[i];
+                prefix += nums[i]; // update prefix before
+                prefix_sum[i] = prefix;
               }
 
-              return prefix;
+              return prefix_sum;
             }
 
 
@@ -169,24 +179,30 @@
 
 * Suffix sum/product:
 
+      * If sum     -> Initial value = 0;
+      * If product -> Initial value = 1;
+
+
       * Ex: Suffix sum without current value:
 
             // nums   -> 1 7 3 9 5
             // suffix -> 24 17 14 5 0
 
-            vector<int> get_suffix(vector<int> &nums)
+            vector<int> suffix_sum(vector<int> &nums)
             {
               int size = nums.size();
 
-              vector<int> suffix(size);
+              vector<int> suffix_sum(size);
 
-              suffix[size - 1] = 0;
-              for (int i = size - 2; i >= 0; i--)
+              int suffix = 0;
+              for (int i = size - 1; i >= 0; i--)
               {
-                suffix[i] = suffix[i + 1] + nums[i + 1];
+
+                suffix_sum[i] = suffix;
+                suffix += nums[i]; // update suffix after
               }
 
-              return suffix;
+              return suffix_sum;
             }
 
 
@@ -195,19 +211,20 @@
             // nums   -> 1 7 3 9 5
             // suffix -> 25 24 17 14 5
 
-            vector<int> get_suffix(vector<int> &nums)
+            vector<int> suffix_sum(vector<int> &nums)
             {
               int size = nums.size();
 
-              vector<int> suffix(size);
+              vector<int> suffix_sum(size);
 
-              suffix[size - 1] = 5;
-              for (int i = size - 2; i >= 0; i--)
+              int suffix = 0;
+              for (int i = size - 1; i >= 0; i--)
               {
-                suffix[i] = suffix[i + 1] + nums[i];
+                suffix += nums[i]; // update suffix before
+                suffix_sum[i] = suffix;
               }
 
-              return suffix;
+              return suffix_sum;
             }
 
 --------------------------------------------------------------------------------
