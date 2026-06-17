@@ -150,7 +150,7 @@
 
       1. With given values:
 
-            vector<int> v = {...};
+            vector<int> v(<size>); // all values are the default value of the type
 
 
       2. Filled with a single value:1

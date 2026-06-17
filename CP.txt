@@ -125,6 +125,89 @@
 
 
 
-* jklj
+* Prefix sum/product:
+
+      * Ex: Prefix sum without current value:
+
+            // nums   -> 1 7 3 9 5
+            // prefix -> 0 1 8 11 20 -> prfix[i] = prefix[i-1] + nums[i-1]
+
+            vector<int> get_prefix(vector<int> &nums)
+            {
+              vector<int> prefix(nums.size());
+
+              prefix[0] = 0;
+              for (int i = 1; i < nums.size(); i++)
+              {
+                prefix[i] = prefix[i - 1] + nums[i - 1];
+              }
+
+              return prefix;
+            }
+
+
+      * Ex: Prefix sum with current value:
+
+            // nums   -> 1 7 3 9 5
+            // prefix -> 1 8 11 20 25 -> prfix[i] = prefix[i-1] + nums[i]
+
+            vector<int> get_prefix(vector<int> &nums)
+            {
+              vector<int> prefix(nums.size());
+
+              prefix[0] = nums[0];
+              for (int i = 1; i < nums.size(); i++)
+              {
+                prefix[i] = prefix[i - 1] + nums[i];
+              }
+
+              return prefix;
+            }
+
+
+
+
+* Suffix sum/product:
+
+      * Ex: Suffix sum without current value:
+
+            // nums   -> 1 7 3 9 5
+            // suffix -> 24 17 14 5 0
+
+            vector<int> get_suffix(vector<int> &nums)
+            {
+              int size = nums.size();
+
+              vector<int> suffix(size);
+
+              suffix[size - 1] = 0;
+              for (int i = size - 2; i >= 0; i--)
+              {
+                suffix[i] = suffix[i + 1] + nums[i + 1];
+              }
+
+              return suffix;
+            }
+
+
+      * Ex: Suffix sum with current value:
+
+            // nums   -> 1 7 3 9 5
+            // suffix -> 25 24 17 14 5
+
+            vector<int> get_suffix(vector<int> &nums)
+            {
+              int size = nums.size();
+
+              vector<int> suffix(size);
+
+              suffix[size - 1] = 5;
+              for (int i = size - 2; i >= 0; i--)
+              {
+                suffix[i] = suffix[i + 1] + nums[i];
+              }
+
+              return suffix;
+            }
 
 --------------------------------------------------------------------------------
