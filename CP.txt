@@ -102,6 +102,80 @@
 
 
 
+---------- Sliding Window ------------------------------------------------------
+
+---------- (With A Fixed Size Window) ----------
+
+* There are 2 main ways to traverse with a fixed window size:
+
+      * Method 1:
+
+            for (int i = 0; i < k; i++)
+            {
+              ...
+            }
+
+            for (int i = k; i < nums.size(); i++)
+            {
+              ...
+            }
+
+            * First for loop is used to calculate first sum/product of the first
+              window.
+
+            * Second for loop starts with the second window.
+
+            * "i" is the last value of the current window.
+
+
+      * Method 1:
+
+            for (int i = 0; i < nums.size() - (k - 1); i++)
+            {
+              ...
+            }
+
+            * For loop is starts with the first window.
+
+            * "i" is the first value of the current window.
+
+
+* Ex (Calculate the sum of values in each window):
+
+      void f(std::vector<int> nums, int k)
+      {
+        int sum = 0;
+        for (int i = 0; i < k; i++)
+        {
+          sum += nums[i];
+        }
+        cout << sum << " ";
+
+        for (int i = k; i < nums.size(); i++)
+        {
+          sum -= nums[i - k];
+          sum += nums[i];
+
+          cout << sum << " ";
+        }
+      }
+
+* To get the sum of current window we can just reduce the first value of the
+  previous window from the sum and add the last value of the current window to
+  the sum. Because middle values are overlapped.
+
+
+
+
+---------- (With A Variable Size Window) ----------
+
+* jlkj
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Arrays --------------------------------------------------------------
 
 * To compare 2 elements for a given condition in a non-sorted array:
