@@ -51,6 +51,21 @@
 
 * Ex: string name = "john";
 
+* Methods:
+
+      1. Create a sub string:
+
+            s.substr(<start_index>, <number_of_characters>);
+
+            * Creates a new string and copies the Characters.
+            * Time: O(n)
+
+
+            string_view(s).substr(<start_index>, <number_of_characters>);
+
+            * Just a view to the original s string.
+            * Time: O(1)
+
 
 
 
@@ -229,6 +244,15 @@
       4. To remove all the elements:
 
             s.clear();  ---> O(n)
+
+
+* Comparisons:
+
+      * s1 == s2:
+
+            * Time: O(n)
+            * Returns true of both sets contain same elements.
+            * Order doesn't matter.
 
 
 
@@ -706,6 +730,104 @@ int maxSubarraySumSizeK(std::vector<int> nums, int k)
 
   return max_sum;
 }
+
+* Time : O(n)
+* Space: O(1)
+
+
+
+
+---------- (Has substring anagram) ----------
+
+* Write a function that takes in a string and an anagram. The function should
+  return a boolean indicating whether or not the string contains a substring
+  with the same characters as the anagram. You can assume that the string
+  contains no duplicate characters. You can assume that the anagram contains no
+  duplicate characters. You can assume that the anagram is not longer than the
+  string.
+
+
+bool hasSubstringAnagram(string s, string anagram)
+{
+  int n = s.length();
+  int k = anagram.length();
+
+  unordered_set<char> anagram_set;
+  unordered_set<char> window_set;
+
+  for (int i = 0; i < k; i++)
+  {
+    anagram_set.insert(anagram[i]);
+    window_set.insert(s[i]);
+  }
+
+  if (anagram_set == window_set)
+    return true;
+
+  for (int i = k; i < n; i++)
+  {
+    window_set.erase(s[i - k]);
+    window_set.insert(s[i]);
+
+    if (anagram_set == window_set)
+      return true;
+  }
+
+  return false;
+}
+
+* Time : O(nk)
+* Space: O(k)
+
+
+
+
+---------- (Count substring anagrams) ----------
+
+* Write a function that takes in a string and an anagram. The function should
+  return the number of substrings that appear in the string that have the same
+  characters as the anagram. You can assume that the anagram is not longer than
+  the string.
+
+
+int countSubstringAnagrams(string s, string anagram)
+{
+  int n = s.length();
+  int k = anagram.length();
+
+  int count = 0;
+
+  unordered_map<char, int> anagram_map;
+  unordered_map<char, int> window_map;
+  for (int i = 0; i < k; i++)
+  {
+    anagram_map[anagram[i]]++;
+    window_map[s[i]]++;
+  }
+
+  if (anagram_map == window_map)
+    count++;
+
+  for (int i = k; i < n; i++)
+  {
+    char previous_char = s[i - k];
+    char current_char = s[i];
+
+    window_map[previous_char]--;
+    if (window_map[previous_char] == 0)
+      window_map.erase(s[i - k]);
+
+    window_map[current_char]++;
+
+    if (anagram_map == window_map)
+      count++;
+  }
+
+  return count;
+}
+
+* Time : O(nk)
+* Space: O(k)
 
 --------------------------------------------------------------------------------
 

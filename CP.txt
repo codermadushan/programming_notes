@@ -302,3 +302,46 @@
             }
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Strings -------------------------------------------------------------
+
+---------- (Duplicates) ----------
+
+* Steps:
+
+      1. Create an unordered_set.
+
+      2. Traverse over the string.
+
+      3. Check if each character is exists in the set or not.
+            * If exists, there are duplicates.
+            * If not, add the character to the set.
+
+
+* If you need to track indices also, then use an unordered_map.
+
+      keys   -> items
+      values -> indices
+
+
+
+
+---------- (Anagrams) ----------
+
+* Without duplicates:
+
+      * Use a unordered_set to store anagram characters (s1).
+      * Use another unordered_set to store target characters (s2).
+      * Compare s1 == s2, Time: O(n).
+
+
+* With duplicates:
+
+      * Use a unordered_map to store anagram characters and their counts (m1).
+      * Use a unordered_map to store each window characters and their counts (m2).
+      * Compare m1 == m2, Time: O(n).
+
+--------------------------------------------------------------------------------
