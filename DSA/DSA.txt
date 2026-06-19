@@ -849,7 +849,29 @@ int countSubstringAnagrams(string s, string anagram)
   target. You can assume that the elements of the vector are nonnegative.
 
 
+array<int, 2> findSubarraySum(vector<int> nums, int targetSum)
+{
+  int n = nums.size();
 
+  int current_window = 0;
+
+  int left = 0;
+  for (int right = 0; right < n; right++)
+  {
+    current_window += nums[right];
+
+    while (current_window > targetSum)
+    {
+      current_window -= nums[left];
+      left++;
+    }
+
+    if (current_window == targetSum)
+      return {left, right};
+  }
+
+  return {0, 0};
+}
 
 --------------------------------------------------------------------------------
 
