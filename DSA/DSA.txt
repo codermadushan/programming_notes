@@ -973,6 +973,9 @@ int longestUniqueSubstring(string s)
   return length;
 }
 
+* Time : O(n)
+* Space: O(1)
+
 --------------------------------------------------------------------------------
 
 
