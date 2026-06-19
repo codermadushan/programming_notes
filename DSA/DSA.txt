@@ -246,6 +246,11 @@
             s.clear();  ---> O(n)
 
 
+      5. To get the length:
+
+            s.size();  ---> O(1)
+
+
 * Comparisons:
 
       * s1 == s2:
@@ -306,6 +311,11 @@
       3. To remove all the elements:
 
             s.clear();  ---> O(n)
+
+
+      4. To get the number of key-value pairs:
+
+            s.size();  ---> O(1)
 
 
 * Compare 2 unordered_maps:
@@ -871,6 +881,96 @@ array<int, 2> findSubarraySum(vector<int> nums, int targetSum)
   }
 
   return {0, 0};
+}
+
+* Time : O(n)
+* Space: O(1)
+
+
+
+
+---------- (Longest subarray sum) ----------
+
+* Write a function that takes in a vector and a target sum. The function should
+  return the length of the longest subarray that sums to the target. You can
+  assume that the elements of the vector are nonnegative. If there is no
+  subarray that sums to the target, then return -1.
+
+
+int longestSubarraySum(vector<int> nums, int targetSum)
+{
+  int n = nums.size();
+
+  int max_length = -1;
+  int sum = 0;
+
+  int left = 0;
+  for (int right = 0; right < n; right++)
+  {
+    sum += nums[right];
+
+    while (sum > targetSum)
+    {
+      sum -= nums[left];
+      left++;
+    }
+
+    int current_window_length = right - left + 1;
+    if (sum == targetSum && max_length < current_window_length)
+    {
+      max_length = max(max_length, current_window_length);
+    }
+  }
+
+  return max_length;
+}
+
+* Time : O(n)
+* Space: O(1)
+
+
+
+
+---------- (Longest unique substring) ----------
+
+* Write a function that takes in a string as an argument. The function should
+  return the length of the longest substring that consists of only unique
+  characters.
+
+
+int longestUniqueSubstring(string s)
+{
+  int n = s.length();
+
+  int length = 0;
+
+  unordered_map<char, int> current_window;
+
+  int left = 0;
+  char current_char;
+  char trailing_char;
+  for (int right = 0; right < n; right++)
+  {
+    current_char = s[right];
+    current_window[current_char]++;
+
+    while (current_window[current_char] > 1)
+    {
+      trailing_char = s[left];
+
+      current_window[trailing_char]--;
+      if (current_window[trailing_char] == 0)
+      {
+        current_window.erase(trailing_char);
+      }
+
+      left++;
+    }
+
+    length = max(length, (int)current_window.size());
+  }
+
+  return length;
 }
 
 --------------------------------------------------------------------------------
