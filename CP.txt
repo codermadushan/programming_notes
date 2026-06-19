@@ -158,7 +158,8 @@
           left++;
         }
 
-        // update the answer
+        // Here we have access to the valid current window
+        // update the answer here
       }
 
 
