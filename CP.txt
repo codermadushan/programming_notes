@@ -104,18 +104,16 @@
 
 ---------- Two Pointers --------------------------------------------------------
 
-* Strategy:
+    int left = 0;
+    int right = nums.size() - 1;
 
-      int left = 0;
-      int right = nums.size() - 1;
+    while (left < right) {
+      // check for the answer
 
-      while (left < right) {
-        // check for the answer
+      // update left conditionally
 
-        // update left conditionally
-
-        // update right conditionally
-      }
+      // update right conditionally
+    }
 
 --------------------------------------------------------------------------------
 
@@ -191,28 +189,22 @@
 
 
 
----------- Arrays --------------------------------------------------------------
+---------- Track The Best Value So Far -----------------------------------------
 
-* To compare 2 elements for a given condition in a non-sorted array:
+    best_so_far = initial_value;
 
-      * Use an unordered_set to track elements.
-      * Use an unordered_map to track elements with their indices.
+    for (each element) {
+      update best_so_far;
 
+      use best_so_far to compute the answer;
+    }
 
-
-
-* To track the best value seen so far:
-
-      best_so_far = initial_value;
-
-      for (each element) {
-        update best_so_far;
-
-        use best_so_far to compute the answer;
-      }
+--------------------------------------------------------------------------------
 
 
 
+
+---------- Prefix/Suffix Sum/Product -------------------------------------------
 
 * Prefix sum/product:
 
@@ -321,30 +313,32 @@
 
 
 
----------- Strings -------------------------------------------------------------
-
----------- (Duplicates) ----------
+---------- (Duplicates) --------------------------------------------------------
 
 * Steps:
 
       1. Create an unordered_set.
 
-      2. Traverse over the string.
+      2. Traverse over each item.
 
-      3. Check if each character is exists in the set or not.
+      3. Check if each item is existed in the set or not:
             * If exists, there are duplicates.
             * If not, add the character to the set.
 
 
-* If you need to track indices also, then use an unordered_map.
+* If you need to track:
 
-      keys   -> items
-      values -> indices
+      1. Indices or,
+      2. Number of occurrences
+
+      * use an unordered_map
+
+--------------------------------------------------------------------------------
 
 
 
 
----------- (Anagrams) ----------
+---------- (Anagrams) ----------------------------------------------------------
 
 * Without duplicates:
 
