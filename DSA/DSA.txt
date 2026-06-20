@@ -733,6 +733,86 @@
 
 
 
+---------- Two Pointers --------------------------------------------------------
+
+---------- (LeetCode 167: Two Sum II - Input Array Is Sorted) ----------
+
+array<int, 2> f(vector<int> &nums, int target)
+{
+  int left = 0;
+  int right = nums.size() - 1;
+
+  int sum = 0;
+  while (left < right)
+  {
+    sum = nums[left] + nums[right];
+
+    if (sum > target)
+    {
+      right--;
+    }
+    else if (sum < target)
+    {
+      left++;
+    }
+    else
+    {
+      return {left, right};
+    }
+  }
+
+  return {};
+}
+
+* Time : O(n)
+* Space: O(1)
+
+
+
+
+---------- (LeetCode 11: Container With Most Water) ----------
+
+class Solution
+{
+public:
+  int maxArea(vector<int> &height)
+  {
+    int max_volume = 0;
+
+    int left = 0;
+    int right = height.size() - 1;
+
+    int current_volume;
+    while (left < right)
+    {
+      int left_height = height[left];
+      int right_height = height[right];
+
+      current_volume = (right - left) * min(left_height, right_height);
+      max_volume = max(max_volume, current_volume);
+
+      if (left_height < right_height)
+      {
+        left++;
+      }
+      else
+      {
+        right--;
+      }
+    }
+
+    return max_volume;
+  }
+};
+
+* Time : O(n)
+* Space: O(1)
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Sliding Window ------------------------------------------------------
 
 ---------- (Max subarray sum size k) ----------
@@ -1040,24 +1120,19 @@ class Solution
 public:
   int maxProfit(vector<int> &prices)
   {
-    int buy_at = prices[0];
-    int current_price;
     int max_profit = 0;
 
+    int buy_at = prices[0];
+
+    int current_price;
     for (int i = 1; i < prices.size(); i++)
     {
       current_price = prices[i];
 
-      if (current_price < buy_at)
-      {
-        buy_at = current_price;
-      }
+      buy_at = min(buy_at, current_price);
 
       int current_profit = current_price - buy_at;
-      if (max_profit < current_profit)
-      {
-        max_profit = current_profit;
-      }
+      max_profit = max(max_profit, current_profit);
     }
 
     return max_profit;
