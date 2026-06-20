@@ -1,0 +1,500 @@
+---------- (LeetCode 1: Two Sum) ----------
+
+class Solution
+{
+public:
+  vector<int> twoSum(vector<int> &nums, int target)
+  {
+    unordered_map<int, int> m;
+
+    int current, diff;
+    for (int i = 0; i < nums.size(); i++)
+    {
+      current = nums[i];
+      diff = target - current;
+
+      if (m.contains(diff))
+      {
+        return {m[diff], i};
+      }
+      else
+      {
+        m[current] = i;
+      }
+    }
+
+    return {};
+  }
+};
+
+* Time : O(n)
+* Space: O(n)
+
+
+
+
+---------- (LeetCode 11: Container With Most Water) ----------
+
+class Solution
+{
+public:
+  int maxArea(vector<int> &height)
+  {
+    int max_volume = 0;
+
+    int left = 0;
+    int right = height.size() - 1;
+
+    int current_volume;
+    while (left < right)
+    {
+      int left_height = height[left];
+      int right_height = height[right];
+
+      current_volume = (right - left) * min(left_height, right_height);
+      max_volume = max(max_volume, current_volume);
+
+      if (left_height < right_height)
+      {
+        left++;
+      }
+      else
+      {
+        right--;
+      }
+    }
+
+    return max_volume;
+  }
+};
+
+* Time : O(n)
+* Space: O(1)
+
+
+
+
+---------- (LeetCode 121: Best Time to Buy and Sell Stock) ----------
+
+class Solution
+{
+public:
+  int maxProfit(vector<int> &prices)
+  {
+    int max_profit = 0;
+
+    int buy_at = prices[0];
+
+    int current_price;
+    for (int i = 1; i < prices.size(); i++)
+    {
+      current_price = prices[i];
+
+      buy_at = min(buy_at, current_price);
+
+      int current_profit = current_price - buy_at;
+      max_profit = max(max_profit, current_profit);
+    }
+
+    return max_profit;
+  }
+};
+
+* Time : O(n)
+* Space: O(1)
+
+
+
+
+---------- (LeetCode 167: Two Sum II - Input Array Is Sorted) ----------
+
+array<int, 2> f(vector<int> &nums, int target)
+{
+  int left = 0;
+  int right = nums.size() - 1;
+
+  int sum = 0;
+  while (left < right)
+  {
+    sum = nums[left] + nums[right];
+
+    if (sum > target)
+    {
+      right--;
+    }
+    else if (sum < target)
+    {
+      left++;
+    }
+    else
+    {
+      return {left, right};
+    }
+  }
+
+  return {};
+}
+
+* Time : O(n)
+* Space: O(1)
+
+
+
+
+---------- (LeetCode 217: Contains Duplicate) ----------
+
+class Solution
+{
+public:
+  bool containsDuplicate(vector<int> &nums)
+  {
+    unordered_set<int> s;
+
+    for (int current : nums)
+    {
+      if (s.contains(current))
+        return true;
+
+      s.insert(current);
+    }
+
+    return false;
+  }
+};
+
+* Time : O(n)
+* Space: O(n)
+
+
+
+
+---------- (LeetCode 219: Contains Duplicate II) ----------
+
+class Solution
+{
+public:
+  bool containsNearbyDuplicate(vector<int> &nums, int k)
+  {
+    unordered_map<int, int> m;
+
+    int current_value;
+
+    for (int i = 0; i < nums.size(); i++)
+    {
+      current_value = nums[i];
+
+      if (m.contains(current_value) && abs(m[current_value] - i) <= k)
+      {
+        return true;
+      }
+      else
+      {
+        m[current_value] = i;
+      }
+    }
+
+    return false;
+  }
+};
+
+* Time : O(n)
+* Space: O(n)
+
+
+
+
+---------- (LeetCode 238: Product of Array Except Self) ----------
+
+class Solution
+{
+public:
+  vector<int> productExceptSelf(vector<int> &nums)
+  {
+    int size = nums.size();
+
+    vector<int> answer(size);
+
+    int prefix = 1;
+    for (int i = 0; i < size; i++)
+    {
+      answer[i] = prefix;
+      prefix *= nums[i];
+    }
+
+    int suffix = 1;
+    for (int i = size - 1; i >= 0; i--)
+    {
+      answer[i] *= suffix;
+      suffix *= nums[i];
+    }
+
+    return answer;
+  }
+};
+
+* Time: O(n)
+* Space: O(n)
+
+
+
+
+
+
+
+
+---------- Other ---------------------------------------------------------------
+
+---------- (Max subarray sum size k) ----------
+
+* Write a function that takes in an vector of numbers and a size k as arguments.
+  The function should return the maximum sum of subarrays that contain exactly k
+  elements. You can assume that k is less than or equal to the length of the
+  input vector.
+
+
+int maxSubarraySumSizeK(std::vector<int> nums, int k)
+{
+  int sum = 0;
+  for (int i = 0; i < k; i++)
+  {
+    sum += nums[i];
+  }
+  int max_sum = max(sum, max_sum);
+
+  for (int i = k; i < nums.size(); i++)
+  {
+    sum -= nums[i - k];
+    sum += nums[i];
+
+    max_sum = max(sum, max_sum);
+  }
+
+  return max_sum;
+}
+
+* Time : O(n)
+* Space: O(1)
+
+
+
+
+---------- (Has substring anagram) ----------
+
+* Write a function that takes in a string and an anagram. The function should
+  return a boolean indicating whether or not the string contains a substring
+  with the same characters as the anagram. You can assume that the string
+  contains no duplicate characters. You can assume that the anagram contains no
+  duplicate characters. You can assume that the anagram is not longer than the
+  string.
+
+
+bool hasSubstringAnagram(string s, string anagram)
+{
+  int n = s.length();
+  int k = anagram.length();
+
+  unordered_set<char> anagram_set;
+  unordered_set<char> window_set;
+
+  for (int i = 0; i < k; i++)
+  {
+    anagram_set.insert(anagram[i]);
+    window_set.insert(s[i]);
+  }
+
+  if (anagram_set == window_set)
+    return true;
+
+  for (int i = k; i < n; i++)
+  {
+    window_set.erase(s[i - k]);
+    window_set.insert(s[i]);
+
+    if (anagram_set == window_set)
+      return true;
+  }
+
+  return false;
+}
+
+* Time : O(nk)
+* Space: O(k)
+
+
+
+
+---------- (Count substring anagrams) ----------
+
+* Write a function that takes in a string and an anagram. The function should
+  return the number of substrings that appear in the string that have the same
+  characters as the anagram. You can assume that the anagram is not longer than
+  the string.
+
+
+int countSubstringAnagrams(string s, string anagram)
+{
+  int n = s.length();
+  int k = anagram.length();
+
+  int count = 0;
+
+  unordered_map<char, int> anagram_map;
+  unordered_map<char, int> window_map;
+  for (int i = 0; i < k; i++)
+  {
+    anagram_map[anagram[i]]++;
+    window_map[s[i]]++;
+  }
+
+  if (anagram_map == window_map)
+    count++;
+
+  for (int i = k; i < n; i++)
+  {
+    char previous_char = s[i - k];
+    char current_char = s[i];
+
+    window_map[previous_char]--;
+    if (window_map[previous_char] == 0)
+      window_map.erase(s[i - k]);
+
+    window_map[current_char]++;
+
+    if (anagram_map == window_map)
+      count++;
+  }
+
+  return count;
+}
+
+* Time : O(nk)
+* Space: O(k)
+
+
+
+
+---------- (Find subarray sum) ----------
+
+* Write a function that takes in an vector and a target sum. The function should
+  return the start and end indices (inclusive) of a subarray that sums to the
+  target. You can assume that the elements of the vector are nonnegative.
+
+
+array<int, 2> findSubarraySum(vector<int> nums, int targetSum)
+{
+  int n = nums.size();
+
+  int current_window = 0;
+
+  int left = 0;
+  for (int right = 0; right < n; right++)
+  {
+    current_window += nums[right];
+
+    while (current_window > targetSum)
+    {
+      current_window -= nums[left];
+      left++;
+    }
+
+    if (current_window == targetSum)
+      return {left, right};
+  }
+
+  return {0, 0};
+}
+
+* Time : O(n)
+* Space: O(1)
+
+
+
+
+---------- (Longest subarray sum) ----------
+
+* Write a function that takes in a vector and a target sum. The function should
+  return the length of the longest subarray that sums to the target. You can
+  assume that the elements of the vector are nonnegative. If there is no
+  subarray that sums to the target, then return -1.
+
+
+int longestSubarraySum(vector<int> nums, int targetSum)
+{
+  int n = nums.size();
+
+  int max_length = -1;
+  int sum = 0;
+
+  int left = 0;
+  for (int right = 0; right < n; right++)
+  {
+    sum += nums[right];
+
+    while (sum > targetSum)
+    {
+      sum -= nums[left];
+      left++;
+    }
+
+    int current_window_length = right - left + 1;
+    if (sum == targetSum && max_length < current_window_length)
+    {
+      max_length = max(max_length, current_window_length);
+    }
+  }
+
+  return max_length;
+}
+
+* Time : O(n)
+* Space: O(1)
+
+
+
+
+---------- (Longest unique substring) ----------
+
+* Write a function that takes in a string as an argument. The function should
+  return the length of the longest substring that consists of only unique
+  characters.
+
+
+int longestUniqueSubstring(string s)
+{
+  int n = s.length();
+
+  int length = 0;
+
+  unordered_map<char, int> current_window;
+
+  int left = 0;
+  char current_char;
+  char trailing_char;
+  for (int right = 0; right < n; right++)
+  {
+    current_char = s[right];
+    current_window[current_char]++;
+
+    while (current_window[current_char] > 1)
+    {
+      trailing_char = s[left];
+
+      current_window[trailing_char]--;
+      if (current_window[trailing_char] == 0)
+      {
+        current_window.erase(trailing_char);
+      }
+
+      left++;
+    }
+
+    length = max(length, (int)current_window.size());
+  }
+
+  return length;
+}
+
+* Time : O(n)
+* Space: O(1)
+
+--------------------------------------------------------------------------------
