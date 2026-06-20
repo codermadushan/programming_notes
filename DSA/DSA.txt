@@ -328,6 +328,18 @@
       * Time: O(n)
 
 
+* Use as a counter:
+
+      If you use an unordered_map as a counter (unordered_map<..., int>), you
+      can use following technique to remove a key-value pair if the count is
+      zero.
+
+      m[<key>]--;
+      if (m[<key>] == 0) {
+        m.erase(<key>);
+      }
+
+
 
 
 ---------- (Sorting) ----------
@@ -1173,7 +1185,7 @@ public:
 
 
 
----------- () ----------
+---------- (LeetCode 53: Maximum Subarray) ----------
 
 * jkj
 

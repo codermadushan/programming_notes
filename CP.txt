@@ -122,6 +122,7 @@
           sum -= nums[i - k];
           sum += nums[i];
 
+          // In here we have the valid current window
           cout << sum << " ";
         }
       }
