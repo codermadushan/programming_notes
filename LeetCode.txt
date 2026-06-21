@@ -74,6 +74,42 @@ public:
 
 
 
+---------- (LeetCode 26: Remove Duplicates from Sorted Array) ----------
+
+class Solution
+{
+public:
+  int removeDuplicates(vector<int> &nums)
+  {
+    int n = nums.size();
+
+    int count = 1;
+
+    int left = 0, leading, trailing;
+    for (int right = 0; right < n; right++)
+    {
+      trailing = nums[left];
+      leading = nums[right];
+
+      if (trailing == leading)
+        continue;
+
+      left++;
+      nums[left] = leading;
+
+      count++;
+    }
+
+    return count;
+  }
+};
+
+* Time : O(n)
+* Space: O(1)
+
+
+
+
 ---------- (LeetCode 121: Best Time to Buy and Sell Stock) ----------
 
 class Solution
