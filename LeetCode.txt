@@ -110,6 +110,38 @@ public:
 
 
 
+---------- (LeetCode 53: Maximum Subarray) ----------
+
+class Solution {
+public:
+  int maxSubArray(vector<int> &nums) {
+    int n = nums.size();
+
+    int max_sum = INT_MIN;
+
+    int current_value, current_sum = 0;
+    for (int right = 0; right < n; right++) {
+      current_value = nums[right];
+
+      current_sum += current_value;
+
+      if (current_sum < current_value) {
+        current_sum = current_value;
+      }
+
+      max_sum = max(max_sum, current_sum);
+    }
+
+    return max_sum;
+  }
+};
+
+* Time : O(n)
+* Space: O(1)
+
+
+
+
 ---------- (LeetCode 121: Best Time to Buy and Sell Stock) ----------
 
 class Solution
