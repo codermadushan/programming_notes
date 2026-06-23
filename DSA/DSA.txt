@@ -431,6 +431,57 @@ int search(vector<int> &arr, int target) {
 
 ---------- Strings -------------------------------------------------------------
 
-* jlj
+* Changing case of a string:
+
+      * Lowercase -> Uppercase: subtract 32
+      * Uppercase -> Lowercase: add 32
+
+      void to_lowercase(string &msg) {
+        int current;
+        for (int i = 0; i < msg.length(); i++) {
+          current = msg[i];
+
+          if (current >= 'A' && current <= 'Z') {
+            msg[i] = current + 32;
+          }
+        }
+      }
+
+
+* Count vowels and consonents:
+
+      void count_vowels_and_consonents(string &msg) {
+
+        unordered_set<char> vowels_set = {'a', 'e', 'i', 'o', 'u',
+                                          'A', 'E', 'I', 'O', 'U'};
+
+        int vowels = 0, consonents = 0;
+        bool is_alphabet;
+        for (char c : msg) {
+          is_alphabet = c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z';
+
+          if (!is_alphabet) continue;
+
+          if (vowels_set.contains(c)) vowels++;
+          else consonents++;
+        }
+
+        cout << "Vowels:     " << vowels << '\n';
+        cout << "Consonents: " << consonents;
+      }
+
+
+* Reverse a string:
+
+      void reverse(string &msg) {
+        int left = 0, right = msg.length() - 1;
+
+        while (left < right) {
+          swap(msg[left], msg[right]);
+
+          left++;
+          right--;
+        }
+      }
 
 --------------------------------------------------------------------------------
