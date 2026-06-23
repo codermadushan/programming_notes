@@ -468,3 +468,25 @@ void reverse(string &msg) {
 }
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Linked List ---------------------------------------------------------
+
+* Traverse:
+
+      void traverse() {
+        Node *current = first;
+
+        while (current != nullptr) {
+          // can access current node here
+
+          current = current->next;
+        }
+      }
+
+
+* jklj
+
+--------------------------------------------------------------------------------

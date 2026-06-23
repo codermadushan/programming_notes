@@ -485,3 +485,79 @@ int search(vector<int> &arr, int target) {
       }
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Linked List----------------------------------------------------------
+
+* Basic node structure:
+
+      struct Node {
+        int value;
+        Node *next = nullptr;
+      } *first = nullptr, *last = nullptr;
+
+
+* Create a node in heap:
+
+      Node *node = new Node;
+      node->value = 10;
+
+
+* Insert a new node to the end:
+
+      void insert_end(int value) {
+        Node *node = new Node;
+        node->value = value;
+
+        if (first == nullptr) {
+          first = node;
+          last = node;
+        } else {
+          last->next = node;
+          last = node;
+        }
+      }
+
+
+* Insert a new node to the start:
+
+      void insert_start(int value) {
+        Node *node = new Node;
+        node->value = value;
+
+        if (first == nullptr) {
+          first = node;
+          last = node;
+        } else {
+          node->next = first;
+          first = node;
+        }
+      }
+
+
+* Display all values:
+
+      * Iterative:
+
+            void display() {
+              Node *current = first;
+
+              while (current != nullptr) {
+                cout << current->value << " ";
+                current = current->next;
+              }
+            }
+
+
+      * Recursive:
+
+            void display(Node *node) {
+              if (node == nullptr) return;
+
+              cout << node->value << " ";
+              display(node->next);
+            }
+
+--------------------------------------------------------------------------------
