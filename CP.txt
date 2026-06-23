@@ -474,6 +474,13 @@ void reverse(string &msg) {
 
 ---------- Linked List ---------------------------------------------------------
 
+* When creating a linked list method, think about following 3 situations:
+
+      1. If the linked list is empty.
+      2. If the result is the first node.
+      3. If the result is the last node.
+
+
 * Traverse:
 
       void traverse() {
@@ -487,6 +494,16 @@ void reverse(string &msg) {
       }
 
 
-* jklj
+* Track the previous element also:
+
+      Node *current = first;
+      Node *previous = nullptr;
+
+      while (current != nullptr) {
+        // logic
+
+        previous = current;
+        current = current->next;
+      }
 
 --------------------------------------------------------------------------------

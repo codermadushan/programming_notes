@@ -491,12 +491,19 @@ int search(vector<int> &arr, int target) {
 
 ---------- Linked List----------------------------------------------------------
 
+* When creating a linked list method, think about following 3 situations:
+
+      1. If the linked list is empty.
+      2. If the result is the first node.
+      3. If the result is the last node.
+
+
 * Basic node structure:
 
       struct Node {
         int value;
         Node *next = nullptr;
-      } *first = nullptr, *last = nullptr;
+      } *first = nullptr;
 
 
 * Create a node in heap:
@@ -505,32 +512,14 @@ int search(vector<int> &arr, int target) {
       node->value = 10;
 
 
-* Insert a new node to the end:
-
-      void insert_end(int value) {
-        Node *node = new Node;
-        node->value = value;
-
-        if (first == nullptr) {
-          first = node;
-          last = node;
-        } else {
-          last->next = node;
-          last = node;
-        }
-      }
-
-
 * Insert a new node to the start:
 
       void insert_start(int value) {
         Node *node = new Node;
         node->value = value;
 
-        if (first == nullptr) {
-          first = node;
-          last = node;
-        } else {
+        if (first == nullptr) first = node;
+        else {
           node->next = first;
           first = node;
         }
@@ -558,6 +547,50 @@ int search(vector<int> &arr, int target) {
 
               cout << node->value << " ";
               display(node->next);
+            }
+
+
+* Search for a given node:
+
+      * Basic:
+
+            Node *search(int target) {
+              Node *current = first;
+
+              while (current != nullptr) {
+                if (current->value == target) return current;
+                current = current->next;
+              }
+
+              return nullptr;
+            }
+
+
+      * Improved search:
+
+            * If node is found, make it the first node.
+
+            Node *search(int target) {
+              Node *current = first;
+              Node *previous = nullptr;
+
+              while (current != nullptr) {
+                if (current->value == target) {
+                  if (current == first) return current;
+                  else {
+                    previous->next = current->next;
+                    current->next = first;
+                    first = current;
+
+                    return current;
+                  }
+                }
+
+                previous = current;
+                current = current->next;
+              }
+
+              return nullptr;
             }
 
 --------------------------------------------------------------------------------
