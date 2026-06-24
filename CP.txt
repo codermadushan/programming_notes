@@ -504,11 +504,11 @@ void reverse(string &msg) {
 
 * Traverse to a given index to modify (3):
 
+      // condition set
+
       if (index == 0) {  ---> if indices start from 1, use 1 instead of 0
         // condition set
       }
-
-      // condition set
 
       Node *current = first;
       for (int i = 0; i < index - 1 && current != nullptr; i++) { ---> if indices start from 1, start "i" with 1
@@ -526,10 +526,10 @@ void reverse(string &msg) {
 
 * Traverse to a given node to modify (2):
 
+      // condition set
+
       Node *previous = nullptr;
       Node *current = first;
-
-      // condition set
 
       while (current != nullptr) {
         if (<condition>) {
@@ -539,5 +539,7 @@ void reverse(string &msg) {
         previous = current;
         current = current->next;
       }
+
+      // do something (previous -> last node)
 
 --------------------------------------------------------------------------------
