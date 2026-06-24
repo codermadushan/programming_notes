@@ -550,6 +550,14 @@ int search(vector<int> &arr, int target) {
             }
 
 
+            void display_recursive_reverse(Node *node) {
+              if (node == nullptr) return;
+
+              display_recursive_reverse(node->next);
+              cout << node->value << " ";
+            }
+
+
 * Search for a given node:
 
       * Basic:
@@ -592,5 +600,32 @@ int search(vector<int> &arr, int target) {
 
               return nullptr;
             }
+
+
+* Insert a new node to a given position:
+
+      void insert_at(int index, int value) {
+        Node *node = new Node;
+        node->value = value;
+
+        if (index == 0) {  ---> If positions start from 1, replace the 0 with 1
+          node->next = first;
+          first = node;
+          return;
+        }
+
+        Node *current = first;
+        for (int i = 0; i < index - 1 && current != nullptr; i++) {  ---> If positions start with 1, start "i" with 1
+          current = current->next;
+        }
+
+        if (current == nullptr) {
+          delete node;
+          return;
+        }
+
+        node->next = current->next;
+        current->next = node;
+      }
 
 --------------------------------------------------------------------------------
