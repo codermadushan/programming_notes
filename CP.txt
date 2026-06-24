@@ -496,7 +496,7 @@ void reverse(string &msg) {
 
       while (current != nullptr) {
         /*
-            current -> node to remove
+            current -> target node
 
             special cases:
                 1. If current == first
