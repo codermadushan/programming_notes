@@ -489,6 +489,28 @@ void reverse(string &msg) {
 
 
 
+* Traverse to a given index:
+
+      /*
+          special cases:
+              1. if index == 0 ---> if indices start from 1, use 1 instead of 0
+      */
+
+      Node *current = first;
+      for (int i = 0; i < index - 1 && current != nullptr; i++) { ---> if indices start from 1, start "i" with 1
+        current = current->next;
+      }
+
+      /*
+          special cases:
+              1. if current == nullptr
+              2. if current == last
+              3. if current is a middle element
+      */
+
+
+
+
 * Track the previous element also:
 
       Node *current = first;
@@ -505,37 +527,6 @@ void reverse(string &msg) {
 
         previous = current;
         current = current->next;
-      }
-
-
-
-
-* To insert to a given position:
-
-      * Traverse (index-1) times.
-
-      void insert_at(int index, int value) {
-        Node *node = new Node;
-        node->value = value;
-
-        if (index == 0) {  ---> If positions start from 1, replace the 0 with 1
-          node->next = first;
-          first = node;
-          return;
-        }
-
-        Node *current = first;
-        for (int i = 0; i < index - 1 && current != nullptr; i++) {  ---> If positions start with 1, start "i" with 1
-          current = current->next;
-        }
-
-        if (current == nullptr) {
-          delete node;
-          return;
-        }
-
-        node->next = current->next;
-        current->next = node;
       }
 
 --------------------------------------------------------------------------------
