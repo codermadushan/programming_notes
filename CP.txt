@@ -513,19 +513,21 @@ void reverse(string &msg) {
 
 
 
-* Track the previous element also:
+* Traverse to a given node:
 
       Node *current = first;
       Node *previous = nullptr;
 
       while (current != nullptr) {
         /*
-            current -> target node
+            if <condition> {
+                current -> target node
 
-            special cases:
-                1. if current == first
-                2. else if current == last
-                3. else
+                special cases:
+                    1. if current == first
+                    2. else if current == last
+                    3. else
+            }
         */
 
         previous = current;
