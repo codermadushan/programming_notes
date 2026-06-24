@@ -474,13 +474,6 @@ void reverse(string &msg) {
 
 ---------- Linked List ---------------------------------------------------------
 
-* When creating a linked list method, think about following 3 situations:
-
-      1. If the linked list is empty.
-      2. If the result is the first node.
-      3. If the result is the last node.
-
-
 * Traverse:
 
       void traverse() {
@@ -494,17 +487,27 @@ void reverse(string &msg) {
       }
 
 
+
+
 * Track the previous element also:
 
       Node *current = first;
       Node *previous = nullptr;
 
       while (current != nullptr) {
-        // logic
+        /*
+            current -> node to remove
+
+            special cases:
+                1. If current == first
+                2. If current == last
+        */
 
         previous = current;
         current = current->next;
       }
+
+
 
 
 * To insert to a given position:
