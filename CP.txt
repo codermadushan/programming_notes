@@ -502,10 +502,12 @@ void reverse(string &msg) {
       }
 
       /*
+          current -> node before given index
+
           special cases:
               1. if current == nullptr
-              2. if current == last
-              3. if current is a middle element
+              2. else if current == last
+              3. else
       */
 
 
@@ -521,8 +523,9 @@ void reverse(string &msg) {
             current -> target node
 
             special cases:
-                1. If current == first
-                2. If current == last
+                1. if current == first
+                2. else if current == last
+                3. else
         */
 
         previous = current;
