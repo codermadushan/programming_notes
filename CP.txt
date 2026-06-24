@@ -474,7 +474,7 @@ void reverse(string &msg) {
 
 ---------- Linked List ---------------------------------------------------------
 
-* Traverse:
+* Traverse only:
 
       void traverse() {
         Node *current = first;
@@ -489,46 +489,48 @@ void reverse(string &msg) {
 
 
 
-* Traverse to a given index:
+* Condition set:
 
-      /*
-          special cases:
-              1. if index == 0 ---> if indices start from 1, use 1 instead of 0
-      */
+      * Define the general case
+
+      * Consider following cases above general case:
+            1. if (first == nullptr && last == nullptr) {}
+            2. if (first == last) {}
+            3. if (current == first) {}
+            4. if (current == last) {}
+
+
+
+
+* Traverse to a given index to modify:
+
+      if (index == 0) {  ---> if indices start from 1, use 1 instead of 0
+        // condition set
+      }
 
       Node *current = first;
       for (int i = 0; i < index - 1 && current != nullptr; i++) { ---> if indices start from 1, start "i" with 1
         current = current->next;
       }
 
-      /*
-          current -> node before given index
+      if (current == nullptr) {
+        ...
+      }
 
-          special cases:
-              1. if current == nullptr
-              2. else if current == last
-              3. else
-      */
+      // condition set (current -> node before given index)
 
 
 
 
-* Traverse to a given node:
+* Traverse to a given node to modify:
 
-      Node *current = first;
       Node *previous = nullptr;
+      Node *current = first;
 
       while (current != nullptr) {
-        /*
-            if <condition> {
-                current -> target node
-
-                special cases:
-                    1. if current == first
-                    2. else if current == last
-                    3. else
-            }
-        */
+        if (<condition>) {
+          // condition set (current -> target node)
+        }
 
         previous = current;
         current = current->next;
