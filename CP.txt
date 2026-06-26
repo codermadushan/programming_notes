@@ -489,7 +489,7 @@ void reverse(string &msg) {
 
 
 
-* Traverse to a given node to modify:
+* Traverse to a given node to modify: (not finalized)
 
       if (first == nullptr) {
         ...
@@ -509,8 +509,8 @@ void reverse(string &msg) {
           /*
               <condition> is satisfied
 
-              current = node that satisfies the condition
-              previous = previous node to the current node
+              current  -> node that satisfies the condition
+              previous -> previous node to the current node
           */
 
           if (current == first) {
@@ -523,8 +523,8 @@ void reverse(string &msg) {
           return;
         }
 
-        previous = current;
-        current = current->next;
+        previous -> current;
+        current  -> current->next;
       }
 
       /*
@@ -537,32 +537,16 @@ void reverse(string &msg) {
 
 
 
+* Traverse to a given index to modify: (not finalized)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-* Traverse to a given index to modify (3):
-
-      // condition set
+      if (first == nullptr) {
+        ...
+        return;
+      }
 
       if (index == 0) {  ---> if indices start from 1, use 1 instead of 0
-        // condition set
+        ...
+        return;
       }
 
       Node *current = first;
@@ -572,12 +556,18 @@ void reverse(string &msg) {
 
       if (current == nullptr) {
         ...
+        return;
       }
 
-      // condition set (current -> node before given index)
+      /*
+          current -> the node before given index
+      */
 
+      if (current == last) {
+        ...
+        return;
+      }
 
-
-
+      // current is a middle node
 
 --------------------------------------------------------------------------------
