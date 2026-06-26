@@ -110,16 +110,16 @@
         the array:
 
 
-        int left = 0;
-        int right = nums.size() - 1;
+      int left = 0;
+      int right = nums.size() - 1;
 
-        while (left < right) {
-          // check for the answer
+      while (left < right) {
+        // check for the answer
 
-          // update left conditionally
+        // update left conditionally
 
-          // update right conditionally
-        }
+        // update right conditionally
+      }
 
 
 * Strategy 2:
@@ -127,8 +127,25 @@
       * Left pointer and right pointer start from index 0:
 
 
-        int left = 0;
-        for (int right = 0; right < n; right++) {...}
+      int left = 0;
+      for (int right = 0; right < n; right++) {...}
+
+
+* Strategy 3:
+
+      * To track previous and current elements of an array:
+
+
+      int n = arr.size();
+
+      int previous = arr[0], current;
+      for (int i = 1; i < n; i++) {
+        current = arr[i];
+
+        // do something
+
+        previous = current;
+      }
 
 --------------------------------------------------------------------------------
 
