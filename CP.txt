@@ -489,15 +489,70 @@ void reverse(string &msg) {
 
 
 
-* Condition set:
+* Traverse to a given node to modify:
 
-      * Define the general case
+      if (first == nullptr) {
+        ...
+        return;
+      }
 
-      * Consider following cases above general case:
-            1. if (first == nullptr && last == nullptr) {}
-            2. if (first == last) {}
-            3. if (current == first) {}
-            4. if (current == last) {}
+      if (first->next == nullptr) {
+        ...
+        return;
+      }
+
+      Node *previous = nullptr;
+      Node *current = first;
+
+      while (current != nullptr) {
+        if (<condition>) {
+          /*
+              <condition> is satisfied
+
+              current = node that satisfies the condition
+              previous = previous node to the current node
+          */
+
+          if (current == first) {
+            ...
+          } else if (current == last) {
+            ...
+          } else {
+            ... // node is at middle
+          }
+          return;
+        }
+
+        previous = current;
+        current = current->next;
+      }
+
+      /*
+          <condition> is not satisfied
+
+          current = nullptr
+          previous = last
+      */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -524,22 +579,5 @@ void reverse(string &msg) {
 
 
 
-* Traverse to a given node to modify (2):
-
-      // condition set
-
-      Node *previous = nullptr;
-      Node *current = first;
-
-      while (current != nullptr) {
-        if (<condition>) {
-          // condition set (current -> target node)
-        }
-
-        previous = current;
-        current = current->next;
-      }
-
-      // do something (previous -> last node)
 
 --------------------------------------------------------------------------------
