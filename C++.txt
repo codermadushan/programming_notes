@@ -206,6 +206,98 @@
 
 
 
+---------- (Deque) ----------
+
+* Can insert to both front end back.
+
+
+* Creation:
+
+      deque<int> d;
+
+
+* Access elements:
+
+      d[<index>];
+
+
+* Update elements:
+
+      d[<index>] = <value>;
+
+
+* Methods:
+
+      * Length of the deque: d.size() -> O(1)
+
+
+      * Insert elements -> O(1):
+
+            d.push_back(10);
+            d.push_front(20);
+
+
+      * Remove elements -> O(1):
+
+            d.pop_back();
+            d.pop_front();
+
+
+      * Check the deque is empty or not:
+
+            d.empty(); -> O(1)
+
+
+
+
+---------- (Stack) ----------
+
+* Push & pop elements in LIFO order.
+
+
+* Creation:
+
+      stack<int> s;
+
+
+* Methods:
+
+      * Remove the most top element: s.pop(); -> O(1)
+
+      * Add an element to the top: s.push(); -> O(1)
+
+      * Check the stack is empty or not: s.empty(); -> O(1)
+
+      * Get the most top element: s.top(); -> O(1)
+
+
+
+
+---------- (Queue) ----------
+
+* Push & pop elements in FIFO order.
+
+
+* Creation:
+
+      queue<int> q;
+
+
+* Methods:
+
+      * Remove the first element: q.pop(); -> O(1)
+
+      * Add an element to the end: q.push(); -> O(1)
+
+      * Check the stack is empty or not: q.empty(); -> O(1)
+
+      * First element: q.front(); -> O(1)
+
+      * Last element: q.back(); -> O(1)
+
+
+
+
 ---------- (Unordered Set) ----------
 
 * Unordered.
