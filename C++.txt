@@ -321,6 +321,13 @@
       * Check the pq is empty or not: pq.empty(); -> O(1)
 
 
+* Create a heap:
+
+      1. Max heap: priority_queue<int> pq;
+
+      2. Min heap: priority_queue<int, vector<int>, greater<int>> pq;
+
+
 
 
 ---------- (Unordered Set) ----------

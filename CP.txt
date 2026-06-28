@@ -604,3 +604,51 @@ void reverse(string &msg) {
       // current is a middle node
 
 --------------------------------------------------------------------------------
+
+
+
+
+---------- Heaps ---------------------------------------------------------------
+
+---------- (Max Heap) ----------
+
+* The largest element is at the root
+
+
+* Every parent is >= its children
+
+
+* Creation:
+
+      priority_queue<int> max_heap;
+
+
+* Usage:
+
+      * If the size is k, it contains smallest k elements so far.
+
+            if (pq.size() > k) pq.pop();
+
+
+
+
+---------- (Min Heap) ----------
+
+* The smallest element is at the root
+
+
+* Every parent is <= its children
+
+
+* Creation:
+
+      priority_queue<int, vector<int>, greater<int>> min_heap;
+
+
+* Usage:
+
+      * If the size is k, it contains largest k elements so far.
+
+            if (pq.size() > k) pq.pop();
+
+--------------------------------------------------------------------------------

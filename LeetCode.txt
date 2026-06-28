@@ -565,4 +565,32 @@ int longestUniqueSubstring(string s)
 * Time : O(n)
 * Space: O(1)
 
+
+
+
+---------- (First Unique Character) ----------
+
+int firstUniqChar(string s) {
+  int n = s.length();
+
+  unordered_map<char, int> m;
+
+  for (int i = 0; i < n; i++) {
+    char current = s[i];
+
+    m[current]++;
+  }
+
+  for (int i = 0; i < n; i++) {
+    char current = s[i];
+
+    if (m[current] == 1) return i;
+  }
+
+  return -1;
+}
+
+* Time : O(n)
+* Space: O(n)
+
 --------------------------------------------------------------------------------
