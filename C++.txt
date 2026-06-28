@@ -382,6 +382,65 @@
 
 
 
+---------- (Set) ----------
+
+* Elements are stored in sorted order.
+
+
+* Duplicates are not allowed.
+
+
+* Creation:
+
+      set<int> s;
+
+
+* Methods:
+
+      1. Enter an element: s.insert(...); -> O(log(n))
+
+      2. Remove an element: s.erase(...); -> O(log(n))
+
+      3. Check an element exists or not: s.contains(...); -> O(log(n))
+
+      4. Number of elements: s.size(); -> O(1)
+
+
+
+
+---------- (Multi Set) ----------
+
+* Values are stored in sorted order.
+
+
+* Duplicates are allowed.
+
+
+* Creation:
+
+      multiset<int> ms;
+
+
+* Methods:
+
+      1. Enter an element: ms.insert(...); -> O(log(n))
+
+      2. Number of occurences of an element: ms.count(...); -> O(log(n) + k)
+
+      3. Number of elements: ms.size(); -> O(1)
+
+      4. Remove all occurences: ms.erase(...); -> O(log(n))
+
+      5. Remove only one occurence:
+
+                  auto it = ms.find(<element>);
+                  if (it != ms.end()) {
+                        ms.erase(it);
+                  }
+
+
+
+
 ---------- (Unordered Map) ----------
 
 * Unordered.
@@ -458,6 +517,83 @@
       if (m[<key>] == 0) {
         m.erase(<key>);
       }
+
+
+
+
+---------- (Map) ----------
+
+* Keys are stored in sorted order.
+
+
+* Duplicates are not allowed.
+
+
+* Creation:
+
+      map<string, int> m;
+
+
+* Insert an element:
+
+      m[<key>] = <value>; -> O(log(n))
+
+
+* Access the value of a key:
+
+      m[<key>]; -> O(log(n))
+
+
+* Methods:
+
+      1. Remove an key-value pair: m.erase(...); -> O(log(n))
+
+      2. Check an element exists or not: m.contains(...); -> O(log(n))
+
+      3. Number of elements: m.size(); -> O(1)
+
+
+
+
+---------- (Multi Map) ----------
+
+* Keys are stored in sorted order.
+
+
+* Duplicates are allowed.
+
+
+* Creation:
+
+      multimap<string, int> mm;
+
+
+* Insert an element:
+
+      mm[<key>] = <value>; -> O(log(n))
+
+
+* Access the value of a key:
+
+      mm[<key>]; -> O(log(n))
+
+
+* Methods:
+
+      1. Remove all key-value pairs: m.erase(...); -> O(log(n))
+
+      2. Remove a key-value pairs:
+
+                  auto it = mm.find(<key>);
+                  if (it != mm.end()) {
+                        mm.erase(it);
+                  }
+
+      3. Check an key exists or not: m.contains(...); -> O(log(n))
+
+      4. Number of pairs: m.size(); -> O(1)
+
+      5. Number of occurences of a key: mm.count(<key>); O(log(n) + k)
 
 --------------------------------------------------------------------------------
 
