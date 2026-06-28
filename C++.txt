@@ -298,6 +298,31 @@
 
 
 
+---------- (Priority Queue) ----------
+
+* Internally represents the max heap data structure.
+
+
+* Creation:
+
+      priority_queue<int> pq;
+
+
+* Methods:
+
+      * Add an element: pq.push(<value>); -> O(log(n))
+
+      * Remove the most top element: pq.pop(); -> O(log(n))
+
+      * Get the top element: pq.top(); -> O(1)
+
+      * Number of elements in the pq: pq.size(); -> O(1)
+
+      * Check the pq is empty or not: pq.empty(); -> O(1)
+
+
+
+
 ---------- (Unordered Set) ----------
 
 * Unordered.
