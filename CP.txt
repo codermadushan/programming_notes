@@ -361,6 +361,34 @@
 
 
 
+---------- (Track the number of occurrences) -----------------------------------
+
+* If elements are only a-z or A-Z or 0-9, then use an array:
+
+      string name = "madushan";
+
+      vector<int> counts(26, 0);
+      for (int i = 0; i < name.length(); i++) {
+        char current = name[i];
+        counts[current - 'a'] += 1;
+      }
+
+
+* Otherwise use a unordered_map:
+
+      string name = "madushan";
+
+      unordered_map<char, int> m;
+      for (int i = 0; i < name.length(); i++) {
+        char current = name[i];
+        m[current]++;
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- (Duplicates) --------------------------------------------------------
 
 * Steps:
