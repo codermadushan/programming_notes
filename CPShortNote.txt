@@ -131,6 +131,22 @@
 
 
 
+---------- Maths ---------------------------------------------------------------
+
+* Calculate the number which repeats the digits of a given number:
+
+      Ex:
+          2   -> 22
+          43  -> 4343
+          221 -> 221221
+
+      * Multiply the given number by: 10^d + 1 (d -> number of digits in given number)
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Two Pointers --------------------------------------------------------
 
 * Strategy 1:
@@ -428,6 +444,14 @@
 
 
 ---------- Strings -------------------------------------------------------------
+
+* Convert string numbers to integers:
+
+      1. To int       -> stoi(<string>);
+      2. To long long -> stoll(<string>);
+
+
+
 
 ---------- Reverse Elements ----------
 
