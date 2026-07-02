@@ -1,0 +1,112 @@
+---------- (Weird Algorithm) ---------------------------------------------------
+
+* Problem:
+
+      Consider an algorithm that takes as input a positive integer n. If n is
+      even, the algorithm divides it by two, and if n is odd, the algorithm
+      multiplies it by three and adds one. The algorithm repeats this, until n
+      is one. For example, the sequence for n=3 is as follows:
+
+          3 10 5 16 8 4 2 1
+
+
+* Answer:
+
+      int main() {
+        ios::sync_with_stdio(false);
+        cin.tie(nullptr);
+
+        long long n;
+        cin >> n;
+
+        while (true) {
+          cout << n << ' ';
+
+          if (n == 1) break;
+          n = n % 2 == 0 ? n / 2 : n * 3 + 1;
+        }
+
+        return 0;
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- (Missing Number) ----------------------------------------------------
+
+* Problem:
+      You are given all numbers between 1,2,\ldots,n except one. Your task is to
+      find the missing number.
+
+
+* Answer:
+
+      int main() {
+        ios::sync_with_stdio(false);
+        cin.tie(nullptr);
+
+        int n;
+        cin >> n;
+
+        unordered_set<int> s;
+
+        for (int i = 0; i < n - 1; i++) {
+          int a;
+          cin >> a;
+          s.insert(a);
+        }
+
+        for (int i = 1; i <= n; i++) {
+          if (!s.contains(i)) {
+            cout << i;
+            break;
+          }
+        }
+
+        return 0;
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- (Repetitions) -------------------------------------------------------
+
+* Problem:
+
+      You are given a DNA sequence: a string consisting of characters A, C, G,
+      and T. Your task is to find the longest repetition in the sequence. This
+      is a maximum-length substring containing only one type of character.
+
+
+* Answer:
+
+      int main() {
+        ios::sync_with_stdio(false);
+        cin.tie(nullptr);
+
+        string s;
+        cin >> s;
+
+        int n = s.length();
+
+        int current_length = 1, max_length = current_length;
+        for (int i = 1; i < n; i++) {
+          if (s[i] == s[i - 1]) {
+            current_length++;
+          } else {
+            current_length = 1;
+          }
+
+          if (current_length > max_length) max_length = current_length;
+        }
+
+        cout << max_length;
+
+        return 0;
+      }
+
+--------------------------------------------------------------------------------
