@@ -622,25 +622,30 @@ int binary_search(vector<int> &nums, int target) {
       while (current != nullptr) {
         if (current ...) {
 
-          // if delete
+          ---------- (if delete) ----------
           if (current == last) {
             ...
           } else {
             ...
           }
           return;
+          ---------------------------------
 
 
-          // if insert
+          ---------- (if insert) ----------
           ...
           return;
+          ---------------------------------
         }
 
         previous -> current;
         current  -> current->next;
       }
 
-      // if insert (previous == last)
+      ---------- (if insert) ----------
+      // previous == last
+      ...
+      ---------------------------------
 
 
 
