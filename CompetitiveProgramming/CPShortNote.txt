@@ -599,7 +599,12 @@ int binary_search(vector<int> &nums, int target) {
 
 
 
-* Traverse to a given node to modify: (not finalized)
+* Traverse conditionally to modify:
+
+      * Delete current node.
+
+      * Insert after previous node.
+
 
       if (first == nullptr) {
         ...
@@ -611,25 +616,23 @@ int binary_search(vector<int> &nums, int target) {
         return;
       }
 
-      Node *previous = nullptr;
-      Node *current = first;
+      Node *previous = first;
+      Node *current = previous->next;
 
       while (current != nullptr) {
-        if (<condition>) {
-          /*
-              <condition> is satisfied
+        if (current ...) {
 
-              current  -> node that satisfies the condition
-              previous -> previous node to the current node
-          */
-
-          if (current == first) {
-            ...
-          } else if (current == last) {
+          // if delete
+          if (current == last) {
             ...
           } else {
-            ... // node is at middle
+            ...
           }
+          return;
+
+
+          // if insert
+          ...
           return;
         }
 
@@ -637,12 +640,7 @@ int binary_search(vector<int> &nums, int target) {
         current  -> current->next;
       }
 
-      /*
-          <condition> is not satisfied
-
-          current = nullptr
-          previous = last
-      */
+      // if insert (previous == last)
 
 
 

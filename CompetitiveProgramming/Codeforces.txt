@@ -93,4 +93,8 @@
         return 0;
       }
 
+      * If number of groups equal to 2, result is 2. Otherwise result is 1.
+
+
+* D:
 --------------------------------------------------------------------------------
