@@ -614,6 +614,9 @@ int binary_search(vector<int> &nums, int target) {
 
           return;
         }
+
+        previous = current;
+        current = current->next;
       }
 
 
@@ -632,6 +635,9 @@ int binary_search(vector<int> &nums, int target) {
 
           return;
         }
+
+        previous = current;
+        current = current->next;
       }
 
       if (first == nullptr) {
@@ -639,7 +645,7 @@ int binary_search(vector<int> &nums, int target) {
         return;
       }
 
-      // do something if the condition is never satisfied
+      // do something if the condition is never satisfied (previous == last)
 
 
 
