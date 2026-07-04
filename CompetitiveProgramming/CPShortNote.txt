@@ -599,53 +599,59 @@ int binary_search(vector<int> &nums, int target) {
 
 
 
-* Traverse conditionally to modify:
+* Traverse conditionally to delete:
 
-      * Delete: Current node
+      Node* previous = nullptr;
+      Node* current = first;
 
-      * Insert: After previous node
+      while (current != nullptr) {
+        if (current ...) {
 
+          if (current == first && first == last) {...}
+          else if (current == first) {...}
+          else if (current == last) {...}
+          else {...}
+
+          return;
+        }
+      }
+
+
+
+
+* Traverse conditionally to insert:
+
+      Node* previous = nullptr;
+      Node* current = first;
+
+      while (current != nullptr) {
+        if (current ...) {
+
+          if (current == first) {...}
+          else {...}
+
+          return;
+        }
+      }
 
       if (first == nullptr) {
         ...
         return;
       }
 
-      if (first->next == nullptr) {
-        ...
-        return;
-      }
-
-      Node *previous = first;
-      Node *current = previous->next;
-
-      while (current != nullptr) {
-        if (current ...) {
-
-          ---------- (if delete) ----------
-          if (current == last) {
-            ...
-          } else {
-            ...
-          }
-          return;
-          ---------------------------------
+      // do something if the condition is never satisfied
 
 
-          ---------- (if insert) ----------
-          ...
-          return;
-          ---------------------------------
-        }
 
-        previous -> current;
-        current  -> current->next;
-      }
 
-      ---------- (if insert) ----------
-      // previous == last
-      ...
-      ---------------------------------
+
+
+
+
+
+
+
+
 
 
 
