@@ -601,9 +601,9 @@ int binary_search(vector<int> &nums, int target) {
 
 * Traverse conditionally to modify:
 
-      * Delete current node.
+      * Delete: Current node
 
-      * Insert after previous node.
+      * Insert: After previous node
 
 
       if (first == nullptr) {
