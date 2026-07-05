@@ -131,6 +131,32 @@
 
 
 
+---------- (Intervals) ---------------------------------------------------------
+
+* Suppose there are 2 intervals as follows:
+
+      1. interval_1_start -> interval_1_end
+      2. interval_2_start -> interval_2_end
+
+
+      overlap_start = max(interval_1_start, interval_2_start);
+      overlap_end = min(interval_1_end, interval_2_end);
+
+      if (overlap_start >= overlap_end) {
+
+        // there is no overlap
+
+      } else {
+
+        // there is a overlap
+
+      }
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Maths ---------------------------------------------------------------
 
 * Calculate the number which repeats the digits of a given number:
