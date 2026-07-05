@@ -142,6 +142,20 @@
 
       * Multiply the given number by: 10^d + 1 (d -> number of digits in given number)
 
+
+
+
+* Traverse over digits in a given number:
+
+      void traverse(int n) {
+        while (n > 0) {
+          int digit = n % 10;
+          cout << digit << ' ';
+
+          n /= 10;
+        }
+      }
+
 --------------------------------------------------------------------------------
 
 
