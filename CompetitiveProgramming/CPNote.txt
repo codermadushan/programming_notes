@@ -150,6 +150,14 @@
 
         // there is a overlap
 
+        // Note that always: overlap <= each interval
+
+        // consider the following drawing for further calculations
+
+              ----------------- |///////////////| ----------------
+              |                 |               |                |
+        interval_start    overlap_start    overlap_end    interval_end
+
       }
 
 --------------------------------------------------------------------------------
