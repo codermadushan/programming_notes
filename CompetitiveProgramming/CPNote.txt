@@ -655,7 +655,7 @@ int binary_search(vector<int> &nums, int target) {
       while (current != nullptr) {
         if (current ...) {
 
-          if (current == first && first == last) {...}
+          if (current == first && first->next == nullptr) {...}
           else if (current == first) {...}
           else if (current == last) {...}
           else {...}
@@ -698,50 +698,38 @@ int binary_search(vector<int> &nums, int target) {
 
 
 
+* Traverse to a given index to delete (3, 4):
 
-
-
-
-
-
-
-
-
-
-
-
-* Traverse to a given index to modify: (not finalized)
-
-      if (first == nullptr) {
-        ...
+      if (index == 0) {
+        if (first == nullptr) {
+          ...
+        } else if (first->next == nullptr) {
+          ...
+        } else {
+          ...
+        }
         return;
       }
 
-      if (index == 0) {  ---> if indices start from 1, use 1 instead of 0
-        ...
-        return;
-      }
-
-      Node *current = first;
-      for (int i = 0; i < index - 1 && current != nullptr; i++) { ---> if indices start from 1, start "i" with 1
+      Node* current = first;
+      for (int i = 0; i < index - 1 && current != nullptr; i++) {
         current = current->next;
       }
 
       if (current == nullptr) {
         ...
-        return;
-      }
-
-      /*
-          current -> the node before given index
-      */
-
-      if (current == last) {
+      } else if (current->next == nullptr) {
         ...
-        return;
+      } else if (current->next == last) {
+        ...
+      } else {
+        ...
       }
 
-      // current is a middle node
+
+
+
+* Traverse to a given index to insert:
 
 --------------------------------------------------------------------------------
 
