@@ -592,26 +592,57 @@ void reverse(string &msg) {
 
 * Ex:
 
-      int maxSubArray(vector<int> &nums) {
-        int n = nums.size();
+      class Solution {
+      public:
+        int maxSubArray(vector<int> &nums) {
+          int n = nums.size();
 
-        int max_sum = INT_MIN;
+          int current_sum = nums[0], max_sum = current_sum;
+          for (int i = 1; i < n; i++) {
+            int current_num = nums[i];
+            current_sum += current_num;
 
-        int current_value, current_sum = 0;
-        for (int right = 0; right < n; right++) {
-          current_value = nums[right];
+            if (current_sum < current_num) {
+              current_sum = current_num;
+            }
 
-          current_sum += current_value;
-
-          if (current_sum < current_value) {
-            current_sum = current_value;
+            max_sum = max(max_sum, current_sum);
           }
 
-          max_sum = max(max_sum, current_sum);
+          return max_sum;
         }
+      };
 
-        return max_sum;
-      }
+
+* To track start and end indices:
+
+      class Solution {
+      public:
+        int maxSubArray(vector<int> &nums) {
+          int n = nums.size();
+
+          int ans_left = 0, ans_right = 0;
+
+          int current_sum = nums[0], max_sum = current_sum;
+          int left = 0;
+          for (int i = 1; i < n; i++) {
+            int current_num = nums[i];
+            current_sum += current_num;
+
+            if (current_sum < current_num) {
+              current_sum = current_num;
+              left = i;
+            }
+
+            max_sum = max(max_sum, current_sum);
+
+            if (max_sum == current_sum) ans_left = left, ans_right = i;
+          }
+
+          cout << ans_left << ',' << ans_right;
+          return max_sum;
+        }
+      };
 
 --------------------------------------------------------------------------------
 
