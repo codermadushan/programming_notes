@@ -647,7 +647,7 @@ int binary_search(vector<int> &nums, int target) {
 
 
 
-* Traverse conditionally to delete:
+* Traverse conditionally to delete (4):
 
       Node* previous = nullptr;
       Node* current = first;
@@ -670,7 +670,7 @@ int binary_search(vector<int> &nums, int target) {
 
 
 
-* Traverse conditionally to insert:
+* Traverse conditionally to insert (2, 2):
 
       Node* previous = nullptr;
       Node* current = first;
@@ -691,14 +691,14 @@ int binary_search(vector<int> &nums, int target) {
       if (first == nullptr) {
         ...
         return;
+      } else {
+        // do something if the condition is never satisfied (previous == last)
       }
 
-      // do something if the condition is never satisfied (previous == last)
 
 
 
-
-* Traverse to a given index to delete (3, 4):
+* Traverse to a given index to delete (3, 5):
 
       if (index == 0) {
         if (first == nullptr) {
@@ -716,7 +716,9 @@ int binary_search(vector<int> &nums, int target) {
         current = current->next;
       }
 
-      if (current == nullptr) {
+      if (first == nullptr) {
+        ...
+      } else if (current == nullptr) {
         ...
       } else if (current->next == nullptr) {
         ...
@@ -729,7 +731,31 @@ int binary_search(vector<int> &nums, int target) {
 
 
 
-* Traverse to a given index to insert:
+* Traverse to a given index to insert (2, 4):
+
+      if (index == 0) {
+        if (first == nullptr) {
+          ...
+        } else {
+          ...
+        }
+        return;
+      }
+
+      Node* current = first;
+      for (int i = 0; i < index - 1 && current != nullptr; i++) {
+        current = current->next;
+      }
+
+      if (first == nullptr) {
+        ...
+      } else if (current == nullptr) {
+        ...
+      } else if (current == last) {
+        ...
+      } else {
+        ...
+      }
 
 --------------------------------------------------------------------------------
 
