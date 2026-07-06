@@ -167,6 +167,24 @@
 
 ---------- Maths ---------------------------------------------------------------
 
+* Greatest Common Divisor (GCD):
+
+      gcd(a, b);  a, b > 0
+
+      The largest positive integer that divides a, b exactly
+
+
+
+
+* Least Common Multiple (LCM):
+
+      lcm(a, b);  a, b > 0
+
+      The smallest positive integer that is divisible by both a, b
+
+
+
+
 * Calculate the number which repeats the digits of a given number:
 
       Ex:
