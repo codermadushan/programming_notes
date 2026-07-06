@@ -347,109 +347,42 @@
 
 
 
----------- Prefix/Suffix Sum/Product -------------------------------------------
+---------- Prefix/Suffix Sum ---------------------------------------------------
 
-* Prefix sum/product:
+* Consider the following array:
 
-      * If sum     -> Initial value = 0;
-      * If product -> Initial value = 1;
+      [3, 5, 2, 7, 1, 4, 6]
 
-
-      * Ex: Prefix sum without current value:
-
-            // nums   -> 1 7 3 9 5
-            // prefix -> 0 1 8 11 20
-
-            vector<int> prefix_sum(vector<int> &nums)
-            {
-              int size = nums.size();
-
-              vector<int> prefix_sum(size);
-
-              int prefix = 0;
-              for (int i = 0; i < size; i++)
-              {
-                prefix_sum[i] = prefix;
-                prefix += nums[i]; // update prefix after
-              }
-
-              return prefix_sum;
-            }
+      * If the array size is n, prefix/suffix sum array size is n + 1
 
 
-      * Ex: Prefix sum with current value:
+* Prefix sum:
 
-            // nums   -> 1 7 3 9 5
-            // prefix -> 1 8 11 20 25
+      * prefix sum array = [0, 3, 8, 10, 17, 18, 22, 28]
 
-            vector<int> prefix_sum(vector<int> &nums)
-            {
-              int size = nums.size();
+      * prefix[n] -> sum of first n elements
 
-              vector<int> prefix_sum(size);
+      int n = suffix.size();
 
-              int prefix = 0;
-              for (int i = 0; i < size; i++)
-              {
-                prefix += nums[i]; // update prefix before
-                prefix_sum[i] = prefix;
-              }
-
-              return prefix_sum;
-            }
+      prefix[0] = 0;
+      for (int i = 1; i < n; i++) {
+        prefix[i] = prefix[i - 1] + arr[i - 1];
+      }
 
 
+* Suffix sum:
 
+      * suffix sum array = [0, 6, 10, 11, 18, 20, 25, 28]
 
-* Suffix sum/product:
+      * suffix[n] -> sum of last n elements
 
-      * If sum     -> Initial value = 0;
-      * If product -> Initial value = 1;
+      int k = arr.size();
+      int n = suffix.size();
 
-
-      * Ex: Suffix sum without current value:
-
-            // nums   -> 1 7 3 9 5
-            // suffix -> 24 17 14 5 0
-
-            vector<int> suffix_sum(vector<int> &nums)
-            {
-              int size = nums.size();
-
-              vector<int> suffix_sum(size);
-
-              int suffix = 0;
-              for (int i = size - 1; i >= 0; i--)
-              {
-
-                suffix_sum[i] = suffix;
-                suffix += nums[i]; // update suffix after
-              }
-
-              return suffix_sum;
-            }
-
-
-      * Ex: Suffix sum with current value:
-
-            // nums   -> 1 7 3 9 5
-            // suffix -> 25 24 17 14 5
-
-            vector<int> suffix_sum(vector<int> &nums)
-            {
-              int size = nums.size();
-
-              vector<int> suffix_sum(size);
-
-              int suffix = 0;
-              for (int i = size - 1; i >= 0; i--)
-              {
-                suffix += nums[i]; // update suffix before
-                suffix_sum[i] = suffix;
-              }
-
-              return suffix_sum;
-            }
+      suffix[0] = 0;
+      for (int i = 1; i < n; i++) {
+        suffix[i] = suffix[i - 1] + arr[k - i];
+      }
 
 --------------------------------------------------------------------------------
 
