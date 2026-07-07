@@ -399,7 +399,7 @@
 
 
 
----------- (Track the number of occurrences) -----------------------------------
+---------- (Count Frequencies) -----------------------------------
 
 * If elements are only a-z or A-Z or 0-9, then use an array:
 
