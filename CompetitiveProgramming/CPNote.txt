@@ -384,6 +384,16 @@
         suffix[i] = suffix[i - 1] + arr[k - i];
       }
 
+
+* Sum of all elements before arr[i] without arr[i] -> prefix[i]
+* Sum of all elements after arr[i] without arr[i]  -> suffix[k - i - 1]
+
+
+* Sum of the values from index "l" to "r" (inclusive):
+
+      * Using prefix sum array: prefix[r + 1] - prefix[l]
+      * Using suffix sum array: suffix[k - l] - suffix[k - r - 1]
+
 --------------------------------------------------------------------------------
 
 
