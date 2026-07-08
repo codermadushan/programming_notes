@@ -132,6 +132,19 @@
 
 
 
+* When you pass a collection type to a function use following techniques:
+
+      * const <type> &<variable> : Read only (As an immutable reference)
+      * <type> &<variable>       : To modify (As a mutable reference)
+
+      * If you no longer need the collection, move it to the function: move(<collection>)
+
+      * When you return a collection type from a function, optimizations will be
+        performed automatically.
+
+
+
+
 ---------- (Arrays) ----------
 
 * Create an array:
@@ -213,6 +226,11 @@
 
       4. clear():
             To remove all the elements.
+
+
+      5. reserve():
+            To preallocate memory if you know the size. Still <vector>.size() is
+            zero.
 
 
 
