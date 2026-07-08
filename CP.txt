@@ -427,6 +427,28 @@
 
 
 
+---------- Group Items ---------------------------------------------------------
+
+* Create an unordered_map as follows:
+
+      unordered_map<<key_type>, vector<item_type>> m;
+
+
+* Use a common property for the items in each group as the key.
+
+
+* If the common property is something like frequency, then you have to convert
+  it to a string. Because you cannot use a vector as a key.
+
+      #1#2....
+
+      * if you don't use #, 1, 11 and 11, 1 are considered same.
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- (Duplicates) --------------------------------------------------------
 
 * Steps:
