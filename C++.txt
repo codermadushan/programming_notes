@@ -228,9 +228,19 @@
             To remove all the elements.
 
 
-      5. reserve():
-            To preallocate memory if you know the size. Still <vector>.size() is
-            zero.
+      5. reserve(n):
+            Set only the capacity to n if n > current_capacity
+
+
+      6. assign(n, value):
+            Set size to n.
+            All values are set to "value".
+
+
+      7. resize(n, value):
+            Set size to n.
+            If shrinking, extra elements are removed.
+            If growing, new elements are initialized with "value".
 
 
 

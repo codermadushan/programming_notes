@@ -446,9 +446,11 @@
 
 ---------- Group Items ---------------------------------------------------------
 
+---------- (Without any group order) ----------
+
 * Create an unordered_map as follows:
 
-      unordered_map<<key_type>, vector<item_type>> m;
+      unordered_map<<key_type>, vector<item_type>> groups;
 
 
 * Use a common property for the items in each group as the key.
