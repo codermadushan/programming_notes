@@ -8744,6 +8744,48 @@ Ex:
       3. Client verify the signature using the CA's public key in the CA's
          certificate in the it's certificate pool
 
+
+
+
+---------- (TLS Configs In Server) ----------
+
+* Load key and certificate files of the server:
+
+      certs, err := tls.LoadX509KeyPair(cert, key)
+
+
+* Provide the loaded files to TLS configurations:
+
+      tlsConfig := &tls.Config{
+        Certificates: []tls.Certificate{certs},
+        MinVersion:   tls.VersionTLS12,
+      }
+
+
+
+
+---------- (TLS Configs In Client) ----------
+
+* Create the certificate pool:
+
+      certPool := x509.NewCertPool()
+
+
+* Add CA certificates to the pool:
+
+      ok := certPool.AppendCertsFromPEM(<cert>)
+      if !ok {
+        log.Fatalln("failed to add CA certificate")
+      }
+
+
+* Provide the pool to TLS configurations:
+
+      tlsConfig := &tls.Config{
+        RootCAs:    certPool,
+        MinVersion: tls.VersionTLS12,
+      }
+
 --------------------------------------------------------------------------------
 
 
