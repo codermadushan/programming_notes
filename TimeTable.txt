@@ -1,11 +1,40 @@
-5 AM -----> 7 AM    : English
+5:00AM -> 6:00AM : Meditation
 
-8 AM -----> 12 Noon : Go
 
-1 PM -----> 3 PM    : Go
 
-3 PM -----> 6 PM    : Flutter
 
-7 PM -----> 9 PM    : (SQL) / (Design Patterns)
+6:00AM -> 7:00AM : English
 
-9 PM -----> 11 PM   : Rust
+
+
+
+8:00AM -> 12:00PM : Flutter
+
+    * Project
+    * Learn a new animation / sliver like widget
+    * Animations
+    * Learning
+
+
+
+
+1:00PM -> 5:00PM : Golang
+
+    * Project
+    * Learning gRPC, WebSocket, RabbitMQ, Kafka
+    * Database
+
+
+
+
+6:00pm -> 8:00PM  : DSA
+
+    * Learn the solutions for NeetCode150
+
+
+
+
+8:00PM -> 10:30PM : Competitive Programming
+
+    * Solve a problem "with floor(my_current_rating) + 300" rating
+    * CP udemy course / Guide to CP book
