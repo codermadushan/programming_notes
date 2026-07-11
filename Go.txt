@@ -8692,6 +8692,63 @@ Ex:
 
 
 
+---------- TLS -----------------------------------------------------------------
+
+* TLS : Transport Layer Security
+
+
+* CA - Certificate Authority:
+
+      * Trusted entity that issues and digitally signs certificates
+
+
+* rootCA-key.pem:
+
+      * CA's private key (RSA or ECDSA or Ed25519)
+      * Used to sign server certificates
+
+
+* rootCA.pem:
+
+      * CA's certificate (X.509)
+      * Contains
+            1. CA's public key
+            2. More information about CA
+
+
+* server-key.pem:
+
+      * Server's private key (RSA or ECDSA or Ed25519)
+      * Used to decrypt data comes from the client
+
+
+* server.pem:
+
+      * Server's certificate (X.509)
+      * Contains:
+            1. Server's public key
+            2. Signature created by the CA's private key on itself
+            3. More information about server
+
+            * The signature is over the certificate's contents except the
+              signature field itself
+
+
+* How client verify the authenticity of server's certificate:
+
+      1. Server sends the certificate to the client
+
+      2. Server's certificate contains the signature of itself created by CA's
+         private key
+
+      3. Client verify the signature using the CA's public key in the CA's
+         certificate in the it's certificate pool
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- TCP -----------------------------------------------------------------
 
 * TCP: Transmission Control Protocol
