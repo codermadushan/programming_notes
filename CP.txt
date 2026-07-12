@@ -468,10 +468,12 @@
 
 ---------- (Group items in a grid to sub boxes) ----------
 
-for (int row = 0; row < num_rows; row++) {
-  for (int column = 0; column < num_columns; column++) {
-    string key = '#' + to_string(row / height_box) + '#' + to_string(column / width_box);
-    m[key].push_back(board[row][column]);
+for (int row_index = 0; row_index < num_rows; row_index++) {
+  for (int column_index = 0; column_index < num_columns; column_index++) {
+
+    int box_index = (row_index / num_rows) * num_columns + (column_index / num_columns);
+    m[box_index].push_back(board[row_index][column_index]);
+
   }
 }
 
