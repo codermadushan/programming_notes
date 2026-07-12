@@ -238,8 +238,15 @@
       * Left pointer and right pointer start from index 0:
 
 
-      int left = 0;
-      for (int right = 0; right < n; right++) {...}
+      int left = 0, right = 0;
+      while (right < n) {
+        while (<condition>) right++;
+
+        // do something
+
+        // update right
+        // update left
+      }
 
 
 * Strategy 3:
@@ -562,6 +569,50 @@ void reverse(string &msg) {
 * Strings that read the same forward and backward.
 
       Ex: "a", "aa", "aba", "abba"
+
+
+
+
+---------- (Encode & Decode) ----------
+
+* Encode a list of strings to a single string:
+
+      * Format: <length> + <delimeter> + <string>
+
+            string encode(vector<string> &strs) {
+              string resp = "";
+
+              for (auto &str : strs) {
+                resp += to_string(str.length()) + '#' + str;
+              }
+
+              return resp;
+            }
+
+
+* Decode an encoded string to the original list:
+
+      vector<string> decode(string s) {
+        int n = s.length();
+
+        vector<string> resp;
+
+        int left = 0, right = 0;
+        while (right < n) {
+          while (s[right] != '#') right++;
+
+          auto len = stoi(s.substr(left, right - left));
+
+          resp.push_back(s.substr(right + 1, len));
+
+          right += len + 1;
+          left = right;
+        }
+
+        return resp;
+      }
+
+      * To build the logic use 2 pointers and use a sample input like "4#lint4#code..."
 
 --------------------------------------------------------------------------------
 
