@@ -1,0 +1,352 @@
+---------- 217: Contains Duplicate ---------------------------------------------
+
+class Solution {
+public:
+  bool containsDuplicate(vector<int> &nums) {
+    int n = nums.size();
+
+    unordered_set<int> s;
+
+    for (int i = 0; i < n; i++) {
+      int current = nums[i];
+
+      if (s.contains(current)) return true;
+      else s.insert(current);
+    }
+
+    return false;
+  }
+};
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- 242: Valid Anagram --------------------------------------------------
+
+class Solution {
+public:
+  bool isAnagram(string s, string t) {
+    int ns = s.length();
+    int nt = t.length();
+
+    if (ns != nt) return false;
+
+    vector<int> vs(26, 0);
+    vector<int> vt(26, 0);
+
+    int n = ns;
+
+    for (int i = 0; i < n; i++) {
+      vs[s[i] - 'a']++;
+      vt[t[i] - 'a']++;
+    }
+
+    return vs == vt;
+  }
+};
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- 1: Two Sum ----------------------------------------------------------
+
+class Solution {
+public:
+  vector<int> twoSum(vector<int> &nums, int target) {
+    int n = nums.size();
+
+    unordered_map<int, int> m;
+
+    for (int i = 0; i < n; i++) {
+      int current = nums[i];
+
+      int diff = target - current;
+
+      if (m.contains(diff)) {
+        return {m[diff], i};
+      } else {
+        m[current] = i;
+      }
+    }
+
+    return {};
+  }
+};
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- 49: Group Anagrams --------------------------------------------------
+
+string generate_key(vector<int> &freq) {
+  int n = freq.size();
+
+  string key = "";
+  for (int i = 0; i < n; i++) {
+    key += '#' + to_string(freq[i]);
+  }
+
+  return key;
+}
+
+class Solution {
+public:
+  vector<vector<string>> groupAnagrams(vector<string> &strs) {
+    unordered_map<string, vector<string>> groups;
+
+    for (const auto &s : strs) {
+      vector<int> freq(26, 0);
+
+      for (char c : s) {
+        freq[c - 'a']++;
+      }
+
+      string key = generate_key(freq);
+      groups[key].push_back(move(s));
+    }
+
+    vector<vector<string>> ans;
+    ans.reserve(groups.size());
+
+    for (auto &[key, group] : groups) {
+      ans.push_back(move(group));
+    }
+
+    return ans;
+  }
+};
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- 347: Top K Frequent Elements ----------------------------------------
+
+class Solution {
+public:
+  vector<int> topKFrequent(vector<int> &nums, int k) {
+    int n = nums.size();
+
+    unordered_map<int, int> freq_map;
+    for (int i = 0; i < n; i++) freq_map[nums[i]]++;
+
+    vector<vector<int>> buckets(n + 1);
+    for (auto [key, value] : freq_map) {
+      buckets[value].push_back(key);
+    }
+
+    vector<int> ans;
+    ans.reserve(k);
+
+    for (int i = n; i >= 0; i--) {
+      auto &bucket = buckets[i];
+      if (bucket.size() == 0) continue;
+
+      for (auto value : bucket) {
+        if (ans.size() >= k) break;
+
+        ans.push_back(value);
+      }
+
+      if (ans.size() == k) break;
+    }
+
+    return ans;
+  }
+};
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- 238: Product of Array Except Self -----------------------------------
+
+class Solution {
+public:
+  vector<int> productExceptSelf(vector<int> &nums) {
+    int k = nums.size();
+
+    vector<int> prefix(k + 1);
+    vector<int> suffix(k + 1);
+
+    int n = prefix.size();
+
+    prefix[0] = 1;
+    suffix[0] = 1;
+    for (int i = 1; i < n; i++) {
+      prefix[i] = prefix[i - 1] * nums[i - 1];
+      suffix[i] = suffix[i - 1] * nums[k - i];
+    }
+
+    vector<int> ans(k);
+    for (int i = 0; i < k; i++) {
+      ans[i] = prefix[i] * suffix[k - i - 1];
+    }
+
+    return ans;
+  }
+};
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- 36: Valid Sudoku ----------------------------------------------------
+
+class Solution {
+public:
+  bool isValid(vector<char> &v) {
+    int n = v.size();
+
+    unordered_set<char> s;
+    for (int i = 0; i < n; i++) {
+      auto c = v[i];
+
+      if (c == '.') continue;
+
+      if (s.contains(c)) return false;
+      s.insert(c);
+    }
+
+    return true;
+  }
+
+  bool isValidSudoku(vector<vector<char>> &board) {
+    int n = board.size();
+
+    for (int i = 0; i < n; i++) {
+      auto &row = board[i];
+      if (!isValid(row)) return false;
+    }
+
+    vector<char> column(n);
+    unordered_map<int, unordered_set<char>> m;
+
+    for (int col = 0; col < n; col++) {
+      for (int row = 0; row < n; row++) {
+        auto value = board[row][col];
+
+        column[row] = value;
+
+        if (value == '.') continue;
+
+        int box_index = (row / 3) * 3 + (col / 3);
+        if (m[box_index].contains(value)) return false;
+        m[box_index].insert(value);
+      }
+
+      if (!isValid(column)) return false;
+    }
+
+    return true;
+  }
+};
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- 271: Encode and Decode Strings --------------------------------------
+
+class Solution {
+public:
+  string encode(vector<string> &strs) {
+    string resp = "";
+
+    for (auto &str : strs) {
+      resp += to_string(str.length()) + '#' + str;
+    }
+
+    return resp;
+  }
+
+  vector<string> decode(string s) {
+    int n = s.length();
+
+    vector<string> resp;
+
+    int left = 0, right = 0;
+    while (right < n) {
+      while (s[right] != '#') right++;
+
+      auto len = stoi(s.substr(left, right - left));
+
+      resp.push_back(s.substr(right + 1, len));
+
+      right += len + 1;
+      left = right;
+    }
+
+    return resp;
+  }
+};
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- 128: Longest Consecutive Sequence -----------------------------------
+
+* In the map value = false means, it doesn't belong to any sub sequence yet.
+
+* A single value cannot be in more than one sub sequence.
+
+
+class Solution {
+public:
+  int longestConsecutive(vector<int> &nums) {
+    int n = nums.size();
+
+    unordered_map<int, bool> m;
+    for (int i = 0; i < n; i++) m[nums[i]] = false;
+
+    int max_len = 0;
+    for (int i = 0; i < n; i++) {
+      int current = nums[i];
+
+      if (m[current] == true) continue;
+
+      int len = 1;
+
+      int previous = current - 1;
+      while (m.contains(previous)) {
+        m[previous] = true;
+        len++;
+
+        previous = previous - 1;
+      }
+
+      int next = current + 1;
+      while (m.contains(next)) {
+        m[next] = true;
+        len++;
+
+        next = next + 1;
+      }
+
+      max_len = max(max_len, len);
+    }
+
+    return max_len;
+  }
+};
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- 125: Valid Palindrome -----------------------------------------------
+
+--------------------------------------------------------------------------------
