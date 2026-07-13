@@ -349,4 +349,77 @@ public:
 
 ---------- 125: Valid Palindrome -----------------------------------------------
 
+class Solution {
+public:
+  bool isValidChar(char c) {
+    if (c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' || c >= '0' && c <= '9')
+      return true;
+
+    return false;
+  }
+
+  char update(char c) {
+    if (c >= 'A' && c <= 'Z') return tolower(c);
+    return c;
+  }
+
+  bool isPalindrome(string s) {
+    int left = 0, right = s.length() - 1;
+    while (left < right) {
+      char left_char = s[left];
+      char right_char = s[right];
+
+      if (!isValidChar(left_char)) {
+        left++;
+        continue;
+      }
+
+      if (!isValidChar(right_char)) {
+        right--;
+        continue;
+      }
+
+      left_char = update(left_char);
+      right_char = update(right_char);
+
+      if (left_char != right_char) return false;
+      left++, right--;
+    }
+
+    return true;
+  }
+};
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- 167: Two Sum II - Input Array Is Sorted -----------------------------
+
+class Solution {
+public:
+  vector<int> twoSum(vector<int> &numbers, int target) {
+    int left = 0, right = numbers.size() - 1;
+    while (left < right) {
+      int sum = numbers[left] + numbers[right];
+
+      if (sum < target) left++;
+      else if (sum > target) right--;
+      else return {left + 1, right + 1};
+    }
+
+    return {};
+  }
+};
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- 15: 3Sum ------------------------------------------------------------
+
+2:20:50
+
 --------------------------------------------------------------------------------
