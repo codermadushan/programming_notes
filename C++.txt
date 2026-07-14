@@ -438,7 +438,8 @@
 
 * Creation:
 
-      set<int> s;
+      set<int> s; (ascending order)
+      set<int, greater<int>> s; (descending order)
 
 
 * Methods:
@@ -464,7 +465,8 @@
 
 * Creation:
 
-      multiset<int> ms;
+      multiset<int> ms;  (ascending order)
+      multiset<int, greater<int>> ms;  (descending order)
 
 
 * Methods:
@@ -577,7 +579,8 @@
 
 * Creation:
 
-      map<string, int> m;
+      map<string, int> m; (ascending order)
+      map<string, int,greater<int>> m; (descending order)
 
 
 * Insert an element:
@@ -611,7 +614,8 @@
 
 * Creation:
 
-      multimap<string, int> mm;
+      multimap<string, int> mm; (ascending order)
+      multimap<string, int, greater<int>> mm; (descending order)
 
 
 * Insert an element:
