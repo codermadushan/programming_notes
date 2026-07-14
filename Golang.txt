@@ -581,11 +581,10 @@ Ex:
 
 1. Without values:
 
-  Option 1:
-      var slice []int
+      slice = make([]int, <initialLength>, <initialCapacity>)
 
-  Option 2:
-      slice = make([]int, <initialLength>)
+      * Initial capacity is optional. If it is not provided, same as initial
+        length.
 
 
 2. With values:
@@ -747,14 +746,7 @@ Ex:
 * By using keys we can access values. If the key doesn't exist, then default
   value of values data type will be returned.
 
-    Option 1:
-
-        value := mapVariable[<key>]
-
-
-    Option 2:
-
-        value, isKeyExist := mapVariable[<key>]
+      value, exist := mapVariable[<key>]
 
 
 

@@ -317,6 +317,7 @@ public:
 
       if (m[current] == true) continue;
 
+      m[current] = true;
       int len = 1;
 
       int previous = current - 1;
