@@ -12012,6 +12012,12 @@ Ex (Long Polling):
       (Can find from official gRPC website)
 
 
+* Also you need to install following packages in each project:
+
+      1. go get google.golang.org/grpc
+      2. go get github.com/golang/protobuf/proto
+
+
 
 
 ---------- (Organize .proto files) ----------
@@ -12093,7 +12099,7 @@ Ex (Long Polling):
 * Before compile, we need to add following line to the .proto file. It
   defines the path & package of generated .pb.go file.
 
-      option go_package = "<your_go_module_name>/<generated_file_relative_path>;<package_name>pb";
+      option go_package = "<your_go_module_name>/<generated_file_relative_path>;<package_name>pbv<version>";
 
 
 * Command:
