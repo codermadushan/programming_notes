@@ -11798,6 +11798,142 @@ Ex (Long Polling):
 
 
 
+---------- WebSockets ---------------------------------------------------------
+
+* Recommended go package: github.com/coder/websocket
+
+
+* Basic mental model:
+
+      * A Hub contains multiple Rooms
+      * A Room contains multiple Clients
+
+
+* Upgrade HTTP to WebSocket:
+
+      conn, err := websocket.Accept(w, r, nil)
+
+
+* Close the websocket connection:
+
+      conn.Close(<status>, <message>)
+
+
+
+
+---------- (Read data) ----------
+
+1. type, data, err := conn.Read(ctx):
+
+      * Read is blocking until:
+
+            1. A complete websocket message is received, or
+            2. The connection is closed, or
+            3. The context is canceled or expired
+
+
+2. err := wsjson.Read(ctx, conn, &msg):
+
+      * To read JSON data
+      * "msg" can be a map or a struct
+
+
+
+
+---------- (Write data) ----------
+
+1. err := conn.Write(ctx, <message_type>, <data>)
+
+      * To write bytes
+
+
+2. err := wsjson.Write(ctx, conn, msg)
+
+      * To write a struct or a map
+
+
+* Message types:
+
+      1. websocket.MessageText
+      2. websocket.MessageBinary
+
+
+
+
+* Ex:
+
+      * internal/ws/room.go:
+
+            type Room struct {
+              clients map[*websocket.Conn]bool
+              mu      sync.Mutex
+            }
+
+            func NewRoom() *Room {
+              return &Room{clients: make(map[*websocket.Conn]bool)}
+            }
+
+            func (r *Room) AddClient(conn *websocket.Conn) {
+              r.mu.Lock()
+              defer r.mu.Unlock()
+
+              r.clients[conn] = true
+            }
+
+            func (r *Room) RemoveClient(conn *websocket.Conn) {
+              r.mu.Lock()
+              defer r.mu.Unlock()
+
+              delete(r.clients, conn)
+            }
+
+            func (r *Room) Broadcast(ctx context.Context, msg []byte) {
+              r.mu.Lock()
+              defer r.mu.Unlock()
+
+              for conn := range r.clients {
+                conn.Write(ctx, websocket.MessageText, msg)
+              }
+            }
+
+
+      * internal/features/<feature>/handler.go:
+
+            type Handler struct {
+              room *ws.Room
+            }
+
+            func NewHandler(room *ws.Room) *Handler {
+              return &Handler{room: room}
+            }
+
+            func (handler *Handler) message(w http.ResponseWriter, r *http.Request) {
+              conn, err := websocket.Accept(w, r, nil)
+              if err != nil {
+                return
+              }
+              defer conn.Close(websocket.StatusNormalClosure, "")
+
+              handler.room.AddClient(conn)
+              defer handler.room.RemoveClient(conn)
+
+              ctx := context.Background()
+
+              for {
+                _, msg, err := conn.Read(ctx)
+                if err != nil {
+                  break
+                }
+
+                handler.room.Broadcast(ctx, msg)
+              }
+            }
+
+--------------------------------------------------------------------------------
+
+
+
+
 ---------- Protocol Buffers ----------------------------------------------------
 
 * protocol Buffers (often called protobuf) are a language and platform-neutral
