@@ -12205,6 +12205,11 @@ Ex (Long Polling):
 
 ---------- Create A Simple gRPC Server -----------------------------------------
 
+* For the server, followings are ServerOptions:
+
+      1. TLS configs
+
+
 * Folder structure:
 
       /cmd
@@ -12232,9 +12237,29 @@ Ex (Long Polling):
 * If a feature contains multiple services, then define a seperate server file
   for each service.
 
-      <feature1>_server.go
-      <feature2>_server.go
+      <service1>_server.go
+      <service2>_server.go
       ...
+
+
+* Guide to provide implementations for methods in each server:
+
+      1. Embed the related unimplemented service server struct to the custom
+         server.
+
+      2. Now when you hover on the custom server, you can see the signatures of
+         all methods related to that server. Then copy and paste each signature
+         and convert it to a method by adding "{}" to the end of the signature.
+
+      3. Now you can do following modifications to each method:
+
+            * Modify the receiver parameter as a pointer receiver of the current
+              custom server.
+
+            * For stream parameters short type aliases are available in
+              following format:
+
+                  <service_name>Service_<method_name>Server
 
 
 * Examples:
@@ -12342,6 +12367,12 @@ Ex (Long Polling):
 * grpc.WithTransportCredentials(insecure.NewCredentials()):
 
       We have to provide this object to NewClient method if we don't use TLS.
+
+
+* For the client followings are DialOptions:
+
+      1. TLS configs
+      2. Compression informations
 
 
 * Ex:
