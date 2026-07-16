@@ -11883,37 +11883,81 @@ Ex (Long Polling):
 
 * Ex:
 
+      * internal/ws/client.go:
+
+            type Client struct {
+              conn *websocket.Conn
+              mu   sync.Mutex // to protect writes
+              once sync.Once
+            }
+
+            func NewClient(conn *websocket.Conn) *Client {
+              return &Client{conn: conn}
+            }
+
+            // Only one goroutine should call Read
+
+            func (c *Client) Read(ctx context.Context) (websocket.MessageType, []byte, error) {
+              return c.conn.Read(ctx)
+            }
+
+            // Multiple goroutines may call Write
+
+            func (c *Client) Write(ctx context.Context, typ websocket.MessageType, p []byte) error {
+              c.mu.Lock()
+              defer c.mu.Unlock()
+
+              return c.conn.Write(ctx, typ, p)
+            }
+
+            // Make sure close happens only once
+
+            func (c *Client) Close(code websocket.StatusCode, reason string) error {
+              var err error
+
+              c.once.Do(func() {
+                err = c.conn.Close(code, reason)
+              })
+
+              return err
+            }
+
+
       * internal/ws/room.go:
 
             type Room struct {
-              clients map[*websocket.Conn]bool
-              mu      sync.Mutex
+              clients map[*Client]bool // can use struct{} instead of bool
+              mu      sync.RWMutex     // to protect clients map
             }
 
             func NewRoom() *Room {
-              return &Room{clients: make(map[*websocket.Conn]bool)}
+              return &Room{clients: make(map[*Client]bool)}
             }
 
-            func (r *Room) AddClient(conn *websocket.Conn) {
+            func (r *Room) AddClient(client *Client) {
               r.mu.Lock()
               defer r.mu.Unlock()
 
-              r.clients[conn] = true
+              r.clients[client] = true
             }
 
-            func (r *Room) RemoveClient(conn *websocket.Conn) {
+            func (r *Room) RemoveClient(client *Client) {
               r.mu.Lock()
               defer r.mu.Unlock()
 
-              delete(r.clients, conn)
+              delete(r.clients, client)
             }
 
             func (r *Room) Broadcast(ctx context.Context, msg []byte) {
-              r.mu.Lock()
-              defer r.mu.Unlock()
+              r.mu.RLock()
+              clients := make([]*Client, 0, len(r.clients))
+              for client := range r.clients {
+                clients = append(clients, client)
+              }
+              r.mu.RUnlock()
 
-              for conn := range r.clients {
-                conn.Write(ctx, websocket.MessageText, msg)
+              for _, client := range clients {
+                client.Write(ctx, websocket.MessageText, msg)
               }
             }
 
@@ -11935,13 +11979,15 @@ Ex (Long Polling):
               }
               defer conn.Close(websocket.StatusNormalClosure, "")
 
-              handler.room.AddClient(conn)
-              defer handler.room.RemoveClient(conn)
+              client := ws.NewClient(conn)
+
+              handler.room.AddClient(client)
+              defer handler.room.RemoveClient(client)
 
               ctx := context.Background()
 
               for {
-                _, msg, err := conn.Read(ctx)
+                _, msg, err := client.Read(ctx)
                 if err != nil {
                   break
                 }
@@ -11981,11 +12027,13 @@ Ex (Long Polling):
 
 * Important:
 
-      * Multiple goroutines reading the same connection at same time -> NOT SAFE
-      * Multiple goroutines writing the same connection at same time -> NOT SAFE
+      * Multiple goroutines reading the same connection at same time      -> NOT SAFE
+      * Multiple goroutines writing the same connection at same time      -> NOT SAFE
+      * One reader and one writer on the same connection at the same time -> SAFE
 
-      * Multiple goroutines reading the same map -> SAFE
-      * Multiple goroutines writing the same map -> NOT SAFE
+      * Multiple goroutines reading the same map   -> SAFE
+      * Multiple goroutines updating the same map  -> NOT SAFE
+      * One reader and one writer on the same map  -> NOT SAFE
 
 --------------------------------------------------------------------------------
 
