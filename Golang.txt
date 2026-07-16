@@ -11838,6 +11838,27 @@ Ex (Long Polling):
       * "msg" can be a map or a struct
 
 
+* To keep listening to a client, use a read loop:
+
+      for {
+        _, msg, err := conn.Read(ctx)
+        if err != nil {
+          break
+        }
+
+        ...
+      }
+
+
+* If you don't want listen to a client, use following line just to keep the
+  websocket connection alive:
+
+      <-r.Context().Done()
+
+      * Block this handler goroutine until the client disconnects or the server
+        cancels the request.
+
+
 
 
 ---------- (Write data) ----------
@@ -11928,6 +11949,43 @@ Ex (Long Polling):
                 handler.room.Broadcast(ctx, msg)
               }
             }
+
+
+
+
+---------- (Multi Room Setup) ----------
+
+* For a multi room setup, use a Hub to store all rooms.
+
+
+* A room contains multiple clients.
+
+
+* Ex:
+
+      type Hub struct {
+        rooms map[string]*Room  // RoomID and Room
+        mu sync.RWMutex
+      }
+
+      type Room struct {
+        rooms map[*websocket.Conn]bool
+        mu sync.RWMutex
+      }
+
+      type Client struct {
+        conn *websocket.Conn
+        mu sync.Mutex  // protect writes
+      }
+
+
+* Important:
+
+      * Multiple goroutines reading the same connection at same time -> NOT SAFE
+      * Multiple goroutines writing the same connection at same time -> NOT SAFE
+
+      * Multiple goroutines reading the same map -> SAFE
+      * Multiple goroutines writing the same map -> NOT SAFE
 
 --------------------------------------------------------------------------------
 
