@@ -11809,6 +11809,12 @@ Ex (Long Polling):
       * A Room contains multiple Clients
 
 
+* URL structure:
+
+      Without TLS: ws://example.com/...
+      With TLS   : wss://example.com/...
+
+
 * Upgrade HTTP to WebSocket:
 
       conn, err := websocket.Accept(w, r, nil)

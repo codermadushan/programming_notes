@@ -453,6 +453,17 @@
 
 ---------- Group Items ---------------------------------------------------------
 
+---------- (Unique groups) ----------
+
+* If you want to maintain a unique set of groups even duplicate groups are
+  entered:
+
+      1. Sort each group before insert.
+      2. Insert each group to a set<vector<type>> s.
+
+
+
+
 ---------- (Without any group order) ----------
 
 * Create an unordered_map as follows:
