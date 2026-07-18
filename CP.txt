@@ -744,25 +744,10 @@ int binary_search(vector<int> &nums, int target) {
 
 ---------- (In C++) ----------
 
-* binary_search:
-
-      * To check a given value exists or not:
-
-            bool exist = binary_search(values.begin(), values.end(), value);
-
-
-* lower_bound:
-
-      * Returns the first position that given value can be inserted.
-
-            auto it = lower_bound(values.begin(), values.end(), 8);
-            int index = it - values.begin();
-
-
-* upper_bound:
-
-
-
+* binary_search: check the value exists or not
+* lower_bound  : first position >= x
+* upper_bound  : first position > x
+* equal_range  : both lower_bound & upper_bound
 
 --------------------------------------------------------------------------------
 

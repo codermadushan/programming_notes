@@ -452,6 +452,10 @@
 
       4. Number of elements: s.size(); -> O(1)
 
+      5. First position >= x: s.lower_bound(x) -> O(log(n))
+
+      6. First position > x: s.upper_bound(x) -> O(log(n))
+
 
 
 
@@ -485,6 +489,10 @@
                   if (it != ms.end()) {
                         ms.erase(it);
                   }
+
+      6. First position >= x: ms.lower_bound(x) -> O(log(n))
+
+      7. First position > x: ms.upper_bound(x) -> O(log(n))
 
 
 
@@ -601,6 +609,10 @@
 
       3. Number of elements: m.size(); -> O(1)
 
+      4. First position >= x: m.lower_bound(x) -> O(log(n))
+
+      5. First position > x: m.upper_bound(x) -> O(log(n))
+
 
 
 
@@ -630,7 +642,7 @@
 
 * Methods:
 
-      1. Remove all key-value pairs: m.erase(...); -> O(log(n))
+      1. Remove all key-value pairs: mm.erase(...); -> O(log(n))
 
       2. Remove a key-value pairs:
 
@@ -639,11 +651,15 @@
                         mm.erase(it);
                   }
 
-      3. Check an key exists or not: m.contains(...); -> O(log(n))
+      3. Check an key exists or not: mm.contains(...); -> O(log(n))
 
-      4. Number of pairs: m.size(); -> O(1)
+      4. Number of pairs: mm.size(); -> O(1)
 
       5. Number of occurences of a key: mm.count(<key>); O(log(n) + k)
+
+      6. First position >= x: mm.lower_bound(x) -> O(log(n))
+
+      7. First position > x: mm.upper_bound(x) -> O(log(n))
 
 --------------------------------------------------------------------------------
 
@@ -659,5 +675,55 @@
 
 
 * DESC: sort(<collection>.begin(),<collection>.end(), greater<value_type>());
+
+--------------------------------------------------------------------------------
+
+
+
+
+---------- Binary Search -------------------------------------------------------
+
+* binary_search: -> o(log(n))
+
+      * To check a given value exists or not:
+
+            bool exist = binary_search(values.begin(), values.end(), value);
+
+
+* lower_bound: -> o(log(n))
+
+      * first position >= x
+
+      * Returns the first position that greater than or equal to the given value.
+
+      * If returns values.end(), that means there is no value that greater than
+        or equal to the given value.
+
+      * Ex:
+
+            auto it = lower_bound(values.begin(), values.end(), value);
+
+            if (it != values.end() && *it == value) {
+              cout << "value is found at index: " << (it - values.begin());
+            } else if (it != values.end()) {
+              cout << "value is not found, first greater element: " << *it << " is at index: " << (it - values.begin());
+            } else if (it == values.end()) {
+              cout << "No value found greater than or equals to: " << value;
+            }
+
+
+* upper_bound: -> o(log(n))
+
+      * first position > x
+
+      * Returns the first position that greater than the given value.
+
+      * If returns values.end(), that means there is no value that greater than
+        the given value.
+
+
+* equal_range: -> o(log(n))
+
+      * Returns both lower_bound and upper_bound as a pair.
 
 --------------------------------------------------------------------------------
