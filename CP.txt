@@ -714,6 +714,8 @@ void reverse(string &msg) {
 
 ---------- Binary Search -------------------------------------------------------
 
+---------- (Implementation) ----------
+
 int binary_search(vector<int> &nums, int target) {
   int left = 0, right = nums.size() - 1;
 
@@ -736,6 +738,31 @@ int binary_search(vector<int> &nums, int target) {
       mid = (left + right) / 2
       mid = (2*left + right - left) / 2
       mid = left + (right - left) / 2
+
+
+
+
+---------- (In C++) ----------
+
+* binary_search:
+
+      * To check a given value exists or not:
+
+            bool exist = binary_search(values.begin(), values.end(), value);
+
+
+* lower_bound:
+
+      * Returns the first position that given value can be inserted.
+
+            auto it = lower_bound(values.begin(), values.end(), 8);
+            int index = it - values.begin();
+
+
+* upper_bound:
+
+
+
 
 --------------------------------------------------------------------------------
 
@@ -932,8 +959,5 @@ int binary_search(vector<int> &nums, int target) {
       NOT         : ~
       Left shift  : <<
       Right shift : >>
-
-
-* jklj
 
 --------------------------------------------------------------------------------
