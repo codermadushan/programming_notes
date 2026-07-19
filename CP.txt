@@ -749,6 +749,37 @@ int binary_search(vector<int> &nums, int target) {
 * upper_bound  : first position > x
 * equal_range  : both lower_bound & upper_bound
 
+
+
+
+---------- (Check For Lower Bound Values) ----------
+
+* suppose you have 2 same length vectors "a" and "b". If you want to check is
+  there a value in "a" that greater than or equals to each value in "b", use
+  following technique:
+
+      1. Add all values in "a" to a set.
+      2. Use lower_bound to search for values.
+      3. If you found a value, then remove it from the set.
+
+
+      for (int i = 0; i < n; i++) {
+        auto it = s.lower_bound(b[i]);
+        if (it == s.end()) return false;
+
+        s.erase(it);
+      }
+
+      return true;
+
+
+* If you want to check is there a value in "a" that less than or equal to each
+  value in "b", then add all values in "b" to a set. and follow the same process.
+
+
+* If the vector which we are going to convert to a set has duplicates, then use
+  a multiset.
+
 --------------------------------------------------------------------------------
 
 
