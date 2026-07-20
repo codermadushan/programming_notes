@@ -979,11 +979,9 @@ int binary_search(vector<int> &nums, int target) {
 
 * No need mapping:
 
-      * To make an non-duplicate arbitary initial to a sorted target, count
-        inversions in initial.
+      * non-duplicate arbitary initial -> sorted target : inversions in initial
 
-      * To make a non-duplicate sorted initial to an arbitary target, count
-        inversions in target.
+      * non-duplicate sorted initial -> arbitary target : inversions in target
 
       * Ex:
 
@@ -1003,11 +1001,9 @@ int binary_search(vector<int> &nums, int target) {
 
 * Need mapping:
 
-      * To convert a non-duplicate arbitary initial to an arbitary target, use
-        mapping and then count inversions in target.
+      * arbitary initial -> arbitary target : mapping + inversions in target
 
-      * To convert a duplicate initial to a target, use mapping and then count
-        inversions in target.
+      * duplicate initial -> target         : mapping + inversions in target
 
       * Ex:
 
