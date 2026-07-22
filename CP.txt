@@ -237,11 +237,7 @@
 
 ---------- (Two Pointers) ----------
 
-* Strategy 1:
-
-      * Left pointer starts from 0 and right pointer starts from last index of
-        the array:
-
+* Two pointer squeeze with duplicates at left and right:
 
       int left = 0;
       int right = nums.size() - 1;
@@ -255,10 +251,38 @@
       }
 
 
-* Strategy 2:
+* Two pointer squeeze without duplicates at left and right:
 
-      * Left pointer and right pointer start from index 0:
+      int left = <start_index>, right = <end_index>;
 
+      while (left < right) {
+        int sum = nums[left] + nums[right];
+
+        if (target > sum) {
+
+          left++;
+          while (left < right && nums[left] == nums[left - 1]) left++;
+
+        } else if (target < sum) {
+
+          right--;
+          while (left < right && nums[right] == nums[right + 1]) right--;
+
+        } else {
+
+          resp.push_back({nums[i], nums[left], nums[right]});
+
+          left++;
+          while (left < right && nums[left - 1] == nums[left]) left++;
+
+          right--;
+          while (left < right && nums[right] == nums[right + 1]) right--;
+
+        }
+      }
+
+
+* Two pointer expand:
 
       int left = 0, right = 0;
       while (right < n) {
@@ -268,23 +292,6 @@
 
         // update right
         // update left
-      }
-
-
-* Strategy 3:
-
-      * To track previous and current elements of an array:
-
-
-      int n = arr.size();
-
-      int previous = arr[0], current;
-      for (int i = 1; i < n; i++) {
-        current = arr[i];
-
-        // do something
-
-        previous = current;
       }
 
 --------------------------------------------------------------------------------
