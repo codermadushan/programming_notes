@@ -213,7 +213,29 @@
 
 
 
----------- Two Pointers --------------------------------------------------------
+---------- Move pointers over an array -----------------------------------------
+
+---------- (One Pointer) ----------
+
+* Move one pointer over every element in an array:
+
+      for (int i = 0; i < n; i++) {
+        //
+      }
+
+
+* Move one pointer over unique elements in an array:
+
+      for (int i = 0; i < n; i++) {
+        if (i > 0 && arr[i] == arr[i - 1]) continue;
+
+        // every arr[i] is unique here
+      }
+
+
+
+
+---------- (Two Pointers) ----------
 
 * Strategy 1:
 
